@@ -6,7 +6,8 @@
 
 set(channel_emulator_SRCS
 	main.cpp
-	RawSocket.cpp
+	modules/null/NullModule.cpp
+	modules/socket/RawSocket.cpp
 )
 
 add_executable(channel_emulator ${channel_emulator_SRCS})

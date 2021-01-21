@@ -25,10 +25,6 @@ void RawSocket::send(boost::asio::const_buffer send_buffer) {
 	socket.send(send_buffers);
 }
 
-void RawSocket::set_receive_handler(function<void(boost::asio::const_buffer)> handler) {
-	receive_handler = handler;
-}
-
 void RawSocket::start_receive() {
 	socket.async_receive(boost::asio::buffer(recv_buffer),
 	                     0,
@@ -40,12 +36,33 @@ void RawSocket::start_receive() {
 	);
 }
 
-void RawSocket::handle_receive(const boost::system::error_code& error, std::size_t bytes_transferred) {
+// Left Raw Socket
+LeftRawSocket::LeftRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
+}
+
+void LeftRawSocket::receiveFromRightModule(boost::asio::const_buffer packet) {
+	send(packet);
+}
+
+void LeftRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
 	if(!error || error == boost::asio::error::message_size) {
-		try {
-			receive_handler(boost::asio::buffer(recv_buffer, bytes_transferred));
-		} catch(bad_function_call e) {
-		}
+		passToRightModule(boost::asio::buffer(recv_buffer, bytes_transferred));
+
+		start_receive();
+	}
+}
+
+// Right Raw Socket
+RightRawSocket::RightRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
+}
+
+void RightRawSocket::receiveFromLeftModule(boost::asio::const_buffer packet) {
+	send(packet);
+}
+
+void RightRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
+	if(!error || error == boost::asio::error::message_size) {
+		passToLeftModule(boost::asio::buffer(recv_buffer, bytes_transferred));
 
 		start_receive();
 	}

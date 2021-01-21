@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "RawSocket.hpp"
+#include "modules/null/NullModule.hpp"
+#include "modules/socket/RawSocket.hpp"
 
 using namespace std;
 
@@ -12,19 +13,17 @@ int main(int argc, const char *argv[]) {
 	boost::asio::io_service io_service;
 
 	// Sockets
-	RawSocket socket_source(io_service, interface_source);
-	RawSocket socket_sink(io_service, interface_sink);
+	LeftRawSocket socket_source(io_service, interface_source);
+	RightRawSocket socket_sink(io_service, interface_sink);
 
-	// Handler
-	socket_source.set_receive_handler([&](boost::asio::const_buffer packet) {
-		//cout << "Source -> Sink: " << boost::asio::buffer_size(packet) << "B" << endl;
-		socket_sink.send(packet);
-	});
+	// Modules
+	NullModule null_module;
 
-	socket_sink.set_receive_handler([&](boost::asio::const_buffer packet) {
-		//cout << "Sink -> Source: " << boost::asio::buffer_size(packet) << "B" << endl;
-		socket_source.send(packet);
-	});
+	// Connect modules
+	socket_source.setRightModule(&null_module);
+	null_module.setLeftModule(&socket_source);
+	null_module.setRightModule(&socket_sink);
+	socket_sink.setLeftModule(&null_module);
 
 	while(1) {
 		io_service.poll();
