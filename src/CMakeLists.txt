@@ -6,6 +6,8 @@
 
 set(channel_emulator_SRCS
 	main.cpp
+	modules/delay/FixedDelayModule.cpp
+	modules/loss/UncorrelatedLossModule.cpp
 	modules/null/NullModule.cpp
 	modules/socket/RawSocket.cpp
 )
