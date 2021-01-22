@@ -6,13 +6,13 @@ UncorrelatedLossModule::UncorrelatedLossModule(double p, uint32_t seed_loss) : d
 
 }
 
-void UncorrelatedLossModule::receiveFromLeftModule(boost::asio::const_buffer packet) {
+void UncorrelatedLossModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	if(!distribution(generator_loss)) {
 		passToRightModule(packet);
 	}
 }
 
-void UncorrelatedLossModule::receiveFromRightModule(boost::asio::const_buffer packet) {
+void UncorrelatedLossModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	//if(!distribution(generator_loss)) {
 		passToLeftModule(packet);
 	//}

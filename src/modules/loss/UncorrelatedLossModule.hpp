@@ -8,13 +8,14 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
+#include "../../utils/Packet.hpp"
 
-class UncorrelatedLossModule : public ModuleHasLeft<boost::asio::const_buffer>, public ModuleHasRight<boost::asio::const_buffer> {
+class UncorrelatedLossModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
 	public:
 		UncorrelatedLossModule(double p, uint32_t seed_loss = 1);
 
-		void receiveFromLeftModule(boost::asio::const_buffer packet) override;
-		void receiveFromRightModule(boost::asio::const_buffer packet) override;
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
+		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 	private:
 		std::default_random_engine generator_loss;
 		std::bernoulli_distribution distribution;

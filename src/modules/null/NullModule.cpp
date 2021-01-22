@@ -6,10 +6,10 @@ NullModule::NullModule() {
 
 }
 
-void NullModule::receiveFromLeftModule(boost::asio::const_buffer packet) {
+void NullModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	passToRightModule(packet);
 }
 
-void NullModule::receiveFromRightModule(boost::asio::const_buffer packet) {
+void NullModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	passToLeftModule(packet);
 }

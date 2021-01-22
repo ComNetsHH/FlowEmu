@@ -19,9 +19,10 @@ RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname) : 
 	start_receive();
 }
 
-void RawSocket::send(boost::asio::const_buffer send_buffer) {
+void RawSocket::send(shared_ptr<Packet> packet) {
 	std::vector<boost::asio::const_buffer> send_buffers;
-	send_buffers.push_back(send_buffer);
+	auto &packet_bytes = packet->getBytes();
+	send_buffers.push_back(boost::asio::const_buffer(packet_bytes.data(), packet_bytes.size()));
 	socket.send(send_buffers);
 }
 
@@ -40,13 +41,13 @@ void RawSocket::start_receive() {
 LeftRawSocket::LeftRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
 }
 
-void LeftRawSocket::receiveFromRightModule(boost::asio::const_buffer packet) {
+void LeftRawSocket::receiveFromRightModule(shared_ptr<Packet> packet) {
 	send(packet);
 }
 
 void LeftRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
 	if(!error || error == boost::asio::error::message_size) {
-		passToRightModule(boost::asio::buffer(recv_buffer, bytes_transferred));
+		passToRightModule(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
 
 		start_receive();
 	}
@@ -56,13 +57,13 @@ void LeftRawSocket::handle_receive(const boost::system::error_code& error, size_
 RightRawSocket::RightRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
 }
 
-void RightRawSocket::receiveFromLeftModule(boost::asio::const_buffer packet) {
+void RightRawSocket::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	send(packet);
 }
 
 void RightRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
 	if(!error || error == boost::asio::error::message_size) {
-		passToLeftModule(boost::asio::buffer(recv_buffer, bytes_transferred));
+		passToLeftModule(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
 
 		start_receive();
 	}

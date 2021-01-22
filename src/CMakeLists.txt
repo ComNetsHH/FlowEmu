@@ -10,6 +10,7 @@ set(channel_emulator_SRCS
 	modules/loss/UncorrelatedLossModule.cpp
 	modules/null/NullModule.cpp
 	modules/socket/RawSocket.cpp
+	utils/Packet.cpp
 )
 
 add_executable(channel_emulator ${channel_emulator_SRCS})

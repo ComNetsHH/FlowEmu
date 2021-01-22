@@ -21,10 +21,10 @@ void FixedDelayModule::processQueue() {
 	timer.async_wait(boost::bind(&FixedDelayModule::processQueue, this));
 }
 
-void FixedDelayModule::receiveFromLeftModule(boost::asio::const_buffer packet) {
+void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	packet_queue.emplace(boost::posix_time::microsec_clock::universal_time(), packet);
 }
 
-void FixedDelayModule::receiveFromRightModule(boost::asio::const_buffer packet) {
+void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	passToLeftModule(packet);
 }

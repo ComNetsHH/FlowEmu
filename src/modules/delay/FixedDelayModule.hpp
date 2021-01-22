@@ -10,20 +10,22 @@
 #include <boost/bind.hpp>
 
 #include "../Module.hpp"
+#include "../../utils/Packet.hpp"
 
-class FixedDelayModule : public ModuleHasLeft<boost::asio::const_buffer>, public ModuleHasRight<boost::asio::const_buffer> {
+class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
 	public:
 		FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay);
 
-		void processQueue();
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
+		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 
-		void receiveFromLeftModule(boost::asio::const_buffer packet) override;
-		void receiveFromRightModule(boost::asio::const_buffer packet) override;
 	private:
 		uint64_t delay;
 
 		boost::asio::deadline_timer timer;
-		std::queue<std::pair<boost::posix_time::ptime, boost::asio::const_buffer>> packet_queue;
+		std::queue<std::pair<boost::posix_time::ptime, std::shared_ptr<Packet>>> packet_queue;
+
+		void processQueue();
 };
 
 #endif
