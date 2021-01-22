@@ -17,10 +17,10 @@ class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public M
 	public:
 		FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay);
 
+		void setDelay(uint64_t delay);
+
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
-
-		void setDelay(uint64_t delay);
 	private:
 		std::atomic<uint64_t> delay;
 
