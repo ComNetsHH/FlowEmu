@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <queue>
 #include <utility>
+#include <atomic>
 
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
@@ -19,8 +20,9 @@ class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public M
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 
+		void setDelay(uint64_t delay);
 	private:
-		uint64_t delay;
+		std::atomic<uint64_t> delay;
 
 		boost::asio::deadline_timer timer;
 		std::queue<std::pair<boost::posix_time::ptime, std::shared_ptr<Packet>>> packet_queue_lr;
