@@ -21,8 +21,8 @@ RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname) : 
 
 void RawSocket::send(shared_ptr<Packet> packet) {
 	std::vector<boost::asio::const_buffer> send_buffers;
-	auto &packet_bytes = packet->getBytes();
-	send_buffers.push_back(boost::asio::const_buffer(packet_bytes.data(), packet_bytes.size()));
+	const auto &packet_bytes = packet->getBytes();
+	send_buffers.emplace_back(packet_bytes.data(), packet_bytes.size());
 	socket.send(send_buffers);
 }
 
