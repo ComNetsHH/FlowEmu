@@ -23,7 +23,8 @@ class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public M
 		uint64_t delay;
 
 		boost::asio::deadline_timer timer;
-		std::queue<std::pair<boost::posix_time::ptime, std::shared_ptr<Packet>>> packet_queue;
+		std::queue<std::pair<boost::posix_time::ptime, std::shared_ptr<Packet>>> packet_queue_lr;
+		std::queue<std::pair<boost::posix_time::ptime, std::shared_ptr<Packet>>> packet_queue_rl;
 
 		void processQueue();
 };

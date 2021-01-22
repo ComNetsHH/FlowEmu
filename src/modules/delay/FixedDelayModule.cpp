@@ -8,10 +8,19 @@ FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, uint64_t
 }
 
 void FixedDelayModule::processQueue() {
-	while(packet_queue.size() >= 1) {
-		if((packet_queue.front().first + boost::posix_time::milliseconds(delay)) < boost::posix_time::microsec_clock::universal_time()) {
-			passToRightModule(packet_queue.front().second);
-			packet_queue.pop();
+	while(packet_queue_lr.size() >= 1) {
+		if((packet_queue_lr.front().first + boost::posix_time::milliseconds(delay)) < boost::posix_time::microsec_clock::universal_time()) {
+			passToRightModule(packet_queue_lr.front().second);
+			packet_queue_lr.pop();
+		} else {
+			break;
+		}
+	}
+
+	while(packet_queue_rl.size() >= 1) {
+		if((packet_queue_rl.front().first + boost::posix_time::milliseconds(delay)) < boost::posix_time::microsec_clock::universal_time()) {
+			passToLeftModule(packet_queue_rl.front().second);
+			packet_queue_rl.pop();
 		} else {
 			break;
 		}
@@ -22,9 +31,9 @@ void FixedDelayModule::processQueue() {
 }
 
 void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
-	packet_queue.emplace(boost::posix_time::microsec_clock::universal_time(), packet);
+	packet_queue_lr.emplace(boost::posix_time::microsec_clock::universal_time(), packet);
 }
 
 void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
-	passToLeftModule(packet);
+	packet_queue_rl.emplace(boost::posix_time::microsec_clock::universal_time(), packet);
 }
