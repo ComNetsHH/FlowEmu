@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <random>
+#include <memory>
 
 #include <boost/asio.hpp>
 
@@ -14,11 +15,15 @@ class UncorrelatedLossModule : public ModuleHasLeft<std::shared_ptr<Packet>>, pu
 	public:
 		UncorrelatedLossModule(double p, uint32_t seed_loss = 1);
 
+		void setLossProbability(double p);
+
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 	private:
+		std::atomic<double> p;
+
 		std::default_random_engine generator_loss;
-		std::bernoulli_distribution distribution;
+		std::unique_ptr<std::bernoulli_distribution> distribution;
 };
 
 #endif
