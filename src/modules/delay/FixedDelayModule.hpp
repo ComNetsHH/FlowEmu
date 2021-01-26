@@ -1,7 +1,6 @@
 #ifndef FIXED_DELAY_MODULE_HPP
 #define FIXED_DELAY_MODULE_HPP
 
-#include <vector>
 #include <cstdint>
 #include <queue>
 #include <utility>
@@ -25,12 +24,15 @@ class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public M
 	private:
 		std::atomic<uint64_t> delay;
 
-		boost::asio::high_resolution_timer timer;
+		boost::asio::high_resolution_timer timer_lr;
 		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_lr;
-		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_rl;
+		void setQueueTimeoutLr();
+		void processQueueLr(const boost::system::error_code& error);
 
-		void setQueueTimeout();
-		void processQueue(const boost::system::error_code& error);
+		boost::asio::high_resolution_timer timer_rl;
+		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_rl;
+		void setQueueTimeoutRl();
+		void processQueueRl(const boost::system::error_code& error);
 };
 
 #endif
