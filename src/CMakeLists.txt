@@ -6,6 +6,7 @@
 
 set(channel_emulator_SRCS
 	main.cpp
+	modules/ModuleManager.cpp
 	modules/delay/FixedDelayModule.cpp
 	modules/loss/UncorrelatedLossModule.cpp
 	modules/null/NullModule.cpp

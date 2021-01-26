@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "modules/ModuleManager.hpp"
 #include "modules/delay/FixedDelayModule.hpp"
 #include "modules/loss/UncorrelatedLossModule.hpp"
 #include "modules/null/NullModule.hpp"
@@ -14,6 +15,9 @@ int main(int argc, const char *argv[]) {
 
 	boost::asio::io_service io_service;
 
+	// Module manager
+	ModuleManager module_manager;
+
 	// Sockets
 	LeftRawSocket socket_source(io_service, interface_source);
 	RightRawSocket socket_sink(io_service, interface_sink);
@@ -24,17 +28,14 @@ int main(int argc, const char *argv[]) {
 	FixedDelayModule fixed_delay_module(io_service, 10);
 
 	// Connect modules
-	socket_source.setRightModule(&null_module);
-	null_module.setLeftModule(&socket_source);
+	module_manager.push_back(&socket_source);
+	//module_manager.push_back(&null_module);
+	module_manager.push_back(&loss_module);
+	module_manager.push_back(&fixed_delay_module);
+	module_manager.push_back(&socket_sink);
 
-	null_module.setRightModule(&loss_module);
-	loss_module.setLeftModule(&null_module);
 
-	loss_module.setRightModule(&fixed_delay_module);
-	fixed_delay_module.setLeftModule(&loss_module);
 
-	fixed_delay_module.setRightModule(&socket_sink);
-	socket_sink.setLeftModule(&fixed_delay_module);
 
 	while(1) {
 		io_service.poll();
