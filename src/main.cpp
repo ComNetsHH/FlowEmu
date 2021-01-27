@@ -4,6 +4,7 @@
 #include "modules/ModuleManager.hpp"
 #include "modules/delay/FixedDelayModule.hpp"
 #include "modules/loss/UncorrelatedLossModule.hpp"
+#include "modules/meter/ThroughputMeter.hpp"
 #include "modules/null/NullModule.hpp"
 #include "modules/socket/RawSocket.hpp"
 
@@ -26,9 +27,11 @@ int main(int argc, const char *argv[]) {
 	NullModule null_module;
 	UncorrelatedLossModule loss_module(0.1);
 	FixedDelayModule fixed_delay_module(io_service, 10);
+	ThroughputMeter throughput_meter_module(io_service);
 
 	// Connect modules
 	module_manager.push_back(&socket_source);
+	module_manager.push_back(&throughput_meter_module);
 	//module_manager.push_back(&null_module);
 	module_manager.push_back(&loss_module);
 	module_manager.push_back(&fixed_delay_module);
