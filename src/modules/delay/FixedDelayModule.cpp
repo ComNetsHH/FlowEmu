@@ -38,11 +38,10 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::duration chrono_delay = chrono::milliseconds(delay.load());
-	chrono::high_resolution_clock::time_point chrono_time = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds(delay.load());
 
 	while(!packet_queue_lr.empty()) {
-		if(packet_queue_lr.front().first + chrono_delay <= chrono_time) {
+		if(packet_queue_lr.front().first <= chrono_deadline) {
 			passToRightModule(packet_queue_lr.front().second);
 			packet_queue_lr.pop();
 		} else {
@@ -78,11 +77,10 @@ void FixedDelayModule::processQueueRl(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::duration chrono_delay = chrono::milliseconds(delay.load());
-	chrono::high_resolution_clock::time_point chrono_time = chrono::high_resolution_clock::now();
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds(delay.load());
 
 	while(!packet_queue_rl.empty()) {
-		if(packet_queue_rl.front().first + chrono_delay <= chrono_time) {
+		if(packet_queue_rl.front().first <= chrono_deadline) {
 			passToLeftModule(packet_queue_rl.front().second);
 			packet_queue_rl.pop();
 		} else {
