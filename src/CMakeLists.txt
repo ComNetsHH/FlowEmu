@@ -11,6 +11,7 @@ set(channel_emulator_SRCS
 	modules/loss/UncorrelatedLossModule.cpp
 	modules/meter/ThroughputMeter.cpp
 	modules/null/NullModule.cpp
+	modules/rate/FixedIntervalRateModule.cpp
 	modules/socket/RawSocket.cpp
 	utils/Packet.cpp
 )
