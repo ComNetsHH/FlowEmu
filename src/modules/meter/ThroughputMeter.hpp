@@ -6,7 +6,6 @@
 #include <memory>
 
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 
 #include "../Module.hpp"
 #include "../../utils/Packet.hpp"

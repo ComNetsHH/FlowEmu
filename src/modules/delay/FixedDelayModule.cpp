@@ -1,5 +1,7 @@
 #include "FixedDelayModule.hpp"
 
+#include <boost/bind.hpp>
+
 using namespace std;
 
 FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay) : timer_lr(io_service), timer_rl(io_service), delay(delay) {

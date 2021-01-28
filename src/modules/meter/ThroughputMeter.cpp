@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <boost/bind.hpp>
+
 using namespace std;
 
 ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io_service) {
