@@ -13,6 +13,7 @@ set(channel_emulator_SRCS
 	modules/null/NullModule.cpp
 	modules/rate/FixedIntervalRateModule.cpp
 	modules/socket/RawSocket.cpp
+	utils/Mqtt.cpp
 	utils/Packet.cpp
 )
 
@@ -22,6 +23,8 @@ set_property(TARGET channel_emulator PROPERTY CXX_STANDARD 11)
 set_property(TARGET channel_emulator PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(channel_emulator
+	mosquitto
+	jsoncpp
 	pthread
 )
 

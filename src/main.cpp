@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <thread>
+#include <atomic>
+#include <csignal>
 
 #include "modules/ModuleManager.hpp"
 #include "modules/delay/FixedDelayModule.hpp"
@@ -8,14 +11,21 @@
 #include "modules/null/NullModule.hpp"
 #include "modules/rate/FixedIntervalRateModule.hpp"
 #include "modules/socket/RawSocket.hpp"
+#include "utils/Mqtt.hpp"
 
 using namespace std;
+
+atomic<bool> running(true);
+boost::asio::io_service io_service;
+
+void signalHandler(int signum) {
+	running = false;
+	io_service.stop();
+}
 
 int main(int argc, const char *argv[]) {
 	string interface_source = "in";
 	string interface_sink = "out";
-
-	boost::asio::io_service io_service;
 
 	// Module manager
 	ModuleManager module_manager;
@@ -40,12 +50,38 @@ int main(int argc, const char *argv[]) {
 	module_manager.push_back(&fixed_delay_module);
 	module_manager.push_back(&socket_sink);
 
+	// Mqtt
+	Mqtt mqtt("localhost", 1883, "channel_emulator");
 
+	mqtt.subscribe("set/loss", [&](const string &topic, const string &message) {
+		double loss = stod(message);
 
+		loss_module.setLossProbability(loss);
+		mqtt.publish("get/loss", to_string(loss), true);
+	});
 
-	while(1) {
+	mqtt.subscribe("set/delay", [&](const string &topic, const string &message) {
+		int delay = stoi(message);
+
+		fixed_delay_module.setDelay(delay);
+		mqtt.publish("get/delay", delay, true);
+	});
+
+	thread mqtt_thread([&](){
+		while(running) {
+			mqtt.loop();
+		}
+	});
+
+	// Loop
+	signal(SIGINT, signalHandler);
+
+	/* while(running) {
 		io_service.poll();
-	}
+	} */
+	io_service.run();
 
+	// Clean up
+	mqtt_thread.join();
 	return 0;
 }
