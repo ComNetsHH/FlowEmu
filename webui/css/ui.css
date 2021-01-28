@@ -1,0 +1,50 @@
+.header {
+	display: flex;
+	align-items: center;
+
+	width: 100%;
+	height: 56px;
+
+	background: black;
+}
+
+.header > .logo {
+	margin: 12px;
+	height: 32px;
+}
+
+.header > a {
+	color: white;
+	font-size: 24px;
+
+	margin: 12px;
+}
+
+.slider_box {
+	margin: 32px 16px;
+}
+
+.slider_box input[type=range] {
+	margin-top: 16px;
+}
+
+input[type=range] {
+	-webkit-appearance: none;
+	width: 100%;
+	height: 24px;
+	background: rgb(230, 230, 230);
+}
+
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 24px;
+	height: 24px;
+	background: black;
+}
+
+input[type=range]::-moz-range-thumb {
+	width: 24px;
+	height: 24px;
+	background: black;
+}
