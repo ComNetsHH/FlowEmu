@@ -37,7 +37,7 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
-	cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << endl;
+	cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << " - " << bytes.size() << " packets/s" << endl;
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));
