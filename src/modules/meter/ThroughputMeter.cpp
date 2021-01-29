@@ -7,7 +7,7 @@
 using namespace std;
 
 ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io_service) {
-	timer.expires_from_now(chrono::milliseconds(100));
+	timer.expires_from_now(chrono::milliseconds(0));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));
 }
 

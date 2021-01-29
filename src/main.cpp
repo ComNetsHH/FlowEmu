@@ -64,7 +64,7 @@ int main(int argc, const char *argv[]) {
 	});
 
 	mqtt.subscribe("set/delay", [&](const string &topic, const string &message) {
-		int delay = stoi(message);
+		uint64_t delay = stoul(message);
 
 		fixed_delay_module.setDelay(delay);
 		mqtt.publish("get/delay", delay, true);
