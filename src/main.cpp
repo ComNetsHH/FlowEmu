@@ -67,6 +67,20 @@ int main(int argc, const char *argv[]) {
 		mqtt.publish("get/delay", delay, true);
 	});
 
+	mqtt.subscribe("set/interval", [&](const string &topic, const string &message) {
+		uint64_t interval = stoul(message);
+
+		fixed_interval_rate_module.setInterval(chrono::nanoseconds(interval));
+		mqtt.publish("get/interval", interval, true);
+	});
+
+	mqtt.subscribe("set/buffer_size", [&](const string &topic, const string &message) {
+		size_t buffer_size = stoul(message);
+
+		fixed_interval_rate_module.setBufferSize(buffer_size);
+		mqtt.publish("get/buffer_size", buffer_size, true);
+	});
+
 	thread mqtt_thread([&](){
 		while(running) {
 			mqtt.loop();
