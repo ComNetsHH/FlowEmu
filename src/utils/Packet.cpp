@@ -1,15 +1,24 @@
 #include "Packet.hpp"
 
-Packet::Packet(std::vector<uint8_t> &bytes) : bytes(bytes) {
+#include <iostream>
+#include <ios>
+
+using namespace std;
+
+Packet::Packet(const vector<uint8_t> &bytes) : bytes(bytes) {
 }
 
-Packet::Packet(uint8_t *data, size_t size) : bytes(data, data + size) {
+Packet::Packet(const uint8_t *data, size_t size) : bytes(data, data + size) {
 }
 
-void Packet::setBytes(std::vector<uint8_t> &bytes) {
+void Packet::setBytes(const vector<uint8_t> &bytes) {
 	this->bytes = bytes;
 }
 
-std::vector<uint8_t>& Packet::getBytes() {
+const vector<uint8_t>& Packet::getBytes() const {
 	return bytes;
+}
+
+const chrono::high_resolution_clock::time_point& Packet::getCreationTimePoint() const {
+	return creation_time_point;
 }
