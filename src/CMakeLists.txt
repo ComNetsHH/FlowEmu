@@ -9,6 +9,7 @@ set(channel_emulator_SRCS
 	modules/ModuleManager.cpp
 	modules/delay/FixedDelayModule.cpp
 	modules/loss/UncorrelatedLossModule.cpp
+	modules/meter/DelayMeter.cpp
 	modules/meter/ThroughputMeter.cpp
 	modules/null/NullModule.cpp
 	modules/rate/FixedIntervalRateModule.cpp
