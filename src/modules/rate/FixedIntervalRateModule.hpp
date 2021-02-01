@@ -9,11 +9,12 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
+#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class FixedIntervalRateModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
 	public:
-		FixedIntervalRateModule(boost::asio::io_service &io_service, std::chrono::high_resolution_clock::duration interval, size_t buffer_size);
+		FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, std::chrono::high_resolution_clock::duration interval, size_t buffer_size);
 
 		void setInterval(std::chrono::high_resolution_clock::duration interval);
 		void setBufferSize(size_t buffer_size);
@@ -22,6 +23,8 @@ class FixedIntervalRateModule : public ModuleHasLeft<std::shared_ptr<Packet>>, p
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 
 	private:
+		Mqtt &mqtt;
+
 		std::atomic<std::chrono::high_resolution_clock::duration> interval;
 		std::atomic<size_t> buffer_size;
 

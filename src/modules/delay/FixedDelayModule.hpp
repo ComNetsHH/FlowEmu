@@ -10,17 +10,19 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
+#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class FixedDelayModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
 	public:
-		FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay);
+		FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay);
 
 		void setDelay(uint64_t delay);
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 	private:
+		Mqtt &mqtt;
 		std::atomic<uint64_t> delay;
 
 		boost::asio::high_resolution_timer timer_lr;

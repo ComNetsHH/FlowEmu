@@ -4,7 +4,20 @@
 
 using namespace std;
 
-FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, chrono::high_resolution_clock::duration interval, size_t buffer_size) : timer_lr(io_service), timer_rl(io_service), interval(interval), buffer_size(buffer_size) {
+FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, chrono::high_resolution_clock::duration interval, size_t buffer_size) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
+	setInterval(chrono::nanoseconds(interval));
+	setBufferSize(buffer_size);
+
+	mqtt.subscribe("set/fixed_interval_rate_module/interval", [&](const string &topic, const string &message) {
+		uint64_t interval = stoul(message);
+		setInterval(chrono::nanoseconds(interval));
+	});
+
+	mqtt.subscribe("set/fixed_interval_rate_module/buffer_size", [&](const string &topic, const string &message) {
+		size_t buffer_size = stoul(message);
+		setBufferSize(buffer_size);
+	});
+
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 
 	timer_lr.expires_at(now);
@@ -16,10 +29,14 @@ FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_ser
 
 void FixedIntervalRateModule::setInterval(chrono::high_resolution_clock::duration interval) {
 	this->interval = interval;
+
+	mqtt.publish("get/fixed_interval_rate_module/interval", to_string(chrono::nanoseconds(interval).count()), true);
 }
 
 void FixedIntervalRateModule::setBufferSize(size_t buffer_size) {
 	this->buffer_size = buffer_size;
+
+	mqtt.publish("get/fixed_interval_rate_module/buffer_size", to_string(buffer_size), true);
 }
 
 void FixedIntervalRateModule::receiveFromLeftModule(shared_ptr<Packet> packet) {

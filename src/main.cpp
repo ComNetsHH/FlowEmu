@@ -39,10 +39,10 @@ int main(int argc, const char *argv[]) {
 	RightRawSocket socket_sink(io_service, interface_sink);
 
 	// Modules
-	FixedIntervalRateModule fixed_interval_rate_module(io_service, chrono::milliseconds(1), 100);
+	FixedIntervalRateModule fixed_interval_rate_module(io_service, mqtt, chrono::milliseconds(1), 100);
 	//NullModule null_module;
-	UncorrelatedLossModule loss_module(0);
-	FixedDelayModule fixed_delay_module(io_service, 0);
+	UncorrelatedLossModule loss_module(mqtt, 0);
+	FixedDelayModule fixed_delay_module(io_service, mqtt, 0);
 	DelayMeter delay_meter_module(io_service, mqtt);
 	ThroughputMeter throughput_meter_module(io_service, mqtt);
 
@@ -56,35 +56,7 @@ int main(int argc, const char *argv[]) {
 	module_manager.push_back(&delay_meter_module);
 	module_manager.push_back(&socket_sink);
 
-	// MQTT subscriptions
-	mqtt.subscribe("set/loss", [&](const string &topic, const string &message) {
-		double loss = stod(message);
-
-		loss_module.setLossProbability(loss);
-		mqtt.publish("get/loss", to_string(loss), true);
-	});
-
-	mqtt.subscribe("set/delay", [&](const string &topic, const string &message) {
-		uint64_t delay = stoul(message);
-
-		fixed_delay_module.setDelay(delay);
-		mqtt.publish("get/delay", to_string(delay), true);
-	});
-
-	mqtt.subscribe("set/interval", [&](const string &topic, const string &message) {
-		uint64_t interval = stoul(message);
-
-		fixed_interval_rate_module.setInterval(chrono::nanoseconds(interval));
-		mqtt.publish("get/interval", to_string(interval), true);
-	});
-
-	mqtt.subscribe("set/buffer_size", [&](const string &topic, const string &message) {
-		size_t buffer_size = stoul(message);
-
-		fixed_interval_rate_module.setBufferSize(buffer_size);
-		mqtt.publish("get/buffer_size", to_string(buffer_size), true);
-	});
-
+	// MQTT loop
 	thread mqtt_thread([&](){
 		while(running) {
 			mqtt.loop();
