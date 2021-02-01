@@ -28,6 +28,9 @@ int main(int argc, const char *argv[]) {
 	string interface_source = "in";
 	string interface_sink = "out";
 
+	// MQTT
+	Mqtt mqtt("localhost", 1883, "channel_emulator");
+
 	// Module manager
 	ModuleManager module_manager;
 
@@ -41,7 +44,7 @@ int main(int argc, const char *argv[]) {
 	UncorrelatedLossModule loss_module(0);
 	FixedDelayModule fixed_delay_module(io_service, 0);
 	DelayMeter delay_meter_module(io_service);
-	ThroughputMeter throughput_meter_module(io_service);
+	ThroughputMeter throughput_meter_module(io_service, mqtt);
 
 	// Connect modules
 	module_manager.push_back(&socket_source);
@@ -53,9 +56,7 @@ int main(int argc, const char *argv[]) {
 	module_manager.push_back(&delay_meter_module);
 	module_manager.push_back(&socket_sink);
 
-	// Mqtt
-	Mqtt mqtt("localhost", 1883, "channel_emulator");
-
+	// MQTT subscriptions
 	mqtt.subscribe("set/loss", [&](const string &topic, const string &message) {
 		double loss = stod(message);
 

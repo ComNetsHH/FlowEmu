@@ -8,16 +8,19 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
+#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class ThroughputMeter : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
 	public:
-		ThroughputMeter(boost::asio::io_service &io_service);
+		ThroughputMeter(boost::asio::io_service &io_service, Mqtt &mqtt);
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
 		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 
 	private:
+		Mqtt &mqtt;
+
 		boost::asio::high_resolution_timer timer;
 		uint64_t bytes_sum = 0;
 		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, uint64_t>> bytes;

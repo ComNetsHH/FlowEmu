@@ -1,12 +1,12 @@
 #include "ThroughputMeter.hpp"
 
-#include <iostream>
+//#include <iostream>
 
 #include <boost/bind.hpp>
 
 using namespace std;
 
-ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io_service) {
+ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service, Mqtt &mqtt) : timer(io_service), mqtt(mqtt) {
 	timer.expires_from_now(chrono::milliseconds(0));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));
 }
@@ -37,7 +37,9 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
-	cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << " - " << bytes.size() << " packets/s" << endl;
+	//cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << " - " << bytes.size() << " packets/s" << endl;
+	mqtt.publish("get/throughput_meter/left_to_right/byte_per_second", to_string(bytes_sum * 8), true);
+	mqtt.publish("get/throughput_meter/left_to_right/packets_per_second", to_string(bytes.size()), true);
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));
