@@ -33,11 +33,11 @@ void DelayMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
-	double min_delay = numeric_limits<double>::max();
-	double max_delay = numeric_limits<double>::min();
+	int64_t min_delay = numeric_limits<int64_t>::max();
+	int64_t max_delay = numeric_limits<int64_t>::min();
 	double mean_delay = 0;
 	for(const auto& entry: creation_time_points) {
-		double delay = chrono::nanoseconds(entry.first - entry.second).count();
+		int64_t delay = chrono::nanoseconds(entry.first - entry.second).count();
 
 		if(delay < min_delay) {min_delay = delay;}
 		if(delay > max_delay) {max_delay = delay;}
