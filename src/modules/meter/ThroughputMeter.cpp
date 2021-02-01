@@ -26,7 +26,6 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 	}
 
 	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::seconds(1);
-
 	while(!bytes.empty()) {
 		const auto& entry = bytes.front();
 		if(entry.first <= chrono_deadline) {
