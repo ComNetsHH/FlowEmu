@@ -67,21 +67,21 @@ int main(int argc, const char *argv[]) {
 		uint64_t delay = stoul(message);
 
 		fixed_delay_module.setDelay(delay);
-		mqtt.publish("get/delay", delay, true);
+		mqtt.publish("get/delay", to_string(delay), true);
 	});
 
 	mqtt.subscribe("set/interval", [&](const string &topic, const string &message) {
 		uint64_t interval = stoul(message);
 
 		fixed_interval_rate_module.setInterval(chrono::nanoseconds(interval));
-		mqtt.publish("get/interval", interval, true);
+		mqtt.publish("get/interval", to_string(interval), true);
 	});
 
 	mqtt.subscribe("set/buffer_size", [&](const string &topic, const string &message) {
 		size_t buffer_size = stoul(message);
 
 		fixed_interval_rate_module.setBufferSize(buffer_size);
-		mqtt.publish("get/buffer_size", buffer_size, true);
+		mqtt.publish("get/buffer_size", to_string(buffer_size), true);
 	});
 
 	thread mqtt_thread([&](){
