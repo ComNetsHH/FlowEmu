@@ -1,13 +1,13 @@
 #include "DelayMeter.hpp"
 
-#include <iostream>
+//#include <iostream>
 #include <limits>
 
 #include <boost/bind.hpp>
 
 using namespace std;
 
-DelayMeter::DelayMeter(boost::asio::io_service &io_service) : timer(io_service) {
+DelayMeter::DelayMeter(boost::asio::io_service &io_service, Mqtt &mqtt) : timer(io_service), mqtt(mqtt) {
 	timer.expires_from_now(chrono::milliseconds(0));
 	timer.async_wait(boost::bind(&DelayMeter::process, this, boost::asio::placeholders::error));
 }
@@ -45,7 +45,10 @@ void DelayMeter::process(const boost::system::error_code& error) {
 	}
 	mean_delay /= creation_time_points.size();
 
-	cout << "Min: " << min_delay / 1000000 << " ms | Mean: " << mean_delay / 1000000 << " ms | Max: " << max_delay / 1000000 << " ms" << endl;
+	//cout << "Min: " << min_delay / 1000000 << " ms | Mean: " << mean_delay / 1000000 << " ms | Max: " << max_delay / 1000000 << " ms" << endl;
+	mqtt.publish("get/delay_meter/left_to_right/min", to_string(min_delay), true);
+	mqtt.publish("get/delay_meter/left_to_right/max", to_string(max_delay), true);
+	mqtt.publish("get/delay_meter/left_to_right/mean", to_string(mean_delay), true);
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
 	timer.async_wait(boost::bind(&DelayMeter::process, this, boost::asio::placeholders::error));

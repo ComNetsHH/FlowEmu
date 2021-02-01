@@ -43,7 +43,7 @@ int main(int argc, const char *argv[]) {
 	//NullModule null_module;
 	UncorrelatedLossModule loss_module(0);
 	FixedDelayModule fixed_delay_module(io_service, 0);
-	DelayMeter delay_meter_module(io_service);
+	DelayMeter delay_meter_module(io_service, mqtt);
 	ThroughputMeter throughput_meter_module(io_service, mqtt);
 
 	// Connect modules
