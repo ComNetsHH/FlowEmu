@@ -1,0 +1,25 @@
+image: ${CI_REGISTRY_IMAGE}/builder
+
+stages:
+  - build
+
+before_script:
+## Setup ccache (Based on: https://gould.cx/ted/blog/2017/06/10/ccache-for-Gitlab-CI/)
+  - mkdir -p ccache
+  - export CCACHE_BASEDIR=${PWD}
+  - export CCACHE_DIR=${PWD}/ccache
+
+build:amd64:
+  stage: build
+  script:
+    - mkdir -p BUILD
+    - cd BUILD
+    - cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ..
+    - make -j4
+  cache:
+    key: amd64
+    paths:
+      - ccache/
+  artifacts:
+    paths:
+      - BUILD/bin
