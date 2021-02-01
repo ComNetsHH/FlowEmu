@@ -1,8 +1,7 @@
-#find_package(Jsoncpp REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP jsoncpp)
 
-#include_directories(
-#	${JSONCPP_INCLUDE_DIRS}/${JSONCPP_INCLUDE_PREFIX}
-#)
+include_directories("${JSONCPP_INCLUDE_DIRS}")
 
 set(channel_emulator_SRCS
 	main.cpp
@@ -25,7 +24,7 @@ set_property(TARGET channel_emulator PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(channel_emulator
 	mosquitto
-	jsoncpp
+	${JSONCPP_LIBRARIES}
 	pthread
 )
 
