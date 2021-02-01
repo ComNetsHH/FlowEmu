@@ -38,7 +38,7 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 	}
 
 	//cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << " - " << bytes.size() << " packets/s" << endl;
-	mqtt.publish("get/throughput_meter/left_to_right/byte_per_second", to_string(bytes_sum * 8), true);
+	mqtt.publish("get/throughput_meter/left_to_right/bytes_per_second", to_string(bytes_sum), true);
 	mqtt.publish("get/throughput_meter/left_to_right/packets_per_second", to_string(bytes.size()), true);
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
