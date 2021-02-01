@@ -19,7 +19,7 @@ RUN apt-get update \
 #                BUILD                #
 #                                     #
 #######################################
-FROM builder
+FROM builder AS build
 
 # Build channel emulator
 ADD . /channel_emulator
