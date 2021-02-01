@@ -36,6 +36,7 @@ void DelayMeter::process(const boost::system::error_code& error) {
 	int64_t min_delay = numeric_limits<int64_t>::max();
 	int64_t max_delay = numeric_limits<int64_t>::min();
 	double mean_delay = 0;
+
 	for(const auto& entry: creation_time_points) {
 		int64_t delay = chrono::nanoseconds(entry.first - entry.second).count();
 
@@ -43,7 +44,19 @@ void DelayMeter::process(const boost::system::error_code& error) {
 		if(delay > max_delay) {max_delay = delay;}
 		mean_delay += delay;
 	}
-	mean_delay /= creation_time_points.size();
+
+	if(min_delay == numeric_limits<int64_t>::max()) {
+		min_delay = 0;
+	}
+
+	if(max_delay == numeric_limits<int64_t>::min()) {
+		max_delay = 0;
+	}
+
+	auto samples_num = creation_time_points.size();
+	if(samples_num != 0) {
+		mean_delay /= samples_num;
+	}
 
 	//cout << "Min: " << min_delay / 1000000 << " ms | Mean: " << mean_delay / 1000000 << " ms | Max: " << max_delay / 1000000 << " ms" << endl;
 	mqtt.publish("get/delay_meter/left_to_right/min", to_string(min_delay), true);
