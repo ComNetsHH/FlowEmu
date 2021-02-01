@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install build dependencies
 RUN apt-get update \
-	&& apt-get install -y build-essential cmake libboost-dev libmosquitto-dev libjsoncpp-dev  \
+	&& apt-get install -y build-essential cmake ccache libboost-dev libmosquitto-dev libjsoncpp-dev  \
 	&& rm -rf /var/lib/apt/lists/*
 
 
