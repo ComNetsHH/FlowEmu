@@ -1,9 +1,9 @@
 #######################################
 #                                     #
-#                BUILD                #
+#               BUILDER               #
 #                                     #
 #######################################
-FROM ubuntu:20.04 AS build
+FROM ubuntu:20.04 AS builder
 
 # Setup APT
 ENV DEBIAN_FRONTEND noninteractive
@@ -12,6 +12,14 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
 	&& apt-get install -y build-essential cmake libboost-dev libmosquitto-dev libjsoncpp-dev  \
 	&& rm -rf /var/lib/apt/lists/*
+
+
+#######################################
+#                                     #
+#                BUILD                #
+#                                     #
+#######################################
+FROM builder
 
 # Build channel emulator
 ADD . /channel_emulator
