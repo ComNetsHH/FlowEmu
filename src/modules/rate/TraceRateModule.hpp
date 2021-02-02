@@ -29,16 +29,16 @@ class TraceRateModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public Mo
 
 		std::atomic<size_t> buffer_size;
 
+		std::chrono::high_resolution_clock::time_point trace_start;
+
 		std::vector<uint32_t> trace_lr;
 		std::vector<uint32_t>::iterator trace_lr_itr;
-		std::chrono::high_resolution_clock::time_point trace_lr_start;
 		boost::asio::high_resolution_timer timer_lr;
 		std::queue<std::shared_ptr<Packet>> packet_queue_lr;
 		void processLr(const boost::system::error_code& error);
 
 		std::vector<uint32_t> trace_rl;
 		std::vector<uint32_t>::iterator trace_rl_itr;
-		std::chrono::high_resolution_clock::time_point trace_rl_start;
 		boost::asio::high_resolution_timer timer_rl;
 		std::queue<std::shared_ptr<Packet>> packet_queue_rl;
 		void processRl(const boost::system::error_code& error);

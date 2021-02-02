@@ -54,12 +54,12 @@ void TraceRateModule::reset() {
 	trace_lr_itr = trace_lr.begin();
 	trace_rl_itr = trace_rl.begin();
 
-	trace_lr_start = chrono::high_resolution_clock::now();
-	timer_lr.expires_at(trace_lr_start + chrono::milliseconds(*(trace_lr_itr++)));
+	trace_start = chrono::high_resolution_clock::now();
+
+	timer_lr.expires_at(trace_start + chrono::milliseconds(*(trace_lr_itr++)));
 	timer_lr.async_wait(boost::bind(&TraceRateModule::processLr, this, boost::asio::placeholders::error));
 
-	trace_rl_start = chrono::high_resolution_clock::now();
-	timer_rl.expires_at(trace_rl_start + chrono::milliseconds(*(trace_rl_itr++)));
+	timer_rl.expires_at(trace_start + chrono::milliseconds(*(trace_rl_itr++)));
 	timer_rl.async_wait(boost::bind(&TraceRateModule::processRl, this, boost::asio::placeholders::error));
 }
 
@@ -80,11 +80,14 @@ void TraceRateModule::processLr(const boost::system::error_code& error) {
 	}
 
 	if(trace_lr_itr == trace_lr.end()) {
-		trace_lr_itr = trace_lr.begin();
-		trace_lr_start = chrono::high_resolution_clock::now();
+		if(trace_lr.back() >= trace_rl.back()) {
+			reset();
+		}
+
+		return;
 	}
 
-	timer_lr.expires_at(trace_lr_start + chrono::milliseconds(*(trace_lr_itr++)));
+	timer_lr.expires_at(trace_start + chrono::milliseconds(*(trace_lr_itr++)));
 	timer_lr.async_wait(boost::bind(&TraceRateModule::processLr, this, boost::asio::placeholders::error));
 }
 
@@ -105,10 +108,13 @@ void TraceRateModule::processRl(const boost::system::error_code& error) {
 	}
 
 	if(trace_rl_itr == trace_rl.end()) {
-		trace_rl_itr = trace_rl.begin();
-		trace_rl_start = chrono::high_resolution_clock::now();
+		if(trace_rl.back() > trace_lr.back()) {
+			reset();
+		}
+
+		return;
 	}
 
-	timer_rl.expires_at(trace_rl_start + chrono::milliseconds(*(trace_rl_itr++)));
+	timer_rl.expires_at(trace_start + chrono::milliseconds(*(trace_rl_itr++)));
 	timer_rl.async_wait(boost::bind(&TraceRateModule::processRl, this, boost::asio::placeholders::error));
 }
