@@ -1,6 +1,6 @@
 $(function(){
 	// Delay
-	subscribe("get/delay", function(topic, payload) {
+	subscribe("get/fixed_delay/delay", function(topic, payload) {
 		var value = parseInt(payload);
 
 		$("#delay_value").text(value);
@@ -12,7 +12,7 @@ $(function(){
 	});
 
 	$("#delay_slider").on("input", function() {
-		publish("set/delay", $(this).val());
+		publish("set/fixed_delay/delay", $(this).val());
 		$(this).data("clicked", true);
 
 		var timeout = $(this).data("timeout");
@@ -25,7 +25,7 @@ $(function(){
 	});
 
 	// Loss
-	subscribe("get/loss", function(topic, payload) {
+	subscribe("get/uncorrelated_loss/loss_probability", function(topic, payload) {
 		var value_p = parseFloat(payload);
 		var value = parseInt(value_p * 10000);
 
@@ -38,7 +38,7 @@ $(function(){
 	});
 
 	$("#loss_slider").on("input", function() {
-		publish("set/loss", ($(this).val() / 10000).toString());
+		publish("set/uncorrelated_loss/loss_probability", ($(this).val() / 10000).toString());
 		$(this).data("clicked", true);
 
 		var timeout = $(this).data("timeout");

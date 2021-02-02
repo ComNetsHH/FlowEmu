@@ -7,7 +7,7 @@ using namespace std;
 FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
 	setDelay(delay);
 
-	mqtt.subscribe("set/delay", [&](const string &topic, const string &message) {
+	mqtt.subscribe("set/fixed_delay/delay", [&](const string &topic, const string &message) {
 		uint64_t delay = stoul(message);
 		setDelay(delay);
 	});
@@ -19,7 +19,7 @@ void FixedDelayModule::setDelay(uint64_t delay) {
 	setQueueTimeoutLr();
 	setQueueTimeoutRl();
 
-	mqtt.publish("get/delay", to_string(delay), true);
+	mqtt.publish("get/fixed_delay/delay", to_string(delay), true);
 }
 
 void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {

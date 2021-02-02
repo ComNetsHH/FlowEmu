@@ -8,17 +8,17 @@ FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_ser
 	setInterval(chrono::nanoseconds(interval));
 	setBufferSize(buffer_size);
 
-	mqtt.subscribe("set/fixed_interval_rate_module/interval", [&](const string &topic, const string &message) {
+	mqtt.subscribe("set/fixed_interval_rate/interval", [&](const string &topic, const string &message) {
 		uint64_t interval = stoul(message);
 		setInterval(chrono::nanoseconds(interval));
 	});
 
-	mqtt.subscribe("set/fixed_interval_rate_module/rate", [&](const string &topic, const string &message) {
+	mqtt.subscribe("set/fixed_interval_rate/rate", [&](const string &topic, const string &message) {
 		uint64_t rate = stoul(message);
 		setRate(rate);
 	});
 
-	mqtt.subscribe("set/fixed_interval_rate_module/buffer_size", [&](const string &topic, const string &message) {
+	mqtt.subscribe("set/fixed_interval_rate/buffer_size", [&](const string &topic, const string &message) {
 		size_t buffer_size = stoul(message);
 		setBufferSize(buffer_size);
 	});
@@ -35,21 +35,21 @@ FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_ser
 void FixedIntervalRateModule::setInterval(chrono::high_resolution_clock::duration interval) {
 	this->interval = interval;
 
-	mqtt.publish("get/fixed_interval_rate_module/interval", to_string(chrono::nanoseconds(interval).count()), true);
-	mqtt.publish("get/fixed_interval_rate_module/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
+	mqtt.publish("get/fixed_interval_rate/interval", to_string(chrono::nanoseconds(interval).count()), true);
+	mqtt.publish("get/fixed_interval_rate/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
 }
 
 void FixedIntervalRateModule::setRate(uint64_t rate) {
 	this->interval = chrono::nanoseconds(1000000000 / rate);
 
-	mqtt.publish("get/fixed_interval_rate_module/interval", to_string(chrono::nanoseconds(interval).count()), true);
-	mqtt.publish("get/fixed_interval_rate_module/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
+	mqtt.publish("get/fixed_interval_rate/interval", to_string(chrono::nanoseconds(interval).count()), true);
+	mqtt.publish("get/fixed_interval_rate/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
 }
 
 void FixedIntervalRateModule::setBufferSize(size_t buffer_size) {
 	this->buffer_size = buffer_size;
 
-	mqtt.publish("get/fixed_interval_rate_module/buffer_size", to_string(buffer_size), true);
+	mqtt.publish("get/fixed_interval_rate/buffer_size", to_string(buffer_size), true);
 }
 
 void FixedIntervalRateModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
