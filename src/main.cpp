@@ -6,6 +6,7 @@
 
 #include "modules/ModuleManager.hpp"
 #include "modules/delay/FixedDelayModule.hpp"
+#include "modules/loss/GilbertElliotLossModule.hpp"
 #include "modules/loss/UncorrelatedLossModule.hpp"
 #include "modules/meter/DelayMeter.hpp"
 #include "modules/meter/ThroughputMeter.hpp"
@@ -41,7 +42,8 @@ int main(int argc, const char *argv[]) {
 	// Modules
 	FixedIntervalRateModule fixed_interval_rate_module(io_service, mqtt, chrono::milliseconds(1), 100);
 	//NullModule null_module;
-	UncorrelatedLossModule loss_module(mqtt, 0);
+	UncorrelatedLossModule uncorrelated_loss_module(mqtt, 0);
+	//GilbertElliotLossModule gilbert_elliot_loss_module(io_service, mqtt, 1.0/10000, 1.0/100, 0, 0.1);
 	FixedDelayModule fixed_delay_module(io_service, mqtt, 0);
 	DelayMeter delay_meter_module(io_service, mqtt);
 	ThroughputMeter throughput_meter_module(io_service, mqtt);
@@ -51,7 +53,8 @@ int main(int argc, const char *argv[]) {
 	module_manager.push_back(&throughput_meter_module);
 	module_manager.push_back(&fixed_interval_rate_module);
 	//module_manager.push_back(&null_module);
-	module_manager.push_back(&loss_module);
+	module_manager.push_back(&uncorrelated_loss_module);
+	//module_manager.push_back(&gilbert_elliot_loss_module);
 	module_manager.push_back(&fixed_delay_module);
 	module_manager.push_back(&delay_meter_module);
 	module_manager.push_back(&socket_sink);
