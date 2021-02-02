@@ -17,6 +17,7 @@ class FixedIntervalRateModule : public ModuleHasLeft<std::shared_ptr<Packet>>, p
 		FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, std::chrono::high_resolution_clock::duration interval, size_t buffer_size);
 
 		void setInterval(std::chrono::high_resolution_clock::duration interval);
+		void setRate(uint64_t rate);
 		void setBufferSize(size_t buffer_size);
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
