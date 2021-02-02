@@ -41,7 +41,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install runtime dependencies
 RUN apt-get update \
-	&& apt-get install -y libmosquitto1 libjsoncpp1 iproute2 iputils-ping \
+	&& apt-get install -y libmosquitto1 libjsoncpp1 iproute2 iputils-ping iperf \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install channel emulator
