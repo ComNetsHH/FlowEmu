@@ -30,6 +30,10 @@ void signalHandler(int signum) {
 int main(int argc, const char *argv[]) {
 	string interface_source = "in";
 	string interface_sink = "out";
+	if(argc > 2) {
+		interface_source = argv[1];
+		interface_sink = argv[2];
+	}
 
 	// MQTT
 	Mqtt mqtt("localhost", 1883, "channel_emulator");

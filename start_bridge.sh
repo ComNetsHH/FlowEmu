@@ -7,4 +7,4 @@ sudo ethtool -K eno1 tcp-segmentation-offload off generic-segmentation-offload o
 
 sudo setcap cap_net_raw=eip ./BUILD/bin/channel_emulator
 
-./BUILD/bin/channel_emulator
+./BUILD/bin/channel_emulator emulator0 emulator1
