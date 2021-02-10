@@ -11,6 +11,7 @@
 #include "modules/meter/DelayMeter.hpp"
 #include "modules/meter/ThroughputMeter.hpp"
 #include "modules/null/NullModule.hpp"
+#include "modules/rate/BitrateRateModule.hpp"
 #include "modules/rate/FixedIntervalRateModule.hpp"
 #include "modules/rate/TraceRateModule.hpp"
 #include "modules/socket/RawSocket.hpp"
@@ -41,6 +42,7 @@ int main(int argc, const char *argv[]) {
 	RightRawSocket socket_sink(io_service, interface_sink);
 
 	// Modules
+	//BitrateRateModule bitrate_rate_module(io_service, mqtt, 1000000, 100);
 	FixedIntervalRateModule fixed_interval_rate_module(io_service, mqtt, chrono::milliseconds(1), 100);
 	//TraceRateModule trace_rate_module(io_service, mqtt, "/config/traces/trace.down", "/config/traces/trace.up", 100);
 	//NullModule null_module;
@@ -53,6 +55,7 @@ int main(int argc, const char *argv[]) {
 	// Connect modules
 	module_manager.push_back(&socket_source);
 	module_manager.push_back(&throughput_meter_module);
+	//module_manager.push_back(&bitrate_rate_module);
 	module_manager.push_back(&fixed_interval_rate_module);
 	//module_manager.push_back(&trace_rate_module);
 	//module_manager.push_back(&null_module);

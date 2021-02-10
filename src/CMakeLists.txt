@@ -14,6 +14,7 @@ set(channel_emulator_SRCS
 	modules/meter/DelayMeter.cpp
 	modules/meter/ThroughputMeter.cpp
 	modules/null/NullModule.cpp
+	modules/rate/BitrateRateModule.cpp
 	modules/rate/FixedIntervalRateModule.cpp
 	modules/rate/TraceRateModule.cpp
 	modules/socket/RawSocket.cpp
