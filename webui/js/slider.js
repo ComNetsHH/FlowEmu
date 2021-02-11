@@ -1,4 +1,4 @@
-$(function(){
+$(function() {
 	$(".parameter").each(function() {
 		var box = $(this);
 		var label = $(this).children(".parameter_value").first();
@@ -21,7 +21,7 @@ $(function(){
 
 			var timeout = $(this).data("timeout");
 			clearTimeout(timeout);
-			timeout = setTimeout( function(element) {
+			timeout = setTimeout(function(element) {
 				element.data("clicked", false);
 				element.val(element.data("current_value"));
 			}, 1000, $(this));
