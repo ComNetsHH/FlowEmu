@@ -57,7 +57,12 @@ void BitrateRateModule::setQueueTimeoutLr(chrono::high_resolution_clock::time_po
 		return;
 	}
 
-	timer_lr.expires_at(now + chrono::nanoseconds((uint64_t) 1000000000 * packet_queue_lr.front()->getBytes().size()*8 / bitrate.load()));
+	uint64_t bitrate_local = bitrate.load();
+	if(bitrate_local == 0) {
+		return;
+	}
+
+	timer_lr.expires_at(now + chrono::nanoseconds((uint64_t) 1000000000 * packet_queue_lr.front()->getBytes().size()*8 / bitrate_local));
 	timer_lr.async_wait(boost::bind(&BitrateRateModule::processQueueLr, this, boost::asio::placeholders::error));
 }
 
@@ -95,7 +100,12 @@ void BitrateRateModule::setQueueTimeoutRl(chrono::high_resolution_clock::time_po
 		return;
 	}
 
-	timer_rl.expires_at(now + chrono::nanoseconds((uint64_t) 1000000000 * packet_queue_rl.front()->getBytes().size()*8 / bitrate.load()));
+	uint64_t bitrate_local = bitrate.load();
+	if(bitrate_local == 0) {
+		return;
+	}
+
+	timer_rl.expires_at(now + chrono::nanoseconds((uint64_t) 1000000000 * packet_queue_rl.front()->getBytes().size()*8 / bitrate_local));
 	timer_rl.async_wait(boost::bind(&BitrateRateModule::processQueueRl, this, boost::asio::placeholders::error));
 }
 
