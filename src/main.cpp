@@ -54,11 +54,12 @@ int main(int argc, const char *argv[]) {
 	//GilbertElliotLossModule gilbert_elliot_loss_module(io_service, mqtt, 1.0/10000, 1.0/100, 0, 0.1);
 	FixedDelayModule fixed_delay_module(io_service, mqtt, 0);
 	DelayMeter delay_meter_module(io_service, mqtt);
-	ThroughputMeter throughput_meter_module(io_service, mqtt);
+	ThroughputMeter throughput_meter_module_left(io_service, mqtt, "throughput_meter_module_left");
+	ThroughputMeter throughput_meter_module_right(io_service, mqtt, "throughput_meter_module_right");
 
 	// Connect modules
 	module_manager.push_back(&socket_source);
-	module_manager.push_back(&throughput_meter_module);
+	module_manager.push_back(&throughput_meter_module_left);
 	//module_manager.push_back(&bitrate_rate_module);
 	module_manager.push_back(&fixed_interval_rate_module);
 	//module_manager.push_back(&trace_rate_module);
@@ -67,6 +68,7 @@ int main(int argc, const char *argv[]) {
 	//module_manager.push_back(&gilbert_elliot_loss_module);
 	module_manager.push_back(&fixed_delay_module);
 	module_manager.push_back(&delay_meter_module);
+	module_manager.push_back(&throughput_meter_module_right);
 	module_manager.push_back(&socket_sink);
 
 	// MQTT loop
