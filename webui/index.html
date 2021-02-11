@@ -21,14 +21,24 @@
 			<!--<a>Channel Emulator</a>-->
 		</div>
 
-		<div class="slider_box">
-			Delay: <a id="delay_value"></a>ms<br>
-			<input id="delay_slider" type="range" min="0" max="250">
+		<div class="parameter" parameter="fixed_interval_rate/rate">
+			Packet rate: <a class="parameter_value"></a> packet/s<br>
+			<input class="parameter_slider" type="range" min="0" max="100000">
 		</div>
 
-		<div class="slider_box">
-			Loss: <a id="loss_value"></a>%<br>
-			<input id="loss_slider" type="range" min="0" max="10000">
+		<div class="parameter" parameter="fixed_interval_rate/buffer_size">
+			Buffer size: <a class="parameter_value"></a> packets<br>
+			<input class="parameter_slider" type="range" min="0" max="1000">
+		</div>
+
+		<div class="parameter" parameter="fixed_delay/delay">
+			Delay: <a class="parameter_value"></a>ms<br>
+			<input class="parameter_slider" type="range" min="0" max="250">
+		</div>
+
+		<div class="parameter" parameter="uncorrelated_loss/loss_probability">
+			Loss: <a class="parameter_value"></a>%<br>
+			<input class="parameter_slider" type="range" min="0" max="1">
 		</div>
 	</body>
 </html>

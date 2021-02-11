@@ -20,11 +20,11 @@
 	margin: 12px;
 }
 
-.slider_box {
+.parameter {
 	margin: 32px 16px;
 }
 
-.slider_box input[type=range] {
+.parameter input[type=range] {
 	margin-top: 16px;
 }
 
