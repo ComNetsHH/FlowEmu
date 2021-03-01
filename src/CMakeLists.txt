@@ -43,6 +43,11 @@ if(MACHINE_LEARNING)
 
 	target_compile_definitions(channel_emulator PRIVATE MACHINE_LEARNING)
 
+	target_sources(channel_emulator PRIVATE
+		ml/DeepQLearning.cpp
+		modules/queue/DQLQueueModule.cpp
+	)
+
 	target_link_libraries(channel_emulator
 		TensorflowCC::TensorflowCC
 		${Protobuf_LIBRARIES}

@@ -11,6 +11,9 @@
 #include "modules/meter/DelayMeter.hpp"
 #include "modules/meter/ThroughputMeter.hpp"
 #include "modules/null/NullModule.hpp"
+#ifdef MACHINE_LEARNING
+#include "modules/queue/DQLQueueModule.hpp"
+#endif
 #include "modules/rate/BitrateRateModule.hpp"
 #include "modules/rate/FixedIntervalRateModule.hpp"
 #include "modules/rate/TraceRateModule.hpp"
@@ -49,6 +52,9 @@ int main(int argc, const char *argv[]) {
 	//BitrateRateModule bitrate_rate_module(io_service, mqtt, 1000000, 100);
 	FixedIntervalRateModule fixed_interval_rate_module(io_service, mqtt, chrono::milliseconds(1), 100);
 	//TraceRateModule trace_rate_module(io_service, mqtt, "/config/traces/trace.down", "/config/traces/trace.up", 100);
+	#ifdef MACHINE_LEARNING
+	DQLQueueModule dql_queue_module(io_service, mqtt, chrono::milliseconds(1));
+	#endif
 	//NullModule null_module;
 	UncorrelatedLossModule uncorrelated_loss_module(mqtt, 0);
 	//GilbertElliotLossModule gilbert_elliot_loss_module(io_service, mqtt, 1.0/10000, 1.0/100, 0, 0.1);
@@ -63,6 +69,9 @@ int main(int argc, const char *argv[]) {
 	//module_manager.push_back(&bitrate_rate_module);
 	module_manager.push_back(&fixed_interval_rate_module);
 	//module_manager.push_back(&trace_rate_module);
+	#ifdef MACHINE_LEARNING
+	module_manager.push_back(&dql_queue_module);
+	#endif
 	//module_manager.push_back(&null_module);
 	module_manager.push_back(&uncorrelated_loss_module);
 	//module_manager.push_back(&gilbert_elliot_loss_module);
