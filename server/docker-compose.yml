@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    restart: always
+    ports:
+      - '1883:1883'
+      - '9001:9001'
+    volumes:
+      - ./config:/mosquitto/config/
+      - ../webui:/http/
