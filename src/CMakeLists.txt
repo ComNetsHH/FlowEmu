@@ -1,9 +1,9 @@
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
 
-if (JSONCPP_INCLUDE_DIRS)
+if(JSONCPP_INCLUDE_DIRS)
 	include_directories("${JSONCPP_INCLUDE_DIRS}")
-endif (JSONCPP_INCLUDE_DIRS)
+endif(JSONCPP_INCLUDE_DIRS)
 
 set(channel_emulator_SRCS
 	main.cpp
