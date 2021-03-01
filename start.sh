@@ -1,8 +1,8 @@
 docker build -t channel_emulator .
 
-docker run -d -it --name channel channel_emulator
-docker run -d -it --name source channel_emulator
-docker run -d -it --name sink channel_emulator
+docker run -d -it -v $(pwd)/config:/config --name channel channel_emulator
+docker run -d -it --privileged --name source channel_emulator
+docker run -d -it --privileged --name sink channel_emulator
 
 pid_channel=$(docker inspect -f '{{.State.Pid}}' channel)
 pid_source=$(docker inspect -f '{{.State.Pid}}' source)
