@@ -33,4 +33,20 @@ target_link_libraries(channel_emulator
 	pthread
 )
 
+if(MACHINE_LEARNING)
+	find_package(TensorflowCC REQUIRED)
+	find_package(Protobuf REQUIRED)
+
+	if(Protobuf_INCLUDE_DIRS)
+		include_directories("${Protobuf_INCLUDE_DIRS}")
+	endif(Protobuf_INCLUDE_DIRS)
+
+	target_compile_definitions(channel_emulator PRIVATE MACHINE_LEARNING)
+
+	target_link_libraries(channel_emulator
+		TensorflowCC::TensorflowCC
+		${Protobuf_LIBRARIES}
+	)
+endif(MACHINE_LEARNING)
+
 install(TARGETS channel_emulator RUNTIME DESTINATION bin)

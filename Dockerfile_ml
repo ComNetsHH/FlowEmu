@@ -1,0 +1,48 @@
+#######################################
+#                                     #
+#               BUILDER               #
+#                                     #
+#######################################
+FROM floopcz/tensorflow_cc:ubuntu AS builder
+
+# Setup APT
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install build dependencies
+RUN apt-get update \
+	&& apt-get install -y build-essential pkg-config cmake ccache libboost-dev libmosquitto-dev libjsoncpp-dev libprotobuf-dev \
+	&& rm -rf /var/lib/apt/lists/*
+
+
+#######################################
+#                                     #
+#                BUILD                #
+#                                     #
+#######################################
+FROM builder AS build
+
+# Build channel emulator
+ADD . /channel_emulator
+RUN rm -R /channel_emulator/BUILD; mkdir -p /channel_emulator/BUILD \
+	&& cd /channel_emulator/BUILD \
+	&& cmake -DMACHINE_LEARNING=on .. \
+	&& make -j$(nproc)
+
+
+#######################################
+#                                     #
+#               RUNTIME               #
+#                                     #
+#######################################
+FROM floopcz/tensorflow_cc:ubuntu
+
+# Setup APT
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install runtime dependencies
+RUN apt-get update \
+	&& apt-get install -y libmosquitto1 libjsoncpp1 iproute2 iputils-ping iperf libprotobuf-dev \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install channel emulator
+COPY --from=build /channel_emulator/BUILD/bin/* /usr/bin/
