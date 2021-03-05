@@ -1,4 +1,4 @@
-.header {
+body > .header {
 	display: flex;
 	align-items: center;
 
@@ -8,12 +8,12 @@
 	background: black;
 }
 
-.header > .logo {
+body > .header > .logo {
 	margin: 12px;
 	height: 32px;
 }
 
-.header > a {
+body > .header > a {
 	color: white;
 	font-size: 24px;
 
