@@ -48,29 +48,28 @@
 			var node_editor = new NodeEditor("#node_editor");
 
 			var node1 = new Node();
+			node1.setTitle("Raw Socket");
+			node1.addContentItem(new NodeContentLabel("Interface: eth0"));
 			node1.setPosition({"x": 50, "y": 50})
 			node_editor.addNode(node1);
 
 			var node2 = new Node();
-			node2.setPosition({"x": 200, "y": 300})
+			node2.setTitle("Fixed Delay");
+			node2.addContentItem(new NodeContentLabel("Delay: 50ms"));
+			node2.setPosition({"x": 350, "y": 50})
 			node_editor.addNode(node2);
 
 			var node3 = new Node();
-			node3.setPosition({"x": 750, "y": 150})
+			node3.setTitle("Raw Socket");
+			node3.addContentItem(new NodeContentLabel("Interface: eth1"));
+			node3.setPosition({"x": 650, "y": 50})
 			node_editor.addNode(node3);
 
-			var node4 = new Node();
-			node4.setPosition({"x": 1300, "y": 250})
-			node_editor.addNode(node4);
-
-			var path1 = new Path(node1, node3);
+			var path1 = new Path(node1, node2);
 			node_editor.addPath(path1);
 
 			var path2 = new Path(node2, node3);
 			node_editor.addPath(path2);
-
-			var path3 = new Path(node3, node4);
-			node_editor.addPath(path3);
 		</script>
 	</body>
 </html>

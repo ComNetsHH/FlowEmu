@@ -10,7 +10,7 @@
 	height: 100%;
 	z-index: -1;
 
-	background: rgb(45, 45, 45);
+	background: rgb(50, 50, 50);
 }
 
 .node_editor > svg path {
@@ -19,12 +19,32 @@
 	fill: none;
 }
 
-.node {
+.node_editor .node {
 	position: absolute;
-	width: 200px;
-	height: 100px;
+	width: 250px;
 
+	color: white;
 	background: rgb(65, 65, 65);
 	border-radius: 5px;
-	box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.node_editor .node .header {
+	width: 100%;
+	padding: 0 8px;
+	height: 28px;
+
+	background:rgb(40, 40, 40);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+
+	line-height: 28px;
+}
+
+.node_editor .node .content {
+	min-height: 8px;
+}
+
+.node_editor .node .content li {
+	padding: 8px;
 }

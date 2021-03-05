@@ -56,13 +56,25 @@ class NodeEditor {
 
 class Node {
 	element = undefined;
+	header = undefined;
+	content = undefined;
+
 	parent = undefined;
+	content_items = [];
 
 	drag_offset = {"x": 0, "y": 0};
 
 	constructor() {
 		this.element = document.createElement("div");
 		this.element.classList.add("node");
+
+		this.header = document.createElement("div");
+		this.header.classList.add("header");
+		this.element.appendChild(this.header);
+
+		this.content = document.createElement("ul");
+		this.content.classList.add("content");
+		this.element.appendChild(this.content);
 
 		this.setPosition({"x": 0, "y": 0});
 
@@ -73,6 +85,17 @@ class Node {
 
 			e.stopPropagation();
 		});
+	}
+
+	setTitle(title) {
+		this.header.innerHTML = title;
+	}
+
+	addContentItem(item) {
+		this.content_items.push(item);
+		item.parent = this;
+
+		this.content.appendChild(item.element);
 	}
 
 	setPosition(position) {
@@ -92,6 +115,24 @@ class Node {
 			"width": this.element.clientWidth,
 			"height": this.element.clientHeight
 		};
+	}
+}
+
+class NodeContentItem {
+	element = undefined;
+
+	parent = undefined;
+
+	constructor() {
+		this.element = document.createElement("li");
+	}
+}
+
+class NodeContentLabel extends NodeContentItem {
+	constructor(text) {
+		super();
+
+		this.element.innerHTML = text;
 	}
 }
 
