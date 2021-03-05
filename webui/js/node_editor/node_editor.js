@@ -107,9 +107,6 @@ class Path {
 		this.setNodeTo(to);
 
 		this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		this.element.setAttribute("stroke", "#fff");
-		this.element.setAttribute("stroke-width", "2");
-		this.element.setAttribute("fill", "transparent");
 
 		this.update();
 	}

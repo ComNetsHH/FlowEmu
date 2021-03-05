@@ -13,6 +13,12 @@
 	background: rgb(45, 45, 45);
 }
 
+.node_editor > svg path {
+	stroke: white;
+	stroke-width: 2px;
+	fill: none;
+}
+
 .node {
 	position: absolute;
 	width: 200px;
