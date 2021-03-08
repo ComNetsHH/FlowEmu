@@ -49,27 +49,53 @@
 
 			var node1 = new Node();
 			node1.setTitle("Raw Socket");
+			var flow1 = new NodeContentFlow();
+			var node1_port_out = new Port("Out");
+			flow1.addPort("right", node1_port_out);
+			var node1_port_in = new Port("In");
+			flow1.addPort("right", node1_port_in);
+			node1.addContentItem(flow1);
 			node1.addContentItem(new NodeContentLabel("Interface: eth0"));
-			node1.setPosition({"x": 50, "y": 50})
+			node1.setPosition({"x": 50, "y": 150})
 			node_editor.addNode(node1);
 
 			var node2 = new Node();
 			node2.setTitle("Fixed Delay");
+			var flow2 = new NodeContentFlow();
+			var node2_port_in = new Port("In");
+			flow2.addPort("left", node2_port_in);
+			flow2.addPort("left", new Port("Out"));
+			var node2_port_out = new Port("Out");
+			flow2.addPort("right", node2_port_out);
+			flow2.addPort("right", new Port("In"));
+			node2.addContentItem(flow2)
 			node2.addContentItem(new NodeContentLabel("Delay: 50ms"));
-			node2.setPosition({"x": 350, "y": 50})
+			node2.setPosition({"x": 450, "y": 50})
 			node_editor.addNode(node2);
 
 			var node3 = new Node();
 			node3.setTitle("Raw Socket");
+			var flow3 = new NodeContentFlow();
+			var node3_port_in = new Port("In");
+			flow3.addPort("left", node3_port_in);
+			var node3_port_out = new Port("Out");
+			flow3.addPort("left", node3_port_out);
+			node3.addContentItem(flow3);
 			node3.addContentItem(new NodeContentLabel("Interface: eth1"));
-			node3.setPosition({"x": 650, "y": 50})
+			node3.setPosition({"x": 850, "y": 250})
 			node_editor.addNode(node3);
 
-			var path1 = new Path(node1, node2);
+			var path1 = new Path(node1_port_out, node2_port_in);
 			node_editor.addPath(path1);
 
-			var path2 = new Path(node2, node3);
+			var path2 = new Path(node2_port_out, node3_port_in);
 			node_editor.addPath(path2);
+
+			var path3 = new Path(node3_port_out, node1_port_in);
+			node_editor.addPath(path3);
+
+			//var path4 = new Path(node2_port_out, node2_port_in);
+			//node_editor.addPath(path4);
 		</script>
 	</body>
 </html>

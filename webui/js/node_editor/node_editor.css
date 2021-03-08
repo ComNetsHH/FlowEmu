@@ -48,3 +48,35 @@
 .node_editor .node .content li {
 	padding: 8px;
 }
+
+.node_editor .node .content .flow {
+	display: flex;
+	padding: 4px 8px;
+}
+
+.node_editor .node .content .flow .port {
+	height: 16px;
+	width: 64px;
+	padding: 0 4px;
+	margin: 5px 0;
+
+	background: orange;
+	
+	line-height: 16px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.node_editor .node .content .flow > .left .port {
+	transform: translate(-16px, 0);
+	text-align: left;
+}
+
+.node_editor .node .content .flow > .center {
+	flex-grow: 1;
+}
+
+.node_editor .node .content .flow > .right .port {
+	transform: translate(16px, 0);
+	text-align: right;
+}

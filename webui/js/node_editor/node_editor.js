@@ -131,8 +131,72 @@ class NodeContentItem {
 class NodeContentLabel extends NodeContentItem {
 	constructor(text) {
 		super();
+		this.element.classList.add("label");
 
 		this.element.innerHTML = text;
+	}
+}
+
+class NodeContentFlow extends NodeContentItem {
+	left = undefined;
+	right = undefined;
+
+	constructor() {
+		super();
+		this.element.classList.add("flow");
+
+		this.left = document.createElement("div");
+		this.left.classList.add("left");
+		this.element.appendChild(this.left);
+
+		var center = document.createElement("div");
+		center.classList.add("center");
+		this.element.appendChild(center);
+
+		this.right = document.createElement("div");
+		this.right.classList.add("right");
+		this.element.appendChild(this.right);
+	}
+
+	addPort(side, port) {
+		port.parent = this;
+		port.side = side;
+
+		switch(side) {
+			case "left":
+				this.left.appendChild(port.element);
+				break;
+			case "right":
+				this.right.appendChild(port.element);
+				break;
+		}
+	}
+}
+
+class Port {
+	element = undefined;
+
+	parent = undefined;
+
+	side = undefined;
+
+	constructor(label) {
+		this.element = document.createElement("div");
+		this.element.classList.add("port");
+		this.element.innerHTML = label;
+	}
+
+	getPosition() {
+		const rect = this.element.getBoundingClientRect();
+		const rectNodeEditor = this.parent.parent.parent.element.getBoundingClientRect();
+
+		const postion_x = rect.left - rectNodeEditor.left;
+		const postion_y = rect.top - rectNodeEditor.top;
+
+		return {
+			"x": ((this.side == "right") ? postion_x + this.element.clientWidth : postion_x),
+			"y": postion_y + this.element.clientHeight / 2
+		};
 	}
 }
 
@@ -140,42 +204,40 @@ class Path {
 	element = undefined;
 	parent = undefined;
 
-	node_from = undefined
-	node_to = undefined
+	port_from = undefined
+	port_to = undefined
 
 	constructor(from, to) {
-		this.setNodeFrom(from);
-		this.setNodeTo(to);
+		this.setPortFrom(from);
+		this.setPortTo(to);
 
 		this.element = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
 		this.update();
 	}
 
-	setNodeFrom(from) {
-		this.node_from = from;
+	setPortFrom(from) {
+		this.port_from = from;
 	}
 
-	setNodeTo(to) {
-		this.node_to = to;
+	setPortTo(to) {
+		this.port_to = to;
 	}
 
 	update() {
-		const from_position = this.node_from.getPosition();
-		from_position.x += this.node_from.getSize().width;
-		from_position.y += this.node_from.getSize().height / 2;
+		const from_position = this.port_from.getPosition();
+		const to_position = this.port_to.getPosition();
 
-		const to_position = this.node_to.getPosition();
-		to_position.y += this.node_to.getSize().height / 2;
-
-		const dist = Math.abs(to_position.x - from_position.x) / 2;
+		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, 100);
+		const dist_from = ((this.port_from.side == "left") ? (0 - dist) : dist)
+		const dist_to = ((this.port_to.side == "left") ? (0 - dist) : dist)
 
 		var path_string = "";
 		path_string += "M ";
 		path_string += from_position.x + " " + from_position.y + " ";
 		path_string += "C ";
-		path_string += (from_position.x + dist) + " " + from_position.y + ", ";
-		path_string += (to_position.x - dist) + " " + to_position.y + ", ";
+		path_string += (from_position.x + dist_from) + " " + from_position.y + ", ";
+		path_string += (to_position.x + dist_to) + " " + to_position.y + ", ";
 		path_string += to_position.x + " " + to_position.y;
 
 		this.element.setAttribute("d", path_string);
