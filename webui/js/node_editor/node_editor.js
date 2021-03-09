@@ -5,6 +5,7 @@ class NodeEditor {
 	nodes = [];
 	paths = [];
 
+	mouse_position = {"x": 0, "y": 0};
 	selected_element = undefined;
 	dragged_element = undefined;
 
@@ -25,12 +26,13 @@ class NodeEditor {
 		});
 
 		this.element.addEventListener("mousemove", function(e) {
-			if (that.dragged_element instanceof Node) {
-				const node_editor_position = that.element.getBoundingClientRect();
+			const node_editor_position = that.element.getBoundingClientRect();
+			that.mouse_position = {"x": e.clientX - node_editor_position.x, "y": e.clientY - node_editor_position.y};
 
+			if(that.dragged_element instanceof Node) {
 				that.dragged_element.setPosition({
-					"x": e.clientX - node_editor_position.x - that.dragged_element.drag_offset.x,
-					"y": e.clientY - node_editor_position.y - that.dragged_element.drag_offset.y
+					"x": that.mouse_position.x - that.dragged_element.drag_offset.x,
+					"y": that.mouse_position.y - that.dragged_element.drag_offset.y
 				});
 
 				that.paths.forEach(function(path) {
