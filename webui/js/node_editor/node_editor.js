@@ -4,6 +4,7 @@ class NodeEditor {
 
 	nodes = [];
 	paths = [];
+	loose_path = undefined;
 
 	mouse_position = {"x": 0, "y": 0};
 	selected_element = undefined;
@@ -22,6 +23,10 @@ class NodeEditor {
 				that.selected_element.unselect();
 			}
 
+			if(that.loose_path !== undefined) {
+				that.removePath(that.loose_path);
+			}
+
 			e.stopPropagation();
 		});
 
@@ -38,6 +43,10 @@ class NodeEditor {
 				that.paths.forEach(function(path) {
 					path.update();
 				});
+			}
+
+			if(that.loose_path !== undefined) {
+				that.loose_path.update();
 			}
 
 			e.stopPropagation();
@@ -99,6 +108,18 @@ class NodeEditor {
 	removePath(path) {
 		path.element.remove();
 		this.paths = this.paths.filter(item => item !== path);
+
+		if(path.port_from !== undefined) {
+			path.port_from.connected_path = undefined;
+		}
+
+		if(path.port_to !== undefined) {
+			path.port_to.connected_path = undefined;
+		}
+
+		if(this.loose_path === path) {
+			this.loose_path = undefined;
+		}
 
 		path = undefined;
 	}
@@ -244,11 +265,46 @@ class Port {
 	parent = undefined;
 
 	side = undefined;
+	connected_path = undefined;
 
 	constructor(label) {
 		this.element = document.createElement("div");
 		this.element.classList.add("port");
 		this.element.innerHTML = label;
+
+		var that = this;
+		this.element.addEventListener("mousedown", function(e) {
+			if(that.connected_path === undefined) {
+				if(that.getNodeEditor().loose_path === undefined) {
+					var path = new Path(that, "mouse");
+					that.getNodeEditor().addPath(path);
+					that.getNodeEditor().loose_path = path;
+					that.getNodeEditor().loose_path.update();
+				} else {
+					if(that.getNodeEditor().loose_path.port_from === undefined) {
+						that.getNodeEditor().loose_path.setPortFrom(that);
+						that.getNodeEditor().loose_path.update();
+						that.getNodeEditor().loose_path = undefined;
+					} else if(that.getNodeEditor().loose_path.port_to === undefined) {
+						that.getNodeEditor().loose_path.setPortTo(that);
+						that.getNodeEditor().loose_path.update();
+						that.getNodeEditor().loose_path = undefined;
+					}
+				}
+			} else if(that.getNodeEditor().loose_path === undefined) {
+				if(that.connected_path.port_from === that) {
+					that.getNodeEditor().loose_path = that.connected_path;
+					that.getNodeEditor().loose_path.setPortFrom("mouse");
+					that.getNodeEditor().loose_path.update();
+				} else if(that.connected_path.port_to === that) {
+					that.getNodeEditor().loose_path = that.connected_path;
+					that.getNodeEditor().loose_path.setPortTo("mouse");
+					that.getNodeEditor().loose_path.update();
+				}
+			}
+
+			e.stopPropagation();
+		});
 	}
 
 	getNodeEditor() {
@@ -273,10 +329,15 @@ class Path {
 	element = undefined;
 	parent = undefined;
 
+	mouse = undefined
 	port_from = undefined
 	port_to = undefined
 
 	constructor(from, to) {
+		if(from === "mouse" && to === "mouse") {
+			console.error("Cannot create a path from mouse to mouse!");
+		}
+
 		this.setPortFrom(from);
 		this.setPortTo(to);
 
@@ -286,20 +347,48 @@ class Path {
 	}
 
 	setPortFrom(from) {
-		this.port_from = from;
+		if(from === "mouse") {
+			this.mouse = "from";
+			if(this.port_from !== undefined) {
+				this.port_from.connected_path = undefined;
+				this.port_from = undefined;
+			}
+		} else {
+			if(this.mouse === "from") {
+				this.mouse = undefined;
+			}
+			from.connected_path = this;
+			this.port_from = from;
+		}
 	}
 
 	setPortTo(to) {
-		this.port_to = to;
+		if(to === "mouse") {
+			this.mouse = "to";
+			if(this.port_to !== undefined) {
+				this.port_to.connected_path = undefined;
+				this.port_to = undefined;
+			}
+		} else {
+			if(this.mouse === "to") {
+				this.mouse = undefined;
+			}
+			to.connected_path = this;
+			this.port_to = to;
+		}
 	}
 
 	update() {
-		const from_position = this.port_from.getPosition();
-		const to_position = this.port_to.getPosition();
+		if(this.mouse !== undefined && this.parent === undefined) {
+			return;
+		}
+
+		const from_position = (this.mouse === "from" ? this.parent.mouse_position : this.port_from.getPosition());
+		const to_position = (this.mouse === "to" ? this.parent.mouse_position : this.port_to.getPosition());
 
 		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, 100);
-		const dist_from = ((this.port_from.side === "left") ? (0 - dist) : dist)
-		const dist_to = ((this.port_to.side === "left") ? (0 - dist) : dist)
+		const dist_from = ((this.port_from !== undefined && this.port_from.side === "left") || (this.port_from === undefined && this.port_to !== undefined && this.port_to.side === "right") ? (0 - dist) : dist)
+		const dist_to = ((this.port_to !== undefined && this.port_to.side === "left") || (this.port_to === undefined &&  this.port_from !== undefined && this.port_from.side === "right") ? (0 - dist) : dist)
 
 		var path_string = "";
 		path_string += "M ";
