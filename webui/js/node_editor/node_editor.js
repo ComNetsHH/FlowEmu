@@ -5,6 +5,7 @@ class NodeEditor {
 	nodes = [];
 	paths = [];
 
+	selected_element = undefined;
 	dragged_element = undefined;
 
 	constructor(div) {
@@ -15,6 +16,14 @@ class NodeEditor {
 		this.element.appendChild(this.svg);
 
 		var that = this;
+		this.element.addEventListener("mousedown", function(e) {
+			if(that.selected_element !== undefined) {
+				that.selected_element.unselect();
+			}
+
+			e.stopPropagation();
+		});
+
 		this.element.addEventListener("mousemove", function(e) {
 			if (that.dragged_element instanceof Node) {
 				const node_editor_position = that.element.getBoundingClientRect();
@@ -37,6 +46,16 @@ class NodeEditor {
 
 			e.stopPropagation();
 		});
+
+		document.addEventListener("keydown", function(e) {
+			if(e.key == "Delete") {
+				if(that.selected_element instanceof Node) {
+					that.removeNode(that.selected_element);
+				}
+
+				e.stopPropagation();
+			}
+		});
 	}
 
 	addNode(node) {
@@ -46,11 +65,40 @@ class NodeEditor {
 		this.element.appendChild(node.element);
 	}
 
+	removeNode(node) {
+		if(this.selected_element === node) {
+			this.selected_element = undefined;
+		}
+
+		if(this.dragged_element === node) {
+			this.dragged_element = undefined;
+		}
+
+		node.element.remove();
+		this.nodes.filter(item => item !== node);
+
+		var that = this;
+		this.paths.forEach(function(path) {
+			if(path.port_from.parent.parent === node || path.port_to.parent.parent === node) {
+				that.removePath(path);
+			}
+		});
+
+		node = undefined;
+	}
+
 	addPath(path) {
 		this.paths.push(path);
 		path.parent = this;
 
 		this.svg.appendChild(path.element);
+	}
+
+	removePath(path) {
+		path.element.remove();
+		this.paths.filter(item => item !== path);
+
+		path = undefined;
 	}
 }
 
@@ -80,6 +128,11 @@ class Node {
 
 		var that = this;
 		this.element.addEventListener("mousedown", function(e) {
+			if(that.parent.selected_element !== undefined) {
+				that.parent.selected_element.unselect();
+			}
+			that.select();
+
 			that.parent.dragged_element = that;
 			that.drag_offset = {"x": e.layerX, "y": e.layerY};
 
@@ -115,6 +168,16 @@ class Node {
 			"width": this.element.clientWidth,
 			"height": this.element.clientHeight
 		};
+	}
+
+	select() {
+		this.parent.selected_element = this;
+
+		this.element.classList.add("selected");
+	}
+
+	unselect() {
+		this.element.classList.remove("selected");
 	}
 }
 

@@ -41,6 +41,10 @@
 	line-height: 28px;
 }
 
+.node_editor .node.selected .header{
+	background: lightgray;
+}
+
 .node_editor .node .content {
 	min-height: 8px;
 }
