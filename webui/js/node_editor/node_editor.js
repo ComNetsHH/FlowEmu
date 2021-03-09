@@ -251,9 +251,13 @@ class Port {
 		this.element.innerHTML = label;
 	}
 
+	getNodeEditor() {
+		return this.parent.parent.parent;
+	}
+
 	getPosition() {
 		const rect = this.element.getBoundingClientRect();
-		const rectNodeEditor = this.parent.parent.parent.element.getBoundingClientRect();
+		const rectNodeEditor = this.getNodeEditor().element.getBoundingClientRect();
 
 		const postion_x = rect.left - rectNodeEditor.left;
 		const postion_y = rect.top - rectNodeEditor.top;
