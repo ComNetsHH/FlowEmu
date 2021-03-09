@@ -50,7 +50,7 @@ class NodeEditor {
 		});
 
 		document.addEventListener("keydown", function(e) {
-			if(e.key == "Delete") {
+			if(e.key === "Delete") {
 				if(that.selected_element instanceof Node) {
 					that.removeNode(that.selected_element);
 				}
