@@ -47,6 +47,7 @@ cleanup &> /dev/null
 docker build -t channel_emulator .
 
 # Start Docker containers
+# NOTE: The source and sink containers are started with extended privileges in order to be able to use all congestion control modules of the host system in iPerf.
 docker run -d -it -v $(pwd)/config:/config --name channel channel_emulator
 docker run -d -it --privileged --name source channel_emulator
 docker run -d -it --privileged --name sink channel_emulator
