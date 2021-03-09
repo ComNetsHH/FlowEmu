@@ -75,7 +75,7 @@ class NodeEditor {
 		}
 
 		node.element.remove();
-		this.nodes.filter(item => item !== node);
+		this.nodes = this.nodes.filter(item => item !== node);
 
 		var that = this;
 		this.paths.forEach(function(path) {
@@ -96,7 +96,7 @@ class NodeEditor {
 
 	removePath(path) {
 		path.element.remove();
-		this.paths.filter(item => item !== path);
+		this.paths = this.paths.filter(item => item !== path);
 
 		path = undefined;
 	}
