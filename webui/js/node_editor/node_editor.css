@@ -1,5 +1,7 @@
 .node_editor {
 	position: relative;
+
+	user-select: none;
 }
 
 .node_editor > svg {
