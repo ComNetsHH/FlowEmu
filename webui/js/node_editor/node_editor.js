@@ -33,7 +33,7 @@ class NodeEditor {
 					"y": e.clientY - node_editor_position.y - that.dragged_element.drag_offset.y
 				});
 
-				that.paths.forEach(function(path){
+				that.paths.forEach(function(path) {
 					path.update();
 				});
 			}
@@ -257,7 +257,7 @@ class Port {
 		const postion_y = rect.top - rectNodeEditor.top;
 
 		return {
-			"x": ((this.side == "right") ? postion_x + this.element.clientWidth : postion_x),
+			"x": ((this.side === "right") ? postion_x + this.element.clientWidth : postion_x),
 			"y": postion_y + this.element.clientHeight / 2
 		};
 	}
@@ -292,8 +292,8 @@ class Path {
 		const to_position = this.port_to.getPosition();
 
 		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, 100);
-		const dist_from = ((this.port_from.side == "left") ? (0 - dist) : dist)
-		const dist_to = ((this.port_to.side == "left") ? (0 - dist) : dist)
+		const dist_from = ((this.port_from.side === "left") ? (0 - dist) : dist)
+		const dist_to = ((this.port_to.side === "left") ? (0 - dist) : dist)
 
 		var path_string = "";
 		path_string += "M ";
