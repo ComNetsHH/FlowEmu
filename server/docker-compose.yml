@@ -8,5 +8,5 @@ services:
       - '1883:1883'
       - '9001:9001'
     volumes:
-      - ./config:/mosquitto/config/
-      - ../webui:/http/
+      - ./config:/mosquitto/config/:ro
+      - ../webui:/http/:ro
