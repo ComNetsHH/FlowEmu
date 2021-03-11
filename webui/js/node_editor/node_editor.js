@@ -207,9 +207,30 @@ class NodeEditor {
 	setPathRemoveHandler(handler) {
 		this.path_remove_handler = handler;
 	}
+
+	serialize() {
+		var data = {
+			"nodes": [],
+			"paths": []
+		};
+
+		this.nodes.forEach(function(node) {
+			data.nodes.push(node.serialize());
+		});
+
+		this.paths.forEach(function(path) {
+			if(path.mouse === undefined) {
+				data.paths.push(path.serialize());
+			}
+		});
+
+		return data;
+	}
 }
 
 class Node {
+	id = undefined;
+
 	element = undefined;
 	header = undefined;
 	content = undefined;
@@ -219,7 +240,9 @@ class Node {
 
 	drag_offset = {"x": 0, "y": 0};
 
-	constructor() {
+	constructor(id) {
+		this.id = id;
+
 		this.element = document.createElement("div");
 		this.element.classList.add("node");
 
@@ -286,6 +309,16 @@ class Node {
 	unselect() {
 		this.element.classList.remove("selected");
 	}
+
+	serialize() {
+		var data = {
+			"id": this.id,
+			"position": this.getPosition(),
+			"size": this.getSize()
+		};
+
+		return data;
+	}
 }
 
 class NodeContentItem {
@@ -344,6 +377,8 @@ class NodeContentFlow extends NodeContentItem {
 }
 
 class Port {
+	id = undefined;
+
 	element = undefined;
 
 	parent = undefined;
@@ -351,7 +386,9 @@ class Port {
 	side = undefined;
 	connected_path = undefined;
 
-	constructor(label) {
+	constructor(id, label) {
+		this.id = id;
+
 		this.element = document.createElement("div");
 		this.element.classList.add("port");
 		this.element.innerHTML = label;
@@ -483,5 +520,14 @@ class Path {
 		path_string += to_position.x + " " + to_position.y;
 
 		this.element.setAttribute("d", path_string);
+	}
+
+	serialize() {
+		var data = {
+			"from": (this.port_from !== undefined ? {"node": this.port_from.parent.parent.id, "port": this.port_from.id} : null),
+			"to": (this.port_to !== undefined ? {"node": this.port_to.parent.parent.id, "port": this.port_to.id} : null)
+		};
+
+		return data;
 	}
 }
