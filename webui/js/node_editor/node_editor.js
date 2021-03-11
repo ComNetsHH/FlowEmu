@@ -246,6 +246,7 @@ class Node {
 	content = undefined;
 
 	parent = undefined;
+	title = undefined;
 	content_items = [];
 
 	drag_offset = {"x": 0, "y": 0};
@@ -281,7 +282,12 @@ class Node {
 	}
 
 	setTitle(title) {
+		this.title = title;
 		this.header.innerHTML = title;
+	}
+
+	getTitle() {
+		return this.title;
 	}
 
 	addContentItem(item) {
@@ -322,9 +328,15 @@ class Node {
 
 	serialize() {
 		var data = {
+			"title": this.getTitle(),
 			"position": this.getPosition(),
-			"size": this.getSize()
+			"size": this.getSize(),
+			"content": []
 		};
+
+		this.content_items.forEach(function(item) {
+			data.content.push(item.serialize());
+		});
 
 		return data;
 	}
@@ -338,20 +350,47 @@ class NodeContentItem {
 	constructor() {
 		this.element = document.createElement("li");
 	}
+
+	serialize() {
+		var data = {
+			"type": null
+		};
+
+		return data;
+	}
 }
 
 class NodeContentLabel extends NodeContentItem {
-	constructor(text) {
+	label = undefined;
+
+	constructor(label) {
 		super();
 		this.element.classList.add("label");
 
-		this.element.innerHTML = text;
+		this.label = label;
+		this.element.innerHTML = label;
+	}
+
+	getLabel() {
+		return this.label;
+	}
+
+	serialize() {
+		var data = {
+			"type": "label",
+			"label": this.getLabel()
+		};
+
+		return data;
 	}
 }
 
 class NodeContentFlow extends NodeContentItem {
 	left = undefined;
 	right = undefined;
+
+	ports_left = [];
+	ports_right = [];
 
 	constructor() {
 		super();
@@ -376,12 +415,34 @@ class NodeContentFlow extends NodeContentItem {
 
 		switch(side) {
 			case "left":
+				this.ports_left.push(port);
 				this.left.appendChild(port.element);
 				break;
 			case "right":
+				this.ports_right.push(port);
 				this.right.appendChild(port.element);
 				break;
 		}
+	}
+
+	serialize() {
+		var data = {
+			"type": "flow",
+			"ports": {
+				"left": [],
+				"right": []
+			}
+		};
+
+		this.ports_left.forEach(function(port) {
+			data.ports.left.push(port.serialize());
+		});
+
+		this.ports_right.forEach(function(port) {
+			data.ports.right.push(port.serialize());
+		});
+
+		return data;
 	}
 }
 
@@ -392,6 +453,7 @@ class Port {
 
 	parent = undefined;
 
+	label = undefined;
 	side = undefined;
 	connected_path = undefined;
 
@@ -400,6 +462,8 @@ class Port {
 
 		this.element = document.createElement("div");
 		this.element.classList.add("port");
+
+		this.label = label;
 		this.element.innerHTML = label;
 
 		var that = this;
@@ -441,6 +505,14 @@ class Port {
 		return this.parent.parent.parent;
 	}
 
+	getId() {
+		return this.id;
+	}
+
+	getLabel() {
+		return this.label;
+	}
+
 	getPosition() {
 		const rect = this.element.getBoundingClientRect();
 		const rectNodeEditor = this.getNodeEditor().element.getBoundingClientRect();
@@ -452,6 +524,15 @@ class Port {
 			"x": ((this.side === "right") ? postion_x + this.element.clientWidth : postion_x),
 			"y": postion_y + this.element.clientHeight / 2
 		};
+	}
+
+	serialize() {
+		var data = {
+			"id": this.getId(),
+			"label": this.getLabel(),
+		};
+
+		return data;
 	}
 }
 
