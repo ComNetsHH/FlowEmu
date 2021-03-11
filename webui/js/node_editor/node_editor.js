@@ -309,10 +309,15 @@ class Node {
 		};
 	}
 
+	setSize(size) {
+		this.element.style.minWidth = size.width;
+		this.element.style.minHeight = size.height;
+	}
+
 	getSize() {
 		return {
-			"width": this.element.clientWidth,
-			"height": this.element.clientHeight
+			"width": parseInt(this.element.clientWidth),
+			"height": parseInt(this.element.clientHeight)
 		};
 	}
 
