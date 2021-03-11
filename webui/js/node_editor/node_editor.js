@@ -208,21 +208,31 @@ class NodeEditor {
 		this.path_remove_handler = handler;
 	}
 
-	serialize() {
-		var data = {
-			"nodes": [],
-			"paths": []
-		};
-
+	serializeNodes() {
+		var data = [];
 		this.nodes.forEach(function(node) {
-			data.nodes.push(node.serialize());
+			data.push(node.serialize());
 		});
 
+		return data;
+	}
+
+	serializePaths() {
+		var data = [];
 		this.paths.forEach(function(path) {
 			if(path.mouse === undefined) {
-				data.paths.push(path.serialize());
+				data.push(path.serialize());
 			}
 		});
+
+		return data;
+	}
+
+	serialize() {
+		var data = {
+			"nodes": this.serializeNodes(),
+			"paths": this.serializePaths()
+		};
 
 		return data;
 	}
