@@ -66,7 +66,15 @@ void Mqtt::publish(const string &topic, const Json::Value &json, bool retain, bo
 	publish(topic, json_string, retain, once);
 }
 
-void Mqtt::publish(const string &topic, const void* buffer, size_t buflen, bool retain, bool once) {
+void Mqtt::publish(const string &topic, const void *buffer, bool retain, bool once) {
+	if(buffer != nullptr) {
+		return;
+	}
+
+	publish(topic, nullptr, 0, retain, once);
+}
+
+void Mqtt::publish(const string &topic, const void *buffer, size_t buflen, bool retain, bool once) {
 	if(once) {
 		auto it = once_messages.find(topic);
 		if(it != once_messages.end()) {

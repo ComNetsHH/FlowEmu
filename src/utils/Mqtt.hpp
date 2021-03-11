@@ -21,7 +21,8 @@ class Mqtt {
 
 		void publish(const std::string &topic, const std::string &message, bool retain = false, bool once = false);
 		void publish(const std::string &topic, const Json::Value &json, bool retain = false, bool once = false);
-		void publish(const std::string &topic, const void* buffer, size_t buflen, bool retain = false, bool once = false);
+		void publish(const std::string &topic, const void *buffer, bool retain = false, bool once = false);
+		void publish(const std::string &topic, const void *buffer, size_t buflen, bool retain = false, bool once = false);
 
 		void subscribe(const std::string &topic, std::function<void(const std::string &topic, const std::string &message)> callback);
 		void subscribeJson(const std::string &topic, std::function<void(const std::string &topic, const Json::Value &json)> callback);
