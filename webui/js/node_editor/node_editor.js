@@ -92,6 +92,36 @@ class NodeEditor {
 		this.element.appendChild(node.element);
 	}
 
+	updateNode(node_id, node_data, call_callback = true) {
+		if(!(node_id in this.nodes)) {
+			log.error("Node with ID " + node_id + " does not exist!");
+			return;
+		}
+
+		var node = this.nodes[node_id];
+		var modified = false;
+
+		if(node.getPosition().x != node_data.position.x   ||
+		   node.getPosition().y != node_data.position.y   ||
+		   node.getSize().width != node_data.size.width   ||
+		   node.getSize().height != node_data.size.height   ) {
+			node.setPosition(node_data.position);
+			node.setSize(node_data.size);
+
+			this.paths.forEach(function(path) {
+				if(path.port_from.parent.parent === node || path.port_to.parent.parent === node) {
+					path.update();
+				}
+			});
+
+			modified = true;
+		}
+
+		if(call_callback && modified && this.node_change_handler !== undefined) {
+			this.node_change_handler(node);
+		}
+	}
+
 	removeNode(node, call_callback = true) {
 		if(call_callback && this.node_remove_handler !== undefined) {
 			this.node_remove_handler(node);
