@@ -81,8 +81,8 @@ class NodeEditor {
 		});
 	}
 
-	addNode(node) {
-		if(this.node_add_handler !== undefined) {
+	addNode(node, call_callback = true) {
+		if(call_callback && this.node_add_handler !== undefined) {
 			this.node_add_handler(node);
 		}
 
@@ -92,8 +92,8 @@ class NodeEditor {
 		this.element.appendChild(node.element);
 	}
 
-	removeNode(node) {
-		if(this.node_remove_handler !== undefined) {
+	removeNode(node, call_callback = true) {
+		if(call_callback && this.node_remove_handler !== undefined) {
 			this.node_remove_handler(node);
 		}
 
@@ -118,54 +118,54 @@ class NodeEditor {
 		node = undefined;
 	}
 
-	addPath(path) {
+	addPath(path, call_callback = true) {
 		this.paths.push(path);
 		path.parent = this;
 
 		this.svg.appendChild(path.element);
 
 		if(path.mouse === undefined) {
-			if(this.path_add_handler !== undefined) {
+			if(call_callback && this.path_add_handler !== undefined) {
 				this.path_add_handler(path);
 			}
 		}
 	}
 
-	updatePathFrom(path, from) {
+	updatePathFrom(path, from, call_callback = true) {
 		var old_path_mouse = path.mouse;
 
 		path.setPortFrom(from);
 
 		if(old_path_mouse == "from" && from !== "mouse") {
-			if(this.path_add_handler !== undefined) {
+			if(call_callback && this.path_add_handler !== undefined) {
 				this.path_add_handler(path);
 			}
 		} else if(from === "mouse") {
-			if(this.path_remove_handler !== undefined) {
+			if(call_callback && this.path_remove_handler !== undefined) {
 				this.path_remove_handler(path);
 			}
 		}
 	}
 
-	updatePathTo(path, to) {
+	updatePathTo(path, to, call_callback = true) {
 		var old_path_mouse = path.mouse;
 
 		path.setPortTo(to);
 
 		if(old_path_mouse == "to" && to !== "mouse") {
-			if(this.path_add_handler !== undefined) {
+			if(call_callback && this.path_add_handler !== undefined) {
 				this.path_add_handler(path);
 			}
 		} else if(to === "mouse") {
-			if(this.path_remove_handler !== undefined) {
+			if(call_callback && this.path_remove_handler !== undefined) {
 				this.path_remove_handler(path);
 			}
 		}
 	}
 
-	removePath(path) {
+	removePath(path, call_callback = true) {
 		if(path.mouse === undefined) {
-			if(this.path_remove_handler !== undefined) {
+			if(call_callback && this.path_remove_handler !== undefined) {
 				this.path_remove_handler(path);
 			}
 		}
