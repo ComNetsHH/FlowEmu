@@ -10,6 +10,12 @@ class NodeEditor {
 	selected_element = undefined;
 	dragged_element = undefined;
 
+	node_add_handler = undefined;
+	node_change_handler = undefined;
+	node_remove_handler = undefined;
+	path_add_handler = undefined;
+	path_remove_handler = undefined;
+
 	constructor(div) {
 		this.element = document.querySelector(div);
 		this.element.classList.add("node_editor");
@@ -53,6 +59,12 @@ class NodeEditor {
 		}, false);
 
 		this.element.addEventListener("mouseup", function(e) {
+			if(that.dragged_element instanceof Node) {
+				if(that.node_change_handler !== undefined) {
+					that.node_change_handler(that.dragged_element);
+				}
+			}
+
 			that.dragged_element = undefined;
 
 			e.stopPropagation();
@@ -70,6 +82,10 @@ class NodeEditor {
 	}
 
 	addNode(node) {
+		if(this.node_add_handler !== undefined) {
+			this.node_add_handler(node);
+		}
+
 		this.nodes.push(node);
 		node.parent = this;
 
@@ -77,6 +93,10 @@ class NodeEditor {
 	}
 
 	removeNode(node) {
+		if(this.node_remove_handler !== undefined) {
+			this.node_remove_handler(node);
+		}
+
 		if(this.selected_element === node) {
 			this.selected_element = undefined;
 		}
@@ -103,9 +123,53 @@ class NodeEditor {
 		path.parent = this;
 
 		this.svg.appendChild(path.element);
+
+		if(path.mouse === undefined) {
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path);
+			}
+		}
+	}
+
+	updatePathFrom(path, from) {
+		var old_path_mouse = path.mouse;
+
+		path.setPortFrom(from);
+
+		if(old_path_mouse == "from" && from !== "mouse") {
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path);
+			}
+		} else if(from === "mouse") {
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path);
+			}
+		}
+	}
+
+	updatePathTo(path, to) {
+		var old_path_mouse = path.mouse;
+
+		path.setPortTo(to);
+
+		if(old_path_mouse == "to" && to !== "mouse") {
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path);
+			}
+		} else if(to === "mouse") {
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path);
+			}
+		}
 	}
 
 	removePath(path) {
+		if(path.mouse === undefined) {
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path);
+			}
+		}
+
 		path.element.remove();
 		this.paths = this.paths.filter(item => item !== path);
 
@@ -122,6 +186,26 @@ class NodeEditor {
 		}
 
 		path = undefined;
+	}
+
+	setNodeAddHandler(handler) {
+		this.node_add_handler = handler;
+	}
+
+	setNodeChangeHandler(handler) {
+		this.node_change_handler = handler;
+	}
+
+	setNodeRemoveHandler(handler) {
+		this.node_remove_handler = handler;
+	}
+
+	setPathAddHandler(handler) {
+		this.path_add_handler = handler;
+	}
+
+	setPathRemoveHandler(handler) {
+		this.path_remove_handler = handler;
 	}
 }
 
@@ -282,11 +366,11 @@ class Port {
 					that.getNodeEditor().loose_path.update();
 				} else {
 					if(that.getNodeEditor().loose_path.port_from === undefined) {
-						that.getNodeEditor().loose_path.setPortFrom(that);
+						that.getNodeEditor().updatePathFrom(that.getNodeEditor().loose_path, that);
 						that.getNodeEditor().loose_path.update();
 						that.getNodeEditor().loose_path = undefined;
 					} else if(that.getNodeEditor().loose_path.port_to === undefined) {
-						that.getNodeEditor().loose_path.setPortTo(that);
+						that.getNodeEditor().updatePathTo(that.getNodeEditor().loose_path, that);
 						that.getNodeEditor().loose_path.update();
 						that.getNodeEditor().loose_path = undefined;
 					}
@@ -294,11 +378,11 @@ class Port {
 			} else if(that.getNodeEditor().loose_path === undefined) {
 				if(that.connected_path.port_from === that) {
 					that.getNodeEditor().loose_path = that.connected_path;
-					that.getNodeEditor().loose_path.setPortFrom("mouse");
+					that.getNodeEditor().updatePathFrom(that.getNodeEditor().loose_path, "mouse");
 					that.getNodeEditor().loose_path.update();
 				} else if(that.connected_path.port_to === that) {
 					that.getNodeEditor().loose_path = that.connected_path;
-					that.getNodeEditor().loose_path.setPortTo("mouse");
+					that.getNodeEditor().updatePathTo(that.getNodeEditor().loose_path, "mouse");
 					that.getNodeEditor().loose_path.update();
 				}
 			}
