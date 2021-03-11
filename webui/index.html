@@ -48,23 +48,23 @@
 			var node_editor = new NodeEditor("#node_editor");
 
 			node_editor.setNodeAddHandler(function(node) {
-				console.log("Add node: " + JSON.stringify(node.serialize()));
+				publish("set/module/" + node.id, node.serialize());
 			});
 
 			node_editor.setNodeChangeHandler(function(node) {
-				console.log("Change node: " + JSON.stringify(node.serialize()));
+				publish("set/module/" + node.id, node.serialize());
 			});
 
 			node_editor.setNodeRemoveHandler(function(node) {
-				console.log("Remove node: " + JSON.stringify(node.serialize()));
+				publish("set/module/" + node.id, null);
 			});
 
 			node_editor.setPathAddHandler(function(path) {
-				console.log("Add path: " + JSON.stringify(path.serialize()));
+				publish("set/paths", node_editor.serializePaths());
 			});
 
 			node_editor.setPathRemoveHandler(function(path) {
-				console.log("Remove path: " + JSON.stringify(path.serialize()));
+				publish("set/paths", node_editor.serializePaths());
 			});
 
 
