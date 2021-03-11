@@ -2,7 +2,7 @@ class NodeEditor {
 	element = undefined;
 	svg = undefined;
 
-	nodes = [];
+	nodes = {};
 	paths = [];
 	loose_path = undefined;
 
@@ -86,7 +86,7 @@ class NodeEditor {
 			this.node_add_handler(node);
 		}
 
-		this.nodes.push(node);
+		this.nodes[node.id] = node;
 		node.parent = this;
 
 		this.element.appendChild(node.element);
@@ -106,7 +106,7 @@ class NodeEditor {
 		}
 
 		node.element.remove();
-		this.nodes = this.nodes.filter(item => item !== node);
+		delete this.nodes[node.id];
 
 		var that = this;
 		this.paths.forEach(function(path) {
@@ -209,10 +209,10 @@ class NodeEditor {
 	}
 
 	serializeNodes() {
-		var data = [];
-		this.nodes.forEach(function(node) {
-			data.push(node.serialize());
-		});
+		var data = {};
+		for(let key in this.nodes) {
+			data[key] = this.nodes[key].serialize();
+		}
 
 		return data;
 	}
@@ -322,7 +322,6 @@ class Node {
 
 	serialize() {
 		var data = {
-			"id": this.id,
 			"position": this.getPosition(),
 			"size": this.getSize()
 		};
