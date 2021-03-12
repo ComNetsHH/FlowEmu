@@ -278,6 +278,7 @@ class Node {
 	parent = undefined;
 	title = undefined;
 	content_items = [];
+	ports = {};
 
 	drag_offset = {"x": 0, "y": 0};
 
@@ -323,6 +324,17 @@ class Node {
 	addContentItem(item) {
 		this.content_items.push(item);
 		item.parent = this;
+
+		if(item instanceof NodeContentFlow) {
+			var that = this;
+			item.ports_left.forEach(function(port) {
+				that.ports[port.getId()] = port;
+			});
+
+			item.ports_right.forEach(function(port) {
+				that.ports[port.getId()] = port;
+			});
+		}
 
 		this.content.appendChild(item.element);
 	}
@@ -451,10 +463,16 @@ class NodeContentFlow extends NodeContentItem {
 		switch(side) {
 			case "left":
 				this.ports_left.push(port);
+				if(this.parent !== undefined) {
+					this.parent.ports[port.id] = port;
+				}
 				this.left.appendChild(port.element);
 				break;
 			case "right":
 				this.ports_right.push(port);
+				if(this.parent !== undefined) {
+					this.parent.ports[port.id] = port;
+				}
 				this.right.appendChild(port.element);
 				break;
 		}
