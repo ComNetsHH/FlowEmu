@@ -43,7 +43,11 @@
 			<input class="parameter_slider" type="range" min="0" max="1">
 		</div> -->
 
-		<div id="node_editor"></div>
+		<div class="content">
+			<div id="node_library"></div>
+			<div id="node_editor"></div>
+		</div>
+
 		<script>
 			var node_editor = new NodeEditor("#node_editor");
 
@@ -122,17 +126,13 @@
 			});
 
 
-			var node1 = new Node("raw_socket_eth0");
-			node1.setTitle("Raw Socket");
-			var flow1 = new NodeContentFlow();
-			var node1_port_out = new Port("out", "Out");
-			flow1.addPort("right", node1_port_out);
-			var node1_port_in = new Port("in", "In");
-			flow1.addPort("right", node1_port_in);
-			node1.addContentItem(flow1);
-			node1.addContentItem(new NodeContentLabel("Interface: eth0"));
-			node1.setPosition({"x": 50, "y": 150})
-			node_editor.addNode(node1);
+			var node_library = new NodeLibrary("#node_library");
+
+			var loss_group = new NodeLibraryGroup("Loss");
+			node_library.addGroup(loss_group);
+
+
+			var delay_group = new NodeLibraryGroup("Delay");
 
 			var node2 = new Node("fixed_delay");
 			node2.setTitle("Fixed Delay");
@@ -146,7 +146,44 @@
 			node2.addContentItem(flow2)
 			node2.addContentItem(new NodeContentLabel("Delay: 50ms"));
 			node2.setPosition({"x": 450, "y": 50})
-			node_editor.addNode(node2);
+			delay_group.addNode(node2);
+
+			node_library.addGroup(delay_group);
+
+
+			var multiplexing_group = new NodeLibraryGroup("Multiplexing");
+
+			var node4 = new Node("multiplexer");
+			node4.setTitle("Multiplexer");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in_1", "In 1"));
+			flow.addPort("left", new Port("in_2", "In 2"));
+			flow.addPort("right", new Port("out", "Out"));
+			node4.addContentItem(flow);
+			multiplexing_group.addNode(node4);
+
+			var node5 = new Node("demultiplexer");
+			node5.setTitle("Demultiplexer");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "In"));
+			flow.addPort("right", new Port("out_1", "Out 1"));
+			flow.addPort("right", new Port("out_2", "Out 2"));
+			node5.addContentItem(flow);
+			multiplexing_group.addNode(node5);
+
+			node_library.addGroup(multiplexing_group);
+
+			/* var node1 = new Node("raw_socket_eth0");
+			node1.setTitle("Raw Socket");
+			var flow1 = new NodeContentFlow();
+			var node1_port_out = new Port("out", "Out");
+			flow1.addPort("right", node1_port_out);
+			var node1_port_in = new Port("in", "In");
+			flow1.addPort("right", node1_port_in);
+			node1.addContentItem(flow1);
+			node1.addContentItem(new NodeContentLabel("Interface: eth0"));
+			node1.setPosition({"x": 50, "y": 150})
+			node_editor.addNode(node1);
 
 			var node3 = new Node("raw_socket_eth1");
 			node3.setTitle("Raw Socket");
@@ -159,7 +196,7 @@
 			node3.addContentItem(new NodeContentLabel("Interface: eth1"));
 			node3.setPosition({"x": 850, "y": 250})
 			node_editor.addNode(node3);
-
+			
 			var path1 = new Path(node1_port_out, node2_port_in);
 			node_editor.addPath(path1, false);
 
@@ -170,9 +207,7 @@
 			node_editor.addPath(path3, false);
 
 			//var path4 = new Path(node2_port_out, node2_port_in);
-			//node_editor.addPath(path4);
-
-			console.log("Serialized: " + JSON.stringify(node_editor.serialize()));
+			//node_editor.addPath(path4); */
 		</script>
 	</body>
 </html>

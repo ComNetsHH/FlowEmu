@@ -24,9 +24,18 @@ body > .header > a {
 	margin: 12px;
 }
 
-.node_editor {
+body > .content {
+	display: flex;
 	width: 100%;
 	height: calc(100% - 56px);
+}
+
+body > .content .node_library {
+	flex: 0 0 auto;
+}
+
+body > .content .node_editor {
+	flex: 1 1 auto;
 }
 
 .parameter {

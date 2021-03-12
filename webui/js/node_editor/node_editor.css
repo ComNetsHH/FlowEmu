@@ -1,7 +1,5 @@
 .node_editor {
 	position: relative;
-
-	user-select: none;
 }
 
 .node_editor > svg {
@@ -21,9 +19,28 @@
 	fill: none;
 }
 
-.node_editor .node {
-	position: absolute;
-	width: 250px;
+.node_library {
+	width: 300px;
+	height: 100%;
+
+	background: rgb(25, 25, 25);
+}
+
+.node_library .group > .header {
+	height: 32px;
+	line-height: 32px;
+	padding: 0 8px;
+
+	background: rgb(40, 40, 40);
+	color: white;
+}
+
+.node_library .group > .content {
+	min-height: 1px;
+}
+
+.node {
+	user-select: none;
 
 	color: white;
 	background: rgb(65, 65, 65);
@@ -31,11 +48,21 @@
 	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
-.node_editor .node.selected {
+.node_editor .node {
+	position: absolute;
+	width: 250px;
+}
+
+.node_library .node {
+	width: calc(100% - 50px);
+	margin: 25px;
+}
+
+.node.selected {
 	box-shadow: 0px 0px 8px rgba(255, 165, 0, 0.5);
 }
 
-.node_editor .node .header {
+.node .header {
 	width: 100%;
 	padding: 0 8px;
 	height: 28px;
@@ -47,20 +74,24 @@
 	line-height: 28px;
 }
 
-.node_editor .node .content {
+.node .content {
 	min-height: 8px;
 }
 
-.node_editor .node .content li {
+.node .content li {
 	padding: 8px;
 }
 
-.node_editor .node .content .flow {
+.node_library .node .content .label {
+	display: none !important;
+}
+
+.node .content .flow {
 	display: flex;
 	padding: 4px 8px;
 }
 
-.node_editor .node .content .flow .port {
+.node .content .flow .port {
 	height: 16px;
 	width: 64px;
 	padding: 0 4px;
@@ -73,16 +104,16 @@
 	font-weight: bold;
 }
 
-.node_editor .node .content .flow > .left .port {
+.node .content .flow > .left .port {
 	transform: translate(-16px, 0);
 	text-align: left;
 }
 
-.node_editor .node .content .flow > .center {
+.node .content .flow > .center {
 	flex-grow: 1;
 }
 
-.node_editor .node .content .flow > .right .port {
+.node .content .flow > .right .port {
 	transform: translate(16px, 0);
 	text-align: right;
 }

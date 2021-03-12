@@ -727,3 +727,54 @@ class Path {
 		return data;
 	}
 }
+
+class NodeLibrary {
+	element = undefined;
+	header = undefined;
+	content = undefined;
+
+	groups = [];
+
+	constructor(div) {
+		this.element = document.querySelector(div);
+		this.element.classList.add("node_library");
+	}
+
+	addGroup(group) {
+		this.groups.push(group);
+		group.parent = this;
+
+		this.element.appendChild(group.element);
+	}
+}
+
+class NodeLibraryGroup {
+	element = undefined;
+
+	parent = undefined;
+	title = undefined;
+	nodes = {}
+
+	constructor(title) {
+		this.title = title;
+
+		this.element = document.createElement("div");
+		this.element.classList.add("group");
+
+		this.header = document.createElement("div");
+		this.header.classList.add("header");
+		this.header.innerHTML = title;
+		this.element.appendChild(this.header);
+
+		this.content = document.createElement("ul");
+		this.content.classList.add("content");
+		this.element.appendChild(this.content);
+	}
+
+	addNode(node) {
+		this.nodes[node.id] = node;
+		node.parent = this;
+
+		this.content.appendChild(node.element);
+	}
+}
