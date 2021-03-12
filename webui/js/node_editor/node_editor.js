@@ -193,6 +193,59 @@ class NodeEditor {
 		}
 	}
 
+	updatePaths(paths_data, call_callback = true) {
+		var that = this;
+
+		this.paths.forEach(function(path1) {
+			var found = false;
+
+			var path1_data = path1.serialize();
+
+			if(path1_data.from === null || path1_data.to === null) {
+				return;
+			}
+
+			paths_data.forEach(function(path2_data) {
+				if(path1_data.from.node === path2_data.from.node &&
+				   path1_data.from.port === path2_data.from.port &&
+				   path1_data.to.node === path2_data.to.node &&
+				   path1_data.to.port === path2_data.to.port) {
+					found = true;
+				}
+			});
+
+			if(!found) {
+				that.removePath(path1, call_callback);
+			}
+		});
+
+		paths_data.forEach(function(path1_data) {
+			var found = false;
+
+			that.paths.forEach(function(path2) {
+				var path2_data = path2.serialize();
+
+				if(path2_data.from === null || path2_data.to === null) {
+					return;
+				}
+
+				if(path1_data.from.node === path2_data.from.node &&
+				   path1_data.from.port === path2_data.from.port &&
+				   path1_data.to.node === path2_data.to.node &&
+				   path1_data.to.port === path2_data.to.port) {
+					found = true;
+				}
+			});
+
+			if(!found) {
+				let from = that.nodes[path1_data.from.node].ports[path1_data.from.port];
+				let to = that.nodes[path1_data.to.node].ports[path1_data.to.port];
+
+				that.addPath(new Path(from, to), call_callback);
+			}
+		});
+	}
+
 	removePath(path, call_callback = true) {
 		if(path.mouse === undefined) {
 			if(call_callback && this.path_remove_handler !== undefined) {
