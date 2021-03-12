@@ -93,6 +93,14 @@
 				}
 			});
 
+			subscribe("get/paths", function(topic, message) {
+				var paths_data = (message.length > 0 ? JSON.parse(message) : null);
+
+				if(paths_data) {
+					node_editor.updatePaths(paths_data, false);
+				}
+			});
+
 			node_editor.setNodeAddHandler(function(node) {
 				publish("set/module/" + node.id, node.serialize());
 			});
@@ -153,13 +161,13 @@
 			node_editor.addNode(node3);
 
 			var path1 = new Path(node1_port_out, node2_port_in);
-			node_editor.addPath(path1);
+			node_editor.addPath(path1, false);
 
 			var path2 = new Path(node2_port_out, node3_port_in);
-			node_editor.addPath(path2);
+			node_editor.addPath(path2, false);
 
 			var path3 = new Path(node3_port_out, node1_port_in);
-			node_editor.addPath(path3);
+			node_editor.addPath(path3, false);
 
 			//var path4 = new Path(node2_port_out, node2_port_in);
 			//node_editor.addPath(path4);
