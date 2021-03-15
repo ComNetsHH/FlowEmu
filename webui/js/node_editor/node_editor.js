@@ -90,6 +90,19 @@ class NodeEditor {
 		node.parent = this;
 
 		this.element.appendChild(node.element);
+
+		var that = this;
+		node.element.addEventListener("mousedown", function(e) {
+			if(that.selected_element !== undefined) {
+				that.selected_element.unselect();
+			}
+			node.select();
+
+			that.dragged_element = node;
+			node.drag_offset = {"x": e.layerX, "y": e.layerY};
+
+			e.stopPropagation();
+		});
 	}
 
 	updateNode(node_id, node_data, call_callback = true) {
@@ -350,19 +363,6 @@ class Node {
 		this.element.appendChild(this.content);
 
 		this.setPosition({"x": 0, "y": 0});
-
-		var that = this;
-		this.element.addEventListener("mousedown", function(e) {
-			if(that.parent.selected_element !== undefined) {
-				that.parent.selected_element.unselect();
-			}
-			that.select();
-
-			that.parent.dragged_element = that;
-			that.drag_offset = {"x": e.layerX, "y": e.layerY};
-
-			e.stopPropagation();
-		});
 	}
 
 	setTitle(title) {
