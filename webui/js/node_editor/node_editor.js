@@ -440,6 +440,33 @@ class Node {
 
 		return data;
 	}
+
+	deserialize(node_data) {
+		this.setTitle(node_data.title);
+		this.setPosition(node_data.position);
+
+		var that = this;
+		node_data.content.forEach(function(item) {
+			switch(item.type) {
+				case "label":
+					var label = new NodeContentLabel(item.label);
+					that.addContentItem(label);
+					break;
+				case "flow":
+					var flow = new NodeContentFlow();
+					item.ports.left.forEach(function(port_data) {
+						var port = new Port(port_data.id, port_data.label);
+						flow.addPort("left", port);
+					});
+					item.ports.right.forEach(function(port_data) {
+						var port = new Port(port_data.id, port_data.label);
+						flow.addPort("right", port);
+					});
+					that.addContentItem(flow);
+					break;
+			}
+		});
+	}
 }
 
 class NodeContentItem {
