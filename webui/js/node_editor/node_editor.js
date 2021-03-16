@@ -24,7 +24,7 @@ class NodeEditor {
 		this.element.appendChild(this.svg);
 
 		var that = this;
-		this.element.addEventListener("mousedown", function(e) {
+		window.addEventListener("mousedown", function(e) {
 			if(that.selected_element !== undefined) {
 				that.selected_element.unselect();
 			}
@@ -36,7 +36,7 @@ class NodeEditor {
 			e.stopPropagation();
 		});
 
-		this.element.addEventListener("mousemove", function(e) {
+		window.addEventListener("mousemove", function(e) {
 			const node_editor_position = that.element.getBoundingClientRect();
 			that.mouse_position = {"x": e.clientX - node_editor_position.x, "y": e.clientY - node_editor_position.y};
 
@@ -58,7 +58,7 @@ class NodeEditor {
 			e.stopPropagation();
 		}, false);
 
-		this.element.addEventListener("mouseup", function(e) {
+		window.addEventListener("mouseup", function(e) {
 			if(that.dragged_element instanceof Node) {
 				if(that.node_change_handler !== undefined) {
 					that.node_change_handler(that.dragged_element);
