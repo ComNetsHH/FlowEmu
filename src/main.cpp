@@ -38,6 +38,8 @@ int main(int argc, const char *argv[]) {
 		interface_sink = argv[2];
 	}
 
+	cout << "Starting emulator..." << endl;
+
 	// MQTT
 	Mqtt mqtt("localhost", 1883, "channel_emulator");
 
@@ -90,12 +92,15 @@ int main(int argc, const char *argv[]) {
 	// Loop
 	signal(SIGINT, signalHandler);
 
+	cout << "Successfully started emulator!" << endl;
 	/* while(running) {
 		io_service.poll();
 	} */
 	io_service.run();
 
 	// Clean up
+	cout << "Stopping emulator..." << endl;
+
 	mqtt_thread.join();
 	return 0;
 }
