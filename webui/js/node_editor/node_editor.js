@@ -251,6 +251,13 @@ class NodeEditor {
 			});
 
 			if(!found) {
+				if(that.nodes[path1_data.from.node] === undefined ||
+				   that.nodes[path1_data.from.node].ports[path1_data.from.port] === undefined ||
+				   that.nodes[path1_data.to.node] === undefined ||
+				   that.nodes[path1_data.to.node].ports[path1_data.to.port] === undefined) {
+					return;
+				}
+
 				let from = that.nodes[path1_data.from.node].ports[path1_data.from.port];
 				let to = that.nodes[path1_data.to.node].ports[path1_data.to.port];
 
