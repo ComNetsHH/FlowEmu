@@ -2,6 +2,7 @@
 #include <string>
 #include <thread>
 #include <atomic>
+#include <regex>
 #include <csignal>
 
 #include "modules/ModuleManager.hpp"
@@ -81,6 +82,26 @@ int main(int argc, const char *argv[]) {
 	module_manager.push_back(&delay_meter_module);
 	module_manager.push_back(&throughput_meter_module_right);
 	module_manager.push_back(&socket_sink);
+
+	// MQTT subscriptions
+	mqtt.subscribeJson("set/module/+", [&](const string &topic, const Json::Value &json_root) {
+		regex r("set\\/module\\/(\\w+)");
+		smatch m;
+		if(!(regex_search(topic, m, r) && m.size() == 2)) {
+			return;
+		}
+		string node_id = m.str(1);
+
+		if(!json_root.empty()) {
+			mqtt.publish("get/module/" + node_id, json_root, true, true);
+		} else {
+			mqtt.publish("get/module/" + node_id, nullptr, true, true);
+		}
+	});
+
+	mqtt.subscribeJson("set/paths", [&](const string &topic, const Json::Value &json_root) {
+		mqtt.publish("get/paths", json_root, true, true);
+	});
 
 	// MQTT loop
 	thread mqtt_thread([&](){
