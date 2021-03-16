@@ -760,11 +760,16 @@ class NodeLibrary {
 	header = undefined;
 	content = undefined;
 
+	node_editor = undefined;
 	groups = [];
 
 	constructor(div) {
 		this.element = document.querySelector(div);
 		this.element.classList.add("node_library");
+	}
+
+	connectNodeEditor(node_editor) {
+		this.node_editor = node_editor;
 	}
 
 	addGroup(group) {
