@@ -349,7 +349,11 @@ class Node {
 	drag_offset = {"x": 0, "y": 0};
 
 	constructor(id) {
-		this.id = id;
+		if(id !== undefined) {
+			this.id = id;
+		} else {
+			this.id = Date.now();
+		}
 
 		this.element = document.createElement("div");
 		this.element.classList.add("node");
