@@ -1,21 +1,24 @@
-//
-// Originally created by Sebastian Lindner as "Layer.hpp" for the Rekotrans emulator on 11/23/17.
-//
-
 #ifndef MODULE_HPP
 #define MODULE_HPP
 
 #include <string>
+#include <map>
+#include <list>
 
-#include <assert.h>
+#include <json/json.h>
 
-/**
- * Module with no modules to the right or the left.
- * @tparam T
- */
+#include "Port.hpp"
+
 class Module {
 	public:
-		virtual ~Module() {}
+		struct PortInfo {
+			enum Side {left, right};
+
+			std::string id;
+			std::string label;
+			Side side;
+			Port* port;
+		};
 
 		void setName(const std::string& name) {
 			this->name = name;
@@ -25,76 +28,83 @@ class Module {
 			return this->name;
 		}
 
-	protected:
-		std::string name = "UNNAMED_MODULE";
-};
+		Json::Value serialize() {
+			Json::Value json_root;
+			json_root["title"] = name;
 
-template<typename T> class ModuleHasLeft; // Forward declaration for ModuleHasRight.
+			Json::Value json_position;
+			json_position["x"] = gui_position_x;
+			json_position["y"] = gui_position_y;
+			json_root["position"] = json_position;
 
-/**
- * Module with another module to the right.
- * @tparam T The data type exchanged with the right module.
- */
-template<typename T> class ModuleHasRight : virtual public Module {
-	public:
-		void setRightModule(ModuleHasLeft<T>* rightModule) {
-			this->rightModule = rightModule;
+			Json::Value json_size;
+			json_size["width"] = gui_width;
+			json_size["height"] = gui_width;
+			json_root["size"] = json_size;
+
+			Json::Value json_content = Json::arrayValue;
+
+			Json::Value json_flow;
+			json_flow["type"] = "flow";
+
+			Json::Value json_ports;
+
+			Json::Value json_ports_left = Json::arrayValue;
+			for(auto const& port_info : ports_info_left) {
+				Json::Value json_port;
+				json_port["id"] = port_info.id;
+				json_port["label"] = port_info.label;
+				json_ports_left.append(json_port);
+			}
+			json_ports["left"] = json_ports_left;
+
+			Json::Value json_ports_right = Json::arrayValue;
+			for(auto const& port_info : ports_info_right) {
+				Json::Value json_port;
+				json_port["id"] = port_info.id;
+				json_port["label"] = port_info.label;
+				json_ports_right.append(json_port);
+			}
+			json_ports["right"] = json_ports_right;
+
+			json_flow["ports"] = json_ports;
+
+			json_content.append(json_flow);
+
+			json_root["content"] = json_content;
+
+			return json_root;
 		}
 
-		virtual void receiveFromRightModule(T packet) {
-			assert(0 && "receiveFromRightModule not implemented.");
-		};
-
-		virtual void passToRightModule(T packet) {
-			assert(rightModule != nullptr && "Unset right module.");
-			rightModule->receiveFromLeftModule(packet);
-		}
-
-		virtual T answerToRightModule() {
-			assert(0 && "answerToRightModule not implemented.");
-			return T();
-		};
-
-		virtual T requestFromRightModule() {
-			assert(rightModule != nullptr && "Unset right module.");
-			return rightModule->answerToLeftModule();
-		}
-
-	protected:
-		ModuleHasLeft<T>* rightModule = nullptr;
-};
-
-/**
- * Module with another module to the left.
- * @tparam T The data type exchanged with the left module.
- */
-template<typename T> class ModuleHasLeft : virtual public Module {
-	public:
-		void setLeftModule(ModuleHasRight<T>* leftModule) {
-			this->leftModule = leftModule;
-		}
-
-		virtual void receiveFromLeftModule(T packet) {
-			assert(0 && "receiveFromLeftModule not implemented.");
-		};
-
-		virtual void passToLeftModule(T packet) {
-			assert(leftModule != nullptr && "Unset left module.");
-			leftModule->receiveFromRightModule(packet);
-		}
-
-		virtual T answerToLeftModule() {
-			assert(0 && "answerToLeftModule not implemented.");
-			return T();
-		};
-
-		virtual T requestFromLeftModule() {
-			assert(leftModule != nullptr && "Unset left module.");
-			return leftModule->answerToRightModule();
+		PortInfo getPort(std::string id) {
+			return ports.at(id);
 		}
 
 	protected:
-		ModuleHasRight<T>* leftModule = nullptr;
+		void addPort(PortInfo port_info) {
+			ports[port_info.id] = port_info;
+
+			switch(port_info.side) {
+				case PortInfo::Side::left:
+					ports_info_left.push_back(port_info);
+					break;
+				case PortInfo::Side::right:
+					ports_info_right.push_back(port_info);
+					break;
+			}
+		}
+
+	private:
+		std::string name = "UNNAMED MODULE";
+
+		std::map<std::string, PortInfo> ports;
+		std::list<PortInfo> ports_info_left;
+		std::list<PortInfo> ports_info_right;
+
+		int gui_position_x = 0;
+		int gui_position_y = 0;
+		int gui_width = 0;
+		int gui_height = 0;
 };
 
 #endif

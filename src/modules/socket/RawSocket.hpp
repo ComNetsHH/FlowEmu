@@ -3,6 +3,10 @@
 #ifndef RAW_SOCKET_HPP
 #define RAW_SOCKET_HPP
 
+#include <string>
+#include <memory>
+#include <cstdint>
+
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
@@ -13,35 +17,22 @@
 #include "../Module.hpp"
 #include "../../utils/Packet.hpp"
 
-class RawSocket {
-	protected:
-		RawSocket(boost::asio::io_service& io_service, std::string ifname);
+class RawSocket : public Module {
+	public:
+		RawSocket(boost::asio::io_service& io_service, std::string ifname, PortInfo::Side ports_side);
+		~RawSocket();
 
+	private:
 		void send(std::shared_ptr<Packet> packet);
 
 		void start_receive();
-		virtual void handle_receive(const boost::system::error_code& error, size_t bytes_transferred) = 0;
+		void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
+
+		SendingPort<std::shared_ptr<Packet>> output_port;
+		ReceivingPort<std::shared_ptr<Packet>> input_port;
 
 		boost::asio::generic::raw_protocol::socket socket;
 		boost::array<uint8_t, 10000> recv_buffer;
-};
-
-class LeftRawSocket : public RawSocket, public ModuleHasRight<std::shared_ptr<Packet>> {
-	public:
-		LeftRawSocket(boost::asio::io_service& io_service, std::string ifname);
-
-		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
-	private:
-		virtual void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
-};
-
-class RightRawSocket : public RawSocket, public ModuleHasLeft<std::shared_ptr<Packet>> {
-	public:
-		RightRawSocket(boost::asio::io_service& io_service, std::string ifname);
-
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
-	private:
-		virtual void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
 };
 
 #endif

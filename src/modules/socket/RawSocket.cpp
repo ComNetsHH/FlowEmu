@@ -6,7 +6,19 @@
 
 using namespace std;
 
-RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname) : socket(io_service, boost::asio::generic::raw_protocol(PF_PACKET, SOCK_RAW)) {
+RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname, PortInfo::Side ports_side) : socket(io_service, boost::asio::generic::raw_protocol(PF_PACKET, SOCK_RAW)) {
+	setName("Raw Socket");
+	switch(ports_side) {
+		case PortInfo::Side::left:
+			addPort({"in", "In", PortInfo::Side::left, &input_port});
+			addPort({"out", "Out", PortInfo::Side::left, &output_port});
+			break;
+		case PortInfo::Side::right:
+			addPort({"out", "Out", PortInfo::Side::right, &output_port});
+			addPort({"in", "In", PortInfo::Side::right, &input_port});
+			break;
+	}
+
 	sockaddr_ll sockaddr;
 	memset(&sockaddr, 0, sizeof(sockaddr));
 	sockaddr.sll_family = PF_PACKET;
@@ -15,6 +27,8 @@ RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname) : 
 	sockaddr.sll_hatype = 1;
 
 	socket.bind(boost::asio::generic::basic_endpoint<boost::asio::generic::raw_protocol>(&sockaddr, sizeof(sockaddr)));
+
+	input_port.setReceiveHandler(bind(&RawSocket::send, this, placeholders::_1));
 
 	start_receive();
 }
@@ -37,34 +51,15 @@ void RawSocket::start_receive() {
 	);
 }
 
-// Left Raw Socket
-LeftRawSocket::LeftRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
-}
-
-void LeftRawSocket::receiveFromRightModule(shared_ptr<Packet> packet) {
-	send(packet);
-}
-
-void LeftRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
-	if(!error || error == boost::asio::error::message_size) {
-		passToRightModule(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
-
-		start_receive();
+void RawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
+	if((!error || error == boost::asio::error::message_size)) {
+		output_port.send(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
 	}
+
+	start_receive();
 }
 
-// Right Raw Socket
-RightRawSocket::RightRawSocket(boost::asio::io_service& io_service, std::string ifname) : RawSocket(io_service, ifname) {
-}
-
-void RightRawSocket::receiveFromLeftModule(shared_ptr<Packet> packet) {
-	send(packet);
-}
-
-void RightRawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
-	if(!error || error == boost::asio::error::message_size) {
-		passToLeftModule(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
-
-		start_receive();
-	}
+RawSocket::~RawSocket() {
+	socket.cancel();
+	socket.close();
 }
