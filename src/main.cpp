@@ -5,6 +5,8 @@
 #include <regex>
 #include <csignal>
 
+#include <boost/asio.hpp>
+
 #include "modules/ModuleManager.hpp"
 #include "modules/delay/FixedDelayModule.hpp"
 #include "modules/loss/GilbertElliotLossModule.hpp"
