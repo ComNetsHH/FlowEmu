@@ -123,7 +123,9 @@ int main(int argc, const char *argv[]) {
 
 	// Clean up
 	cout << "Stopping emulator..." << endl;
+	running = false;
 
 	mqtt_thread.join();
+
 	return 0;
 }
