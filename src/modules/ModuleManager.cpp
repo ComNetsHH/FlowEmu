@@ -4,9 +4,12 @@
 #include <memory>
 #include <regex>
 
+#include "delay/FixedDelayModule.hpp"
+#include "loss/UncorrelatedLossModule.hpp"
+
 using namespace std;
 
-ModuleManager::ModuleManager(Mqtt &mqtt) : mqtt(mqtt) {
+ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : io_service(io_service), mqtt(mqtt) {
 	mqtt.subscribeJson("set/module/+", [&](const string &topic, const Json::Value &json_root) {
 		regex r("set\\/module\\/(\\w+)");
 		smatch m;
@@ -17,7 +20,13 @@ ModuleManager::ModuleManager(Mqtt &mqtt) : mqtt(mqtt) {
 
 		if(!json_root.empty()) {
 			if(modules.find(node_id) == modules.end()) {
-				
+				string type = json_root.get("type", "").asString();
+
+				if(type == "fixed_delay") {
+					addModule(node_id, make_shared<FixedDelayModule>(io_service, mqtt, 50));
+				} else if(type == "uncorrelated_loss") {
+					addModule(node_id, make_shared<UncorrelatedLossModule>(mqtt, 0.1));
+				}
 			} else {
 				updateModule(node_id, json_root);
 			}

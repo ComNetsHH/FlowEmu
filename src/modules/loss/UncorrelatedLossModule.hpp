@@ -12,15 +12,15 @@
 #include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
-class UncorrelatedLossModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
+class UncorrelatedLossModule : public Module {
 	public:
 		UncorrelatedLossModule(Mqtt &mqtt, double p, uint32_t seed = 1);
 
 		void setLossProbability(double p);
 		void setSeed(uint32_t seed);
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
-		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
+		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 	private:
 		Mqtt &mqtt;
 
@@ -29,6 +29,12 @@ class UncorrelatedLossModule : public ModuleHasLeft<std::shared_ptr<Packet>>, pu
 
 		std::default_random_engine generator_loss;
 		std::unique_ptr<std::bernoulli_distribution> distribution;
+
+		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
+		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+
+		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
+		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 };
 
 #endif

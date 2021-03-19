@@ -3,6 +3,15 @@
 using namespace std;
 
 UncorrelatedLossModule::UncorrelatedLossModule(Mqtt &mqtt, double p, uint32_t seed) : mqtt(mqtt) {
+	setName("Fixed Delay");
+	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
+	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
+	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
+	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+
+	input_port_lr.setReceiveHandler(bind(&UncorrelatedLossModule::receiveFromLeftModule, this, placeholders::_1));
+	input_port_rl.setReceiveHandler(bind(&UncorrelatedLossModule::receiveFromRightModule, this, placeholders::_1));
+
 	setLossProbability(p);
 	setSeed(seed);
 
@@ -35,12 +44,12 @@ void UncorrelatedLossModule::setSeed(uint32_t seed) {
 
 void UncorrelatedLossModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	if(!(*distribution)(generator_loss)) {
-		passToRightModule(packet);
+		output_port_lr.send(packet);
 	}
 }
 
 void UncorrelatedLossModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	if(!(*distribution)(generator_loss)) {
-		passToLeftModule(packet);
+		output_port_rl.send(packet);
 	}
 }

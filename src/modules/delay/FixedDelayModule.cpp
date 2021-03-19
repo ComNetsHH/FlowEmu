@@ -5,6 +5,15 @@
 using namespace std;
 
 FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
+	setName("Fixed Delay");
+	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
+	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
+	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
+	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+
+	input_port_lr.setReceiveHandler(bind(&FixedDelayModule::receiveFromLeftModule, this, placeholders::_1));
+	input_port_rl.setReceiveHandler(bind(&FixedDelayModule::receiveFromRightModule, this, placeholders::_1));
+
 	setDelay(delay);
 
 	mqtt.subscribe("set/fixed_delay/delay", [&](const string &topic, const string &message) {
@@ -24,7 +33,7 @@ void FixedDelayModule::setDelay(uint64_t delay) {
 
 void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	if(delay == 0) {
-		passToRightModule(packet);
+		output_port_lr.send(packet);
 		return;
 	}
 
@@ -52,7 +61,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 
 	while(!packet_queue_lr.empty()) {
 		if(packet_queue_lr.front().first <= chrono_deadline) {
-			passToRightModule(packet_queue_lr.front().second);
+			output_port_lr.send(packet_queue_lr.front().second);
 			packet_queue_lr.pop();
 		} else {
 			setQueueTimeoutLr();
@@ -63,7 +72,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 
 void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	if(delay == 0) {
-		passToLeftModule(packet);
+		output_port_rl.send(packet);
 		return;
 	}
 
@@ -91,7 +100,7 @@ void FixedDelayModule::processQueueRl(const boost::system::error_code& error) {
 
 	while(!packet_queue_rl.empty()) {
 		if(packet_queue_rl.front().first <= chrono_deadline) {
-			passToLeftModule(packet_queue_rl.front().second);
+			output_port_rl.send(packet_queue_rl.front().second);
 			packet_queue_rl.pop();
 		} else {
 			setQueueTimeoutRl();

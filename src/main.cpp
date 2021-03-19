@@ -46,7 +46,7 @@ int main(int argc, const char *argv[]) {
 	Mqtt mqtt("localhost", 1883, "channel_emulator");
 
 	// Module manager
-	ModuleManager module_manager(mqtt);
+	ModuleManager module_manager(io_service, mqtt);
 
 	// Sockets
 	module_manager.addModule("socket_source", make_shared<RawSocket>(io_service, interface_source, Module::PortInfo::Side::right));
