@@ -15,15 +15,15 @@ ModuleManager::ModuleManager(Mqtt &mqtt) : mqtt(mqtt) {
 		}
 		string node_id = m.str(1);
 
-		/* if(!json_root.empty()) {
+		if(!json_root.empty()) {
 			if(modules.find(node_id) == modules.end()) {
 				
 			} else {
-				
+				updateModule(node_id, json_root);
 			}
 		} else {
 			removeModule(node_id);
-		} */
+		}
 	});
 
 	mqtt.subscribeJson("set/paths", [&](const string &topic, const Json::Value &json_root) {
@@ -123,6 +123,17 @@ void ModuleManager::addModule(string id, shared_ptr<Module> module) {
 
 	cout << "Add module " + id + "!" << endl;
 	modules[id] = module;
+}
+
+void ModuleManager::updateModule(string id, Json::Value json_root) {
+	if(modules.find(id) == modules.end()) {
+		cerr << "Module " + id + " does not exist!" << endl;
+		return;
+	}
+
+	modules[id]->deserialize(json_root);
+
+	mqtt.publish("get/module/" + id, modules[id]->serialize(), true, true);
 }
 
 void ModuleManager::removeModule(string id) {

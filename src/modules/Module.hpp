@@ -76,6 +76,20 @@ class Module {
 			return json_root;
 		}
 
+		void deserialize(Json::Value json_root) {
+			name = json_root.get("title", name).asString();
+
+			if(json_root.isMember("position")) {
+				gui_position_x = json_root["position"].get("x", 0).asInt();
+				gui_position_y = json_root["position"].get("y", 0).asInt();
+			}
+
+			if(json_root.isMember("size")) {
+				gui_width = json_root["size"].get("width", 0).asInt();
+				gui_height = json_root["size"].get("height", 0).asInt();
+			}
+		}
+
 		PortInfo getPort(std::string id) {
 			return ports.at(id);
 		}
