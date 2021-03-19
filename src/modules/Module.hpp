@@ -39,7 +39,7 @@ class Module {
 
 			Json::Value json_size;
 			json_size["width"] = gui_width;
-			json_size["height"] = gui_width;
+			json_size["height"] = gui_height;
 			json_root["size"] = json_size;
 
 			Json::Value json_content = Json::arrayValue;
