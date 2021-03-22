@@ -153,6 +153,18 @@ void ModuleManager::removeModule(string id) {
 		return;
 	}
 
+	for(auto it = paths.begin(); it != paths.end(); /*++it*/) {
+		if(it->from_node_id == id || it->to_node_id == id) {
+			it->from_port_info.port->disconnect();
+			it->to_port_info.port->disconnect();
+
+			cout << "Remove path!" << endl;
+			it = paths.erase(it);
+		} else {
+			++it;
+		}
+	}
+
 	cout << "Remove module " + id + "!" << endl;
 	modules.erase(id);
 }
