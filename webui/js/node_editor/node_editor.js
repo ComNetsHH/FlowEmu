@@ -349,6 +349,7 @@ class Node {
 	content = undefined;
 
 	parent = undefined;
+	type = undefined;
 	title = undefined;
 	content_items = [];
 	ports = {};
@@ -374,6 +375,14 @@ class Node {
 		this.element.appendChild(this.content);
 
 		this.setPosition({"x": 0, "y": 0});
+	}
+
+	setType(type) {
+		this.type = type;
+	}
+
+	getType() {
+		return this.type;
 	}
 
 	setTitle(title) {
@@ -439,6 +448,7 @@ class Node {
 
 	serialize() {
 		var data = {
+			"type": this.getType(),
 			"title": this.getTitle(),
 			"position": this.getPosition(),
 			"size": this.getSize(),
@@ -453,6 +463,7 @@ class Node {
 	}
 
 	deserialize(node_data) {
+		this.setType(node_data.type);
 		this.setTitle(node_data.title);
 		this.setPosition(node_data.position);
 
