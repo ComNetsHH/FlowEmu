@@ -52,6 +52,10 @@ void RawSocket::start_receive() {
 }
 
 void RawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
+	if(error == boost::asio::error::operation_aborted) {
+		return;
+	}
+
 	if((!error || error == boost::asio::error::message_size)) {
 		output_port.send(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
 	}
