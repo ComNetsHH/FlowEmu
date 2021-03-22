@@ -107,85 +107,37 @@
 			node_library.connectNodeEditor(node_editor);
 
 			var loss_group = new NodeLibraryGroup("Loss");
+
+			var uncorrelated_loss = new Node("uncorrelated_loss");
+			uncorrelated_loss.setType("uncorrelated_loss");
+			uncorrelated_loss.setTitle("Uncorrelated Loss");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "receiving", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "receiving", "In"));
+			uncorrelated_loss.addContentItem(flow)
+			uncorrelated_loss.addContentItem(new NodeContentLabel("Loss: 10%"));
+			loss_group.addNode(uncorrelated_loss);
+
 			node_library.addGroup(loss_group);
 
 
 			var delay_group = new NodeLibraryGroup("Delay");
 
-			var node2 = new Node("fixed_delay");
-			node2.setTitle("Fixed Delay");
-			var flow2 = new NodeContentFlow();
-			var node2_port_in = new Port("flow1_in", "In");
-			flow2.addPort("left", node2_port_in);
-			flow2.addPort("left", new Port("flow2_out", "Out"));
-			var node2_port_out = new Port("flow1_out", "Out");
-			flow2.addPort("right", node2_port_out);
-			flow2.addPort("right", new Port("flow2_in", "In"));
-			node2.addContentItem(flow2)
-			node2.addContentItem(new NodeContentLabel("Delay: 50ms"));
-			node2.setPosition({"x": 450, "y": 50})
-			delay_group.addNode(node2);
+			var fixed_delay = new Node("fixed_delay");
+			fixed_delay.setType("fixed_delay");
+			fixed_delay.setTitle("Fixed Delay");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "receiving", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "receiving", "In"));
+			fixed_delay.addContentItem(flow)
+			fixed_delay.addContentItem(new NodeContentLabel("Delay: 50ms"));
+			delay_group.addNode(fixed_delay);
 
 			node_library.addGroup(delay_group);
-
-
-			var multiplexing_group = new NodeLibraryGroup("Multiplexing");
-
-			var node4 = new Node("multiplexer");
-			node4.setTitle("Multiplexer");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in_1", "In 1"));
-			flow.addPort("left", new Port("in_2", "In 2"));
-			flow.addPort("right", new Port("out", "Out"));
-			node4.addContentItem(flow);
-			multiplexing_group.addNode(node4);
-
-			var node5 = new Node("demultiplexer");
-			node5.setTitle("Demultiplexer");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "In"));
-			flow.addPort("right", new Port("out_1", "Out 1"));
-			flow.addPort("right", new Port("out_2", "Out 2"));
-			node5.addContentItem(flow);
-			multiplexing_group.addNode(node5);
-
-			node_library.addGroup(multiplexing_group);
-
-			/* var node1 = new Node("raw_socket_eth0");
-			node1.setTitle("Raw Socket");
-			var flow1 = new NodeContentFlow();
-			var node1_port_out = new Port("out", "Out");
-			flow1.addPort("right", node1_port_out);
-			var node1_port_in = new Port("in", "In");
-			flow1.addPort("right", node1_port_in);
-			node1.addContentItem(flow1);
-			node1.addContentItem(new NodeContentLabel("Interface: eth0"));
-			node1.setPosition({"x": 50, "y": 150})
-			node_editor.addNode(node1);
-
-			var node3 = new Node("raw_socket_eth1");
-			node3.setTitle("Raw Socket");
-			var flow3 = new NodeContentFlow();
-			var node3_port_in = new Port("in", "In");
-			flow3.addPort("left", node3_port_in);
-			var node3_port_out = new Port("out", "Out");
-			flow3.addPort("left", node3_port_out);
-			node3.addContentItem(flow3);
-			node3.addContentItem(new NodeContentLabel("Interface: eth1"));
-			node3.setPosition({"x": 850, "y": 250})
-			node_editor.addNode(node3);
-			
-			var path1 = new Path(node1_port_out, node2_port_in);
-			node_editor.addPath(path1, false);
-
-			var path2 = new Path(node2_port_out, node3_port_in);
-			node_editor.addPath(path2, false);
-
-			var path3 = new Path(node3_port_out, node1_port_in);
-			node_editor.addPath(path3, false);
-
-			//var path4 = new Path(node2_port_out, node2_port_in);
-			//node_editor.addPath(path4); */
 		</script>
 	</body>
 </html>

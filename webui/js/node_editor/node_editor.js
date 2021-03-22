@@ -477,11 +477,11 @@ class Node {
 				case "flow":
 					var flow = new NodeContentFlow();
 					item.ports.left.forEach(function(port_data) {
-						var port = new Port(port_data.id, port_data.label);
+						var port = new Port(port_data.id, port_data.type, port_data.label);
 						flow.addPort("left", port);
 					});
 					item.ports.right.forEach(function(port_data) {
-						var port = new Port(port_data.id, port_data.label);
+						var port = new Port(port_data.id, port_data.type, port_data.label);
 						flow.addPort("right", port);
 					});
 					that.addContentItem(flow);
@@ -607,16 +607,18 @@ class Port {
 	element = undefined;
 
 	parent = undefined;
-
+	type = undefined;
 	label = undefined;
 	side = undefined;
 	connected_path = undefined;
 
-	constructor(id, label) {
+	constructor(id, type, label) {
 		this.id = id;
 
 		this.element = document.createElement("div");
 		this.element.classList.add("port");
+
+		this.setType(type);
 
 		this.label = label;
 		this.element.innerHTML = label;
@@ -664,6 +666,33 @@ class Port {
 		return this.id;
 	}
 
+	setType(type) {
+		this.type = type;
+
+		switch(type) {
+			case "sending":
+				this.element.classList.remove("receiving", "requesting", "responding");
+				this.element.classList.add("sending");
+				break;
+			case "receiving":
+				this.element.classList.remove("sending", "requesting", "responding");
+				this.element.classList.add("receiving");
+				break;
+			case "requesting":
+				this.element.classList.remove("sending", "receiving", "responding");
+				this.element.classList.add("requesting");
+				break;
+			case "responding":
+				this.element.classList.remove("sending", "receiving", "requesting");
+				this.element.classList.add("responding");
+				break;
+		}
+	}
+
+	getType() {
+		return this.type;
+	}
+
 	getLabel() {
 		return this.label;
 	}
@@ -684,6 +713,7 @@ class Port {
 	serialize() {
 		var data = {
 			"id": this.getId(),
+			"type": this.getType(),
 			"label": this.getLabel(),
 		};
 

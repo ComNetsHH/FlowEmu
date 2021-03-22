@@ -91,14 +91,16 @@
 	padding: 4px 8px;
 }
 
+.node .content .flow > .center {
+	flex-grow: 1;
+}
+
 .node .content .flow .port {
 	height: 16px;
 	width: 64px;
 	padding: 0 4px;
 	margin: 5px 0;
 
-	background: orange;
-	
 	line-height: 16px;
 	font-size: 12px;
 	font-weight: bold;
@@ -109,11 +111,105 @@
 	text-align: left;
 }
 
-.node .content .flow > .center {
-	flex-grow: 1;
-}
-
 .node .content .flow > .right .port {
 	transform: translate(16px, 0);
 	text-align: right;
+}
+
+.node .content .flow .port.sending {
+	background: orange;
+}
+
+.node .content .flow > .left .port.sending::before {
+	content: " ";
+	position: absolute;
+	left: -8px;
+
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-right: 8px solid orange;
+}
+
+.node .content .flow > .right .port.sending::after {
+	content: " ";
+	position: absolute;
+	right: -8px;
+
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-left: 8px solid orange;
+}
+
+.node .content .flow .port.receiving {
+	background: orange;
+}
+
+.node .content .flow > .left .port.receiving::before {
+	content: " ";
+	position: absolute;
+	left: -8px;
+
+	border-top: 8px solid orange;
+	border-bottom: 8px solid orange;
+	border-left: 8px solid transparent;
+}
+
+.node .content .flow > .right .port.receiving::after {
+	content: " ";
+	position: absolute;
+	right: -8px;
+
+	border-top: 8px solid orange;
+	border-bottom: 8px solid orange;
+	border-right: 8px solid transparent;
+}
+
+.node .content .flow .port.requesting {
+	background: rebeccapurple;
+}
+
+.node .content .flow > .left .port.requesting::after {
+	content: " ";
+	position: absolute;
+	left: -8px;
+
+	width: 8px;
+	height: 16px;
+	background: rebeccapurple;
+}
+
+.node .content .flow > .right .port.requesting::after {
+	content: " ";
+	position: absolute;
+	right: -8px;
+
+	width: 8px;
+	height: 16px;
+	background: rebeccapurple;
+}
+
+.node .content .flow .port.responding {
+	background: rebeccapurple;
+}
+
+.node .content .flow > .left .port.responding::after {
+	content: " ";
+	position: absolute;
+	left: -8px;
+
+	width: 8px;
+	height: 16px;
+	background: rebeccapurple;
+	border-radius: 8px 0 0 8px;
+}
+
+.node .content .flow > .right .port.responding::after {
+	content: " ";
+	position: absolute;
+	right: -8px;
+
+	width: 8px;
+	height: 16px;
+	background: rebeccapurple;
+	border-radius: 0 8px 8px 0;
 }
