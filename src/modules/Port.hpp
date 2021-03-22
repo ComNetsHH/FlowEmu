@@ -11,6 +11,8 @@ struct incompatible_port_types : public std::exception {};
 
 class Port {
 	public:
+		virtual const char* getType() const = 0;
+
 		virtual void connect(Port* connected_port) = 0;
 		virtual void disconnect() = 0;
 };
@@ -19,6 +21,10 @@ template<typename T> class ReceivingPort;
 
 template<typename T> class SendingPort : virtual public Port {
 	public:
+		const char* getType() const {
+			return "sending";
+		}
+
 		void connect(Port* connected_port) {
 			auto casted_connected_port = dynamic_cast<ReceivingPort<T>*>(connected_port);
 			if(casted_connected_port == nullptr) {
@@ -45,6 +51,10 @@ template<typename T> class SendingPort : virtual public Port {
 
 template<typename T> class ReceivingPort : virtual public Port {
 	public:
+		const char* getType() const {
+			return "receiving";
+		}
+
 		void connect(Port* connected_port) {
 			auto casted_connected_port = dynamic_cast<SendingPort<T>*>(connected_port);
 			if(casted_connected_port == nullptr) {
@@ -79,6 +89,10 @@ template<typename T> class RespondingPort;
 
 template<typename T> class RequestingPort : virtual public Port {
 	public:
+		const char* getType() const {
+			return "requesting";
+		}
+
 		void connect(Port* connected_port) {
 			auto casted_connected_port = dynamic_cast<RespondingPort<T>*>(connected_port);
 			if(casted_connected_port == nullptr) {
@@ -106,6 +120,10 @@ template<typename T> class RequestingPort : virtual public Port {
 
 template<typename T> class RespondingPort : virtual public Port {
 	public:
+		const char* getType() const {
+			return "responding";
+		}
+
 		void connect(Port* connected_port) {
 			auto casted_connected_port = dynamic_cast<RequestingPort<T>*>(connected_port);
 			if(casted_connected_port == nullptr) {

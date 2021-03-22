@@ -53,6 +53,7 @@ class Module {
 			for(auto const& port_info : ports_info_left) {
 				Json::Value json_port;
 				json_port["id"] = port_info.id;
+				json_port["type"] = port_info.port->getType();
 				json_port["label"] = port_info.label;
 				json_ports_left.append(json_port);
 			}
@@ -62,6 +63,7 @@ class Module {
 			for(auto const& port_info : ports_info_right) {
 				Json::Value json_port;
 				json_port["id"] = port_info.id;
+				json_port["type"] = port_info.port->getType();
 				json_port["label"] = port_info.label;
 				json_ports_right.append(json_port);
 			}
