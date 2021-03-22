@@ -16,6 +16,7 @@
 class FixedDelayModule : public Module {
 	public:
 		FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay);
+		~FixedDelayModule();
 
 		void setDelay(uint64_t delay);
 

@@ -108,3 +108,8 @@ void FixedDelayModule::processQueueRl(const boost::system::error_code& error) {
 		}
 	}
 }
+
+FixedDelayModule::~FixedDelayModule() {
+	timer_lr.cancel();
+	timer_rl.cancel();
+}
