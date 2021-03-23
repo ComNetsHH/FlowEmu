@@ -6,6 +6,8 @@
 
 #include "delay/FixedDelayModule.hpp"
 #include "loss/UncorrelatedLossModule.hpp"
+#include "queue/FifoQueueModule.hpp"
+#include "rate/FixedIntervalRateModule.hpp"
 
 using namespace std;
 
@@ -26,6 +28,10 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					addModule(node_id, make_shared<FixedDelayModule>(io_service, mqtt, 50));
 				} else if(type == "uncorrelated_loss") {
 					addModule(node_id, make_shared<UncorrelatedLossModule>(mqtt, 0.1));
+				} else if(type == "fifo_queue") {
+					addModule(node_id, make_shared<FifoQueueModule>(mqtt, 100));
+				} else if(type == "fixed_interval_rate") {
+					addModule(node_id, make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1)));
 				}
 			} else {
 				updateModule(node_id, json_root);

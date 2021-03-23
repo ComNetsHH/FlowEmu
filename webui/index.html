@@ -138,6 +138,36 @@
 			delay_group.addNode(fixed_delay);
 
 			node_library.addGroup(delay_group);
+
+
+			var queue_group = new NodeLibraryGroup("Queue");
+
+			var fifo_queue = new Node("fifo_queue");
+			fifo_queue.setType("fifo_queue");
+			fifo_queue.setTitle("FIFO Queue");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "responding", "Out"));
+			fifo_queue.addContentItem(flow)
+			queue_group.addNode(fifo_queue);
+
+			node_library.addGroup(queue_group);
+
+
+			var rate_group = new NodeLibraryGroup("Rate");
+
+			var fixed_interval_rate = new Node("fixed_interval_rate");
+			fixed_interval_rate.setType("fixed_interval_rate");
+			fixed_interval_rate.setTitle("Fixed Interval Rate");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "requesting", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "requesting", "In"));
+			fixed_interval_rate.addContentItem(flow)
+			rate_group.addNode(fixed_interval_rate);
+
+			node_library.addGroup(rate_group);
 		</script>
 	</body>
 </html>
