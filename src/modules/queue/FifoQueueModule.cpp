@@ -7,8 +7,8 @@ FifoQueueModule::FifoQueueModule(Mqtt &mqtt, size_t buffer_size) : mqtt(mqtt) {
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
 
-	input_port.setReceiveHandler(bind(&FifoQueueModule::push, this, placeholders::_1));
-	output_port.setRequestHandler(bind(&FifoQueueModule::pop, this));
+	input_port.setReceiveHandler(bind(&FifoQueueModule::enqueue, this, placeholders::_1));
+	output_port.setRequestHandler(bind(&FifoQueueModule::dequeue, this));
 
 	setBufferSize(buffer_size);
 
@@ -24,7 +24,7 @@ void FifoQueueModule::setBufferSize(size_t buffer_size) {
 	mqtt.publish("get/fifo_queue/buffer_size", to_string(buffer_size), true);
 }
 
-void FifoQueueModule::push(shared_ptr<Packet> packet) {
+void FifoQueueModule::enqueue(shared_ptr<Packet> packet) {
 	if(packet_queue.size() >= buffer_size) {
 		return;
 	}
@@ -32,7 +32,7 @@ void FifoQueueModule::push(shared_ptr<Packet> packet) {
 	packet_queue.emplace(packet);
 }
 
-std::shared_ptr<Packet> FifoQueueModule::pop() {
+std::shared_ptr<Packet> FifoQueueModule::dequeue() {
 	shared_ptr<Packet> packet;
 	if(!packet_queue.empty()) {
 		packet = packet_queue.front();

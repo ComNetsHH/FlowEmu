@@ -25,8 +25,8 @@ class FifoQueueModule : public Module {
 
 		std::queue<std::shared_ptr<Packet>> packet_queue;
 
-		void push(std::shared_ptr<Packet> packet);
-		std::shared_ptr<Packet> pop();
+		void enqueue(std::shared_ptr<Packet> packet);
+		std::shared_ptr<Packet> dequeue();
 };
 
 #endif
