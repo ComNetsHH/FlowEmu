@@ -18,6 +18,10 @@ class FixedDelayModule : public Module {
 		FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay);
 		~FixedDelayModule();
 
+		const char* getType() const {
+			return "fixed_delay";
+		}
+
 		void setDelay(uint64_t delay);
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);

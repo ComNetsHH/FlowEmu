@@ -17,6 +17,10 @@ class FixedIntervalRateModule : public Module {
 		FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, std::chrono::high_resolution_clock::duration interval);
 		~FixedIntervalRateModule();
 
+		const char* getType() const {
+			return "fixed_interval_rate";
+		}
+
 		void setInterval(std::chrono::high_resolution_clock::duration interval);
 		void setRate(uint64_t rate);
 

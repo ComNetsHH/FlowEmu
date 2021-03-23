@@ -17,6 +17,10 @@ class TraceRateModule : public Module {
 		TraceRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, const std::string &downlink_trace_filename, const std::string &up_trace_filename);
 		~TraceRateModule();
 
+		const char* getType() const {
+			return "trace_rate";
+		}
+
 		void reset();
 
 	private:

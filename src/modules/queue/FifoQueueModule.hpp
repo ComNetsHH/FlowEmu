@@ -13,6 +13,10 @@ class FifoQueueModule : public Module {
 	public:
 		FifoQueueModule(Mqtt &mqtt, size_t buffer_size);
 
+		const char* getType() const {
+			return "fifo_queue";
+		}
+
 		void setBufferSize(size_t buffer_size);
 
 	private:

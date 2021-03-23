@@ -20,6 +20,8 @@ class Module {
 			Port* port;
 		};
 
+		virtual const char* getType() const = 0;
+
 		void setName(const std::string& name) {
 			this->name = name;
 		}
@@ -31,6 +33,7 @@ class Module {
 		Json::Value serialize() {
 			Json::Value json_root;
 			json_root["title"] = name;
+			json_root["type"] = getType();
 
 			Json::Value json_position;
 			json_position["x"] = gui_position_x;

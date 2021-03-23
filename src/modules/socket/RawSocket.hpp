@@ -22,6 +22,10 @@ class RawSocket : public Module {
 		RawSocket(boost::asio::io_service& io_service, std::string ifname, PortInfo::Side ports_side);
 		~RawSocket();
 
+		const char* getType() const {
+			return "raw_socket";
+		}
+
 	private:
 		void send(std::shared_ptr<Packet> packet);
 

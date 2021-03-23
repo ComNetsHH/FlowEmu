@@ -16,6 +16,10 @@ class UncorrelatedLossModule : public Module {
 	public:
 		UncorrelatedLossModule(Mqtt &mqtt, double p, uint32_t seed = 1);
 
+		const char* getType() const {
+			return "uncorrelated_loss";
+		}
+
 		void setLossProbability(double p);
 		void setSeed(uint32_t seed);
 
