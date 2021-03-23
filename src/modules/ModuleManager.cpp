@@ -8,6 +8,7 @@
 #include "loss/UncorrelatedLossModule.hpp"
 #include "queue/FifoQueueModule.hpp"
 #include "rate/FixedIntervalRateModule.hpp"
+#include "rate/TraceRateModule.hpp"
 
 using namespace std;
 
@@ -32,6 +33,8 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					addModule(node_id, make_shared<FifoQueueModule>(mqtt, 100));
 				} else if(type == "fixed_interval_rate") {
 					addModule(node_id, make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1)));
+				} else if(type == "trace_rate") {
+					addModule(node_id, make_shared<TraceRateModule>(io_service, mqtt, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up"));
 				}
 			} else {
 				updateModule(node_id, json_root);

@@ -167,6 +167,17 @@
 			fixed_interval_rate.addContentItem(flow)
 			rate_group.addNode(fixed_interval_rate);
 
+			var trace_rate = new Node("trace_rate");
+			trace_rate.setType("trace_rate");
+			trace_rate.setTitle("Trace Rate");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "requesting", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "requesting", "In"));
+			trace_rate.addContentItem(flow)
+			rate_group.addNode(trace_rate);
+
 			node_library.addGroup(rate_group);
 		</script>
 	</body>
