@@ -146,6 +146,8 @@ template<typename T> class RespondingPort : virtual public Port {
 				return request_handler();
 			} catch(const std::bad_function_call &e) {
 			}
+
+			return T();
 		}
 
 	protected:
