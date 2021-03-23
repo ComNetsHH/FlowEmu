@@ -25,17 +25,24 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 			if(modules.find(node_id) == modules.end()) {
 				string type = json_root.get("type", "").asString();
 
+				shared_ptr<Module> new_module;
 				if(type == "fixed_delay") {
-					addModule(node_id, make_shared<FixedDelayModule>(io_service, mqtt, 50));
+					new_module = make_shared<FixedDelayModule>(io_service, mqtt, 50);
 				} else if(type == "uncorrelated_loss") {
-					addModule(node_id, make_shared<UncorrelatedLossModule>(mqtt, 0.1));
+					new_module = make_shared<UncorrelatedLossModule>(mqtt, 0.1);
 				} else if(type == "fifo_queue") {
-					addModule(node_id, make_shared<FifoQueueModule>(mqtt, 100));
+					new_module = make_shared<FifoQueueModule>(mqtt, 100);
 				} else if(type == "fixed_interval_rate") {
-					addModule(node_id, make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1)));
+					new_module = make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1));
 				} else if(type == "trace_rate") {
-					addModule(node_id, make_shared<TraceRateModule>(io_service, mqtt, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up"));
+					new_module = make_shared<TraceRateModule>(io_service, mqtt, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up");
+				} else {
+					cerr << "Unknown node type!" << endl;
+					return;
 				}
+
+				addModule(node_id, new_module, false);
+				updateModule(node_id, json_root);
 			} else {
 				updateModule(node_id, json_root);
 			}
@@ -131,9 +138,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 	mqtt.publish("get/paths", Json::arrayValue, true, true);
 }
 
-void ModuleManager::addModule(string id, shared_ptr<Module> module) {
-	mqtt.publish("get/module/" + id, module->serialize(), true, true);
-
+void ModuleManager::addModule(string id, shared_ptr<Module> module, bool publish) {
 	if(modules.find(id) != modules.end()) {
 		cerr << "Module " + id + " already exists!" << endl;
 		return;
@@ -141,9 +146,13 @@ void ModuleManager::addModule(string id, shared_ptr<Module> module) {
 
 	cout << "Add module " + id + "!" << endl;
 	modules[id] = module;
+
+	if(publish) {
+		mqtt.publish("get/module/" + id, module->serialize(), true, true);
+	}
 }
 
-void ModuleManager::updateModule(string id, Json::Value json_root) {
+void ModuleManager::updateModule(string id, Json::Value json_root, bool publish) {
 	if(modules.find(id) == modules.end()) {
 		cerr << "Module " + id + " does not exist!" << endl;
 		return;
@@ -151,11 +160,15 @@ void ModuleManager::updateModule(string id, Json::Value json_root) {
 
 	modules[id]->deserialize(json_root);
 
-	mqtt.publish("get/module/" + id, modules[id]->serialize(), true, true);
+	if(publish) {
+		mqtt.publish("get/module/" + id, modules[id]->serialize(), true, true);
+	}
 }
 
-void ModuleManager::removeModule(string id) {
-	mqtt.publish("get/module/" + id, nullptr, true, true);
+void ModuleManager::removeModule(string id, bool publish) {
+	if(publish) {
+		mqtt.publish("get/module/" + id, nullptr, true, true);
+	}
 
 	if(modules.find(id) == modules.end()) {
 		cerr << "Module " + id + " does not exist!" << endl;

@@ -16,9 +16,9 @@ class ModuleManager {
 	public:
 		ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt);
 
-		void addModule(std::string id, std::shared_ptr<Module> module);
-		void updateModule(std::string id, Json::Value json_root);
-		void removeModule(std::string id);
+		void addModule(std::string id, std::shared_ptr<Module> module, bool publish = true);
+		void updateModule(std::string id, Json::Value json_root, bool publish = true);
+		void removeModule(std::string id, bool publish = true);
 	private:
 		boost::asio::io_service &io_service;
 		Mqtt &mqtt;
