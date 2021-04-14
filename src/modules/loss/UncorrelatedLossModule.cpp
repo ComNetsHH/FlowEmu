@@ -3,7 +3,7 @@
 using namespace std;
 
 UncorrelatedLossModule::UncorrelatedLossModule(Mqtt &mqtt, double p, uint32_t seed) : mqtt(mqtt) {
-	setName("Fixed Delay");
+	setName("Uncorrelated Loss");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
