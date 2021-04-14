@@ -194,6 +194,29 @@
 			rate_group.addNode(trace_rate);
 
 			node_library.addGroup(rate_group);
+
+
+			var meter_group = new NodeLibraryGroup("Meter");
+
+			var delay_meter = new Node("delay_meter");
+			delay_meter.setType("delay_meter");
+			delay_meter.setTitle("Delay Meter");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "sending", "Out"));
+			delay_meter.addContentItem(flow)
+			meter_group.addNode(delay_meter);
+
+			var throughput_meter = new Node("throughput_meter");
+			throughput_meter.setType("throughput_meter");
+			throughput_meter.setTitle("Throughput Meter");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "sending", "Out"));
+			throughput_meter.addContentItem(flow)
+			meter_group.addNode(throughput_meter);
+
+			node_library.addGroup(meter_group);
 		</script>
 	</body>
 </html>

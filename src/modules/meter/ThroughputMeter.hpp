@@ -12,16 +12,23 @@
 #include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
-class ThroughputMeter : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
+class ThroughputMeter : public Module {
 	public:
 		ThroughputMeter(boost::asio::io_service &io_service, Mqtt &mqtt, const std::string &module_id);
+		~ThroughputMeter();
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
-		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
+		const char* getType() const {
+			return "throughput_meter";
+		}
+
+		void receive(std::shared_ptr<Packet> packet);
 
 	private:
 		Mqtt &mqtt;
 		std::string module_id;
+
+		ReceivingPort<std::shared_ptr<Packet>> input_port;
+		SendingPort<std::shared_ptr<Packet>> output_port;
 
 		boost::asio::high_resolution_timer timer;
 		uint64_t bytes_sum = 0;

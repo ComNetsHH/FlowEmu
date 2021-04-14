@@ -7,6 +7,8 @@
 #include "delay/FixedDelayModule.hpp"
 #include "loss/GilbertElliotLossModule.hpp"
 #include "loss/UncorrelatedLossModule.hpp"
+#include "meter/DelayMeter.hpp"
+#include "meter/ThroughputMeter.hpp"
 #include "queue/FifoQueueModule.hpp"
 #include "rate/FixedIntervalRateModule.hpp"
 #include "rate/TraceRateModule.hpp"
@@ -33,6 +35,10 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					new_module = make_shared<GilbertElliotLossModule>(io_service, mqtt, 0.001, 0.001, 0, 1);
 				} else if(type == "uncorrelated_loss") {
 					new_module = make_shared<UncorrelatedLossModule>(mqtt, 0.1);
+				} else if(type == "delay_meter") {
+					new_module = make_shared<DelayMeter>(io_service, mqtt);
+				} else if(type == "throughput_meter") {
+					new_module = make_shared<ThroughputMeter>(io_service, mqtt, "throughput_meter");
 				} else if(type == "fifo_queue") {
 					new_module = make_shared<FifoQueueModule>(mqtt, 100);
 				} else if(type == "fixed_interval_rate") {
