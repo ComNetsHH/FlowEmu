@@ -5,6 +5,7 @@
 #include <regex>
 
 #include "delay/FixedDelayModule.hpp"
+#include "loss/GilbertElliotLossModule.hpp"
 #include "loss/UncorrelatedLossModule.hpp"
 #include "queue/FifoQueueModule.hpp"
 #include "rate/FixedIntervalRateModule.hpp"
@@ -28,6 +29,8 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				shared_ptr<Module> new_module;
 				if(type == "fixed_delay") {
 					new_module = make_shared<FixedDelayModule>(io_service, mqtt, 50);
+				} else if(type == "gilbert_elliot_loss") {
+					new_module = make_shared<GilbertElliotLossModule>(io_service, mqtt, 0.001, 0.001, 0, 1);
 				} else if(type == "uncorrelated_loss") {
 					new_module = make_shared<UncorrelatedLossModule>(mqtt, 0.1);
 				} else if(type == "fifo_queue") {

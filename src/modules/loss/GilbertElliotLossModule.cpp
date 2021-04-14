@@ -7,6 +7,15 @@
 using namespace std;
 
 GilbertElliotLossModule::GilbertElliotLossModule(boost::asio::io_service &io_service, Mqtt &mqtt, double p01, double p10, double e0, double e1, uint32_t seed_transition, uint32_t seed_loss) : timer_transition(io_service), mqtt(mqtt) {
+	setName("Gilbert-Elliot Loss");
+	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
+	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
+	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
+	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+
+	input_port_lr.setReceiveHandler(bind(&GilbertElliotLossModule::receiveFromLeftModule, this, placeholders::_1));
+	input_port_rl.setReceiveHandler(bind(&GilbertElliotLossModule::receiveFromRightModule, this, placeholders::_1));
+
 	setModelParameters(p01, p10, e0, e1);
 	setSeedTransition(seed_transition);
 	setSeedLoss(seed_loss);
@@ -122,12 +131,16 @@ bool GilbertElliotLossModule::isLost() {
 
 void GilbertElliotLossModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 	if(!isLost()) {
-		passToRightModule(packet);
+		output_port_lr.send(packet);
 	}
 }
 
 void GilbertElliotLossModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 	if(!isLost()) {
-		passToLeftModule(packet);
+		output_port_rl.send(packet);
 	}
+}
+
+GilbertElliotLossModule::~GilbertElliotLossModule() {
+	timer_transition.cancel();
 }

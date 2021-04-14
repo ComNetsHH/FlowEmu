@@ -120,6 +120,21 @@
 			uncorrelated_loss.addContentItem(new NodeContentLabel("Loss: 10%"));
 			loss_group.addNode(uncorrelated_loss);
 
+			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
+			gilbert_elliot_loss.setType("gilbert_elliot_loss");
+			gilbert_elliot_loss.setTitle("Gilbert-Elliot Loss");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "receiving", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "receiving", "In"));
+			gilbert_elliot_loss.addContentItem(flow)
+			gilbert_elliot_loss.addContentItem(new NodeContentLabel("p_01: 1/1000ms"));
+			gilbert_elliot_loss.addContentItem(new NodeContentLabel("p_10: 1/1000ms"));
+			gilbert_elliot_loss.addContentItem(new NodeContentLabel("e_0: 0%"));
+			gilbert_elliot_loss.addContentItem(new NodeContentLabel("e_1: 100%"));
+			loss_group.addNode(gilbert_elliot_loss);
+
 			node_library.addGroup(loss_group);
 
 
