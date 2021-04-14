@@ -40,7 +40,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				} else if(type == "trace_rate") {
 					new_module = make_shared<TraceRateModule>(io_service, mqtt, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up");
 				} else {
-					cerr << "Unknown node type!" << endl;
+					cerr << "Unknown module type: " << type << endl;
 					return;
 				}
 
