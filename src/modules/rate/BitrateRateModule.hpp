@@ -13,30 +13,27 @@
 #include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
-class BitrateRateModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
+class BitrateRateModule : public Module {
 	public:
-		BitrateRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t bitrate, size_t buffer_size);
+		BitrateRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t bitrate);
+		~BitrateRateModule();
+
+		const char* getType() const {
+			return "bitrate_rate";
+		}
 
 		void setBitrate(uint64_t bitrate);
-		void setBufferSize(size_t buffer_size);
-
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
-		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 	private:
 		Mqtt &mqtt;
 
 		std::atomic<uint64_t> bitrate;
-		std::atomic<size_t> buffer_size;
 
-		boost::asio::high_resolution_timer timer_lr;
-		std::queue<std::shared_ptr<Packet>> packet_queue_lr;
-		void setQueueTimeoutLr(std::chrono::high_resolution_clock::time_point now);
-		void processQueueLr(const boost::system::error_code& error);
+		RequestingPort<std::shared_ptr<Packet>> input_port;
+		SendingPort<std::shared_ptr<Packet>> output_port;
 
-		boost::asio::high_resolution_timer timer_rl;
-		std::queue<std::shared_ptr<Packet>> packet_queue_rl;
-		void setQueueTimeoutRl(std::chrono::high_resolution_clock::time_point now);
-		void processQueueRl(const boost::system::error_code& error);
+		boost::asio::high_resolution_timer timer;
+		bool active = false;
+		void process(const boost::system::error_code& error);
 };
 
 #endif

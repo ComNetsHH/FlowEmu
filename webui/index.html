@@ -171,6 +171,15 @@
 
 			var rate_group = new NodeLibraryGroup("Rate");
 
+			var bitrate_rate = new Node("bitrate_rate");
+			bitrate_rate.setType("bitrate_rate");
+			bitrate_rate.setTitle("Bitrate Rate");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "requesting", "In"));
+			flow.addPort("right", new Port("out", "sending", "Out"));
+			bitrate_rate.addContentItem(flow)
+			rate_group.addNode(bitrate_rate);
+
 			var fixed_interval_rate = new Node("fixed_interval_rate");
 			fixed_interval_rate.setType("fixed_interval_rate");
 			fixed_interval_rate.setTitle("Fixed Interval Rate");
