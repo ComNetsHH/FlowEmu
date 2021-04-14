@@ -30,6 +30,8 @@ void FifoQueueModule::enqueue(shared_ptr<Packet> packet) {
 	}
 
 	packet_queue.emplace(packet);
+
+	output_port.notify();
 }
 
 std::shared_ptr<Packet> FifoQueueModule::dequeue() {
