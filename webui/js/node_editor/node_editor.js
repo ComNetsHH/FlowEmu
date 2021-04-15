@@ -10,6 +10,9 @@ class NodeEditor {
 	selected_element = undefined;
 	dragged_element = undefined;
 
+	pan = {"x": 0, "y": 0};
+	panning = undefined;
+
 	node_add_handler = undefined;
 	node_change_handler = undefined;
 	node_remove_handler = undefined;
@@ -33,12 +36,18 @@ class NodeEditor {
 				that.removePath(that.loose_path);
 			}
 
+			that.panning = {"start_pan_x": that.pan.x,
+			                "start_pan_y": that.pan.y,
+			                "start_mouse_x": e.clientX,
+			                "start_mouse_y": e.clientY,
+			};
+
 			e.stopPropagation();
 		});
 
 		window.addEventListener("mousemove", function(e) {
 			const node_editor_position = that.element.getBoundingClientRect();
-			that.mouse_position = {"x": e.clientX - node_editor_position.x, "y": e.clientY - node_editor_position.y};
+			that.mouse_position = {"x": e.clientX - node_editor_position.x - that.pan.x, "y": e.clientY - node_editor_position.y - that.pan.y};
 
 			if(that.dragged_element instanceof Node) {
 				that.dragged_element.setPosition({
@@ -55,6 +64,19 @@ class NodeEditor {
 				that.loose_path.update();
 			}
 
+			if(that.panning !== undefined) {
+				that.pan.x = that.panning.start_pan_x + (e.clientX - that.panning.start_mouse_x);
+				that.pan.y = that.panning.start_pan_y + (e.clientY - that.panning.start_mouse_y);
+
+				for(let key in that.nodes) {
+					that.nodes[key].element.style.transform = "translate(" + that.pan.x + "px, " + that.pan.y + "px)";
+				}
+
+				that.paths.forEach(function(path) {
+					path.update();
+				});
+			}
+
 			e.stopPropagation();
 		}, false);
 
@@ -66,6 +88,8 @@ class NodeEditor {
 			}
 
 			that.dragged_element = undefined;
+
+			that.panning = undefined;
 
 			e.stopPropagation();
 		});
