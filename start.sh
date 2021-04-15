@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Build normal emulator Docker image
+DOCKER_FILE_EMULATOR="Dockerfile"
+DOCKER_IMAGE_EMULATOR="channel_emulator"
+
+# Build emulator Docker image with machine learning support
+#DOCKER_FILE_EMULATOR="Dockerfile_ml"
+#DOCKER_IMAGE_EMULATOR="channel_emulator_ml"
+
+# User emulator Docker image for source and sink
+DOCKER_IMAGE_SOURCE_SINK=$DOCKER_IMAGE_EMULATOR
+
 cleanup() {
 	(docker stop channel; docker rm channel) || true
 	(docker stop source; docker rm source) || true
@@ -44,13 +55,13 @@ set -o errexit
 cleanup &> /dev/null
 
 # Build Docker image
-docker build -t channel_emulator .
+docker build -t $DOCKER_IMAGE_EMULATOR -f $DOCKER_FILE_EMULATOR .
 
 # Start Docker containers
 # NOTE: The source and sink containers are started with extended privileges in order to be able to use all congestion control modules of the host system in iPerf.
-docker run -d -it -v $(pwd)/config:/config --name channel channel_emulator
-docker run -d -it --privileged --name source channel_emulator
-docker run -d -it --privileged --name sink channel_emulator
+docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_EMULATOR
+docker run -d -it --privileged --name source $DOCKER_IMAGE_SOURCE_SINK
+docker run -d -it --privileged --name sink $DOCKER_IMAGE_SOURCE_SINK
 
 # Create links between Docker containers
 setup_network > /dev/null
