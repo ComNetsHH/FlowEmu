@@ -97,7 +97,7 @@ shared_ptr<Packet> DQLQueueModule::dequeue() {
 	size_t queue_length = packet_queue.size();
 	for(int y = 0; y < 10; y++) {
 		double a = pow(0.1, y);
-		observation_new(y, 0) = (1.0 - a) * observation(y, 0) + a * (1.0 - ((double) queue_length / 100.0));
+		observation_new(y, 0) = (1.0 - a) * observation(y, 0) + a * (1.0 - ((double) queue_length / buffer_size));
 		observation_new(y, 1) = (1.0 - a) * observation(y, 1) + a * (double) packet_sent;
 		observation_new(y, 2) = (1.0 - a) * observation(y, 2) + a * (double) action;
 	}
