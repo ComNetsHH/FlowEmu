@@ -699,12 +699,12 @@ class Port {
 		const rect = this.element.getBoundingClientRect();
 		const rectNodeEditor = this.getNodeEditor().element.getBoundingClientRect();
 
-		const postion_x = rect.left - rectNodeEditor.left;
-		const postion_y = rect.top - rectNodeEditor.top;
+		const position_x = rect.left - rectNodeEditor.left;
+		const position_y = rect.top - rectNodeEditor.top;
 
 		return {
-			"x": ((this.side === "right") ? postion_x + this.element.clientWidth : postion_x),
-			"y": postion_y + this.element.clientHeight / 2
+			"x": ((this.side === "right") ? position_x + this.element.clientWidth : position_x),
+			"y": position_y + this.element.clientHeight / 2
 		};
 	}
 
