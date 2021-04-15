@@ -16,23 +16,22 @@
 #include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
-class DQLQueueModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public ModuleHasRight<std::shared_ptr<Packet>> {
+class DQLQueueModule : public Module {
 	public:
-		DQLQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, std::chrono::high_resolution_clock::duration interval);
+		DQLQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, size_t buffer_size, double epsilon);
 		~DQLQueueModule();
 
-		void setInterval(std::chrono::high_resolution_clock::duration interval);
-		void setRate(uint64_t rate);
+		const char* getType() const {
+			return "dql_queue";
+		}
+
 		void setBufferSize(size_t buffer_size);
 		void setEpsilon(double epsilon);
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet) override;
-		void receiveFromRightModule(std::shared_ptr<Packet> packet) override;
 	private:
 		Mqtt &mqtt;
 		DeepQLearning deep_q_learning;
 
-		std::atomic<std::chrono::high_resolution_clock::duration> interval;
 		std::atomic<size_t> buffer_size;
 		std::atomic<double> epsilon;
 
@@ -43,9 +42,13 @@ class DQLQueueModule : public ModuleHasLeft<std::shared_ptr<Packet>>, public Mod
 		std::unique_ptr<std::thread> training_thread;
 		std::atomic<bool> running;
 
-		boost::asio::high_resolution_timer timer_lr;
-		std::queue<std::shared_ptr<Packet>> packet_queue_lr;
-		void processLr(const boost::system::error_code& error);
+		ReceivingPort<std::shared_ptr<Packet>> input_port;
+		RespondingPort<std::shared_ptr<Packet>> output_port;
+
+		std::queue<std::shared_ptr<Packet>> packet_queue;
+
+		void enqueue(std::shared_ptr<Packet> packet);
+		std::shared_ptr<Packet> dequeue();
 
 		boost::asio::high_resolution_timer timer_statistics;
 		void statistics(const boost::system::error_code& error);

@@ -10,6 +10,9 @@
 #include "meter/DelayMeter.hpp"
 #include "meter/ThroughputMeter.hpp"
 #include "queue/FifoQueueModule.hpp"
+#ifdef MACHINE_LEARNING
+#include "queue/DQLQueueModule.hpp"
+#endif
 #include "rate/BitrateRateModule.hpp"
 #include "rate/FixedIntervalRateModule.hpp"
 #include "rate/TraceRateModule.hpp"
@@ -40,6 +43,10 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					new_module = make_shared<DelayMeter>(io_service, mqtt);
 				} else if(type == "throughput_meter") {
 					new_module = make_shared<ThroughputMeter>(io_service, mqtt, "throughput_meter");
+				#ifdef MACHINE_LEARNING
+				} else if(type == "dql_queue") {
+					new_module = make_shared<DQLQueueModule>(io_service, mqtt, 100, 0.001);
+				#endif
 				} else if(type == "fifo_queue") {
 					new_module = make_shared<FifoQueueModule>(mqtt, 100);
 				} else if(type == "bitrate_rate") {

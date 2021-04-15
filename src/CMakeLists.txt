@@ -46,7 +46,7 @@ if(MACHINE_LEARNING)
 
 	target_sources(channel_emulator PRIVATE
 		ml/DeepQLearning.cpp
-		# modules/queue/DQLQueueModule.cpp
+		modules/queue/DQLQueueModule.cpp
 	)
 
 	target_link_libraries(channel_emulator
