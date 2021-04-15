@@ -39,6 +39,11 @@
 
 .node_library .group > .content {
 	min-height: 1px;
+	overflow: hidden;
+}
+
+.node_library .group.collapsed > .content {
+	height: 0;
 }
 
 .node {

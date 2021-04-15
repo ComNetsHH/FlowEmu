@@ -851,6 +851,15 @@ class NodeLibraryGroup {
 		this.content = document.createElement("ul");
 		this.content.classList.add("content");
 		this.element.appendChild(this.content);
+
+		var that = this;
+		this.header.addEventListener("click", function(e) {
+			if(that.element.classList.contains("collapsed")) {
+				that.element.classList.remove("collapsed");
+			} else {
+				that.element.classList.add("collapsed");
+			}
+		});
 	}
 
 	addNode(node) {
