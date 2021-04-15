@@ -148,9 +148,6 @@ class NodeEditor {
 			this.dragged_element = undefined;
 		}
 
-		node.element.remove();
-		delete this.nodes[node.id];
-
 		var that = this;
 		this.paths.forEach(function(path) {
 			if(path.port_from.parent.parent === node || path.port_to.parent.parent === node) {
@@ -158,7 +155,8 @@ class NodeEditor {
 			}
 		});
 
-		node = undefined;
+		node.element.remove();
+		delete this.nodes[node.id];
 	}
 
 	addPath(path, call_callback = true) {
