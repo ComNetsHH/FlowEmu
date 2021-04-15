@@ -780,7 +780,7 @@ class Path {
 		const from_position = (this.mouse === "from" ? this.parent.mouse_position : this.port_from.getPosition());
 		const to_position = (this.mouse === "to" ? this.parent.mouse_position : this.port_to.getPosition());
 
-		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, 100);
+		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, Math.min(Math.abs(to_position.y - from_position.y) * 2, 100));
 		const dist_from = ((this.port_from !== undefined && this.port_from.side === "left") || (this.port_from === undefined && this.port_to !== undefined && this.port_to.side === "right") ? (0 - dist) : dist)
 		const dist_to = ((this.port_to !== undefined && this.port_to.side === "left") || (this.port_to === undefined && this.port_from !== undefined && this.port_from.side === "right") ? (0 - dist) : dist)
 
