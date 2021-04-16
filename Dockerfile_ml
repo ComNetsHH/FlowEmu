@@ -21,9 +21,12 @@ RUN apt-get update \
 #######################################
 FROM builder AS build
 
+# Add emulator source
+ADD CMakeLists.txt /channel_emulator/CMakeLists.txt
+ADD src /channel_emulator/src
+
 # Build channel emulator
-ADD . /channel_emulator
-RUN rm -R /channel_emulator/BUILD; mkdir -p /channel_emulator/BUILD \
+RUN mkdir -p /channel_emulator/BUILD \
 	&& cd /channel_emulator/BUILD \
 	&& cmake -DMACHINE_LEARNING=on .. \
 	&& make -j$(nproc)
