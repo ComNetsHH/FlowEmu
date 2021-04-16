@@ -13,7 +13,7 @@ set(channel_emulator_SRCS
 	modules/loss/UncorrelatedLossModule.cpp
 	modules/meter/DelayMeter.cpp
 	modules/meter/ThroughputMeter.cpp
-	# modules/null/NullModule.cpp
+	modules/null/NullModule.cpp
 	modules/queue/FifoQueueModule.cpp
 	modules/rate/BitrateRateModule.cpp
 	modules/rate/FixedIntervalRateModule.cpp
