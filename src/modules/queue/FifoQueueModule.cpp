@@ -1,8 +1,10 @@
 #include "FifoQueueModule.hpp"
 
+#include <boost/bind.hpp>
+
 using namespace std;
 
-FifoQueueModule::FifoQueueModule(Mqtt &mqtt, size_t buffer_size) : mqtt(mqtt) {
+FifoQueueModule::FifoQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, size_t buffer_size) : timer_statistics(io_service), mqtt(mqtt) {
 	setName("FIFO Queue");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
@@ -16,6 +18,10 @@ FifoQueueModule::FifoQueueModule(Mqtt &mqtt, size_t buffer_size) : mqtt(mqtt) {
 		size_t buffer_size = stoul(message);
 		setBufferSize(buffer_size);
 	});
+
+	// Start statistics timer
+	timer_statistics.expires_from_now(chrono::milliseconds(0));
+	timer_statistics.async_wait(boost::bind(&FifoQueueModule::statistics, this, boost::asio::placeholders::error));
 }
 
 void FifoQueueModule::setBufferSize(size_t buffer_size) {
@@ -42,4 +48,15 @@ std::shared_ptr<Packet> FifoQueueModule::dequeue() {
 	}
 
 	return packet;
+}
+
+void FifoQueueModule::statistics(const boost::system::error_code& error) {
+	if(error == boost::asio::error::operation_aborted) {
+		return;
+	}
+
+	mqtt.publish("get/fifo_queue/queue_length", to_string(packet_queue.size()), true);
+
+	timer_statistics.expires_at(timer_statistics.expiry() + chrono::milliseconds(100));
+	timer_statistics.async_wait(boost::bind(&FifoQueueModule::statistics, this, boost::asio::placeholders::error));
 }

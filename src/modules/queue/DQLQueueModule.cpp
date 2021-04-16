@@ -118,6 +118,8 @@ void DQLQueueModule::statistics(const boost::system::error_code& error) {
 		return;
 	}
 
+	mqtt.publish("get/dql_queue/queue_length", to_string(packet_queue.size()), true);
+
 	auto observation = observation_tf.tensor<float, 2>();
 	for(int x = 0; x < 3; x++) {
 		for(int y = 0; y < 10; y++) {
@@ -128,7 +130,7 @@ void DQLQueueModule::statistics(const boost::system::error_code& error) {
 	cout << "Reward: " << (int) reward << endl;
 	cout << "-------------------------" << endl;
 
-	timer_statistics.expires_at(timer_statistics.expiry() + chrono::seconds(1));
+	timer_statistics.expires_at(timer_statistics.expiry() + chrono::milliseconds(100));
 	timer_statistics.async_wait(boost::bind(&DQLQueueModule::statistics, this, boost::asio::placeholders::error));
 }
 
