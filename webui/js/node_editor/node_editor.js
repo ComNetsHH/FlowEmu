@@ -47,12 +47,13 @@ class NodeEditor {
 
 		window.addEventListener("mousemove", function(e) {
 			const node_editor_position = that.element.getBoundingClientRect();
-			that.mouse_position = {"x": e.clientX - node_editor_position.x - that.pan.x, "y": e.clientY - node_editor_position.y - that.pan.y};
+			that.mouse_position = {"x": e.clientX - node_editor_position.x, "y": e.clientY - node_editor_position.y};
+			that.mouse_position_panned = {"x": e.clientX - node_editor_position.x - that.pan.x, "y": e.clientY - node_editor_position.y - that.pan.y};
 
 			if(that.dragged_element instanceof Node) {
 				that.dragged_element.setPosition({
-					"x": that.mouse_position.x - that.dragged_element.drag_offset.x,
-					"y": that.mouse_position.y - that.dragged_element.drag_offset.y
+					"x": that.mouse_position_panned.x - that.dragged_element.drag_offset.x,
+					"y": that.mouse_position_panned.y - that.dragged_element.drag_offset.y
 				});
 
 				that.paths.forEach(function(path) {
@@ -64,7 +65,7 @@ class NodeEditor {
 				that.loose_path.update();
 			}
 
-			if(that.panning !== undefined) {
+			if(!(that.dragged_element instanceof Node) && that.panning !== undefined) {
 				that.pan.x = that.panning.start_pan_x + (e.clientX - that.panning.start_mouse_x);
 				that.pan.y = that.panning.start_pan_y + (e.clientY - that.panning.start_mouse_y);
 
@@ -114,6 +115,8 @@ class NodeEditor {
 		node.parent = this;
 
 		this.element.appendChild(node.element);
+
+		node.element.style.transform = "translate(" + this.pan.x + "px, " + this.pan.y + "px)";
 
 		var that = this;
 		node.element.addEventListener("mousedown", function(e) {
@@ -900,12 +903,13 @@ class NodeLibraryGroup {
 
 			let library_node_position = node.element.getBoundingClientRect();
 			let node_editor_position = that.parent.node_editor.element.getBoundingClientRect();
+			let node_editor_pan = that.parent.node_editor.pan;
 
 			var new_node = new Node();
 			new_node.deserialize(node.serialize());
 			new_node.setPosition({
-				"x": library_node_position.x - node_editor_position.x,
-				"y": library_node_position.y - node_editor_position.y
+				"x": library_node_position.x - node_editor_position.x - node_editor_pan.x,
+				"y": library_node_position.y - node_editor_position.y - node_editor_pan.y
 			});
 			that.parent.node_editor.addNode(new_node);
 
