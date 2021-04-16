@@ -27,8 +27,6 @@ class GilbertElliotLossModule : public Module {
 
 		void reset();
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
-		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 	private:
 		Mqtt &mqtt;
 
@@ -52,6 +50,9 @@ class GilbertElliotLossModule : public Module {
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
+
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
+		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 
 		boost::asio::high_resolution_timer timer_transition;
 		void transition(const boost::system::error_code& error);

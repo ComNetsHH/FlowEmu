@@ -23,8 +23,6 @@ class UncorrelatedLossModule : public Module {
 		void setLossProbability(double p);
 		void setSeed(uint32_t seed);
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
-		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 	private:
 		Mqtt &mqtt;
 
@@ -39,6 +37,9 @@ class UncorrelatedLossModule : public Module {
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
+
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
+		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 };
 
 #endif

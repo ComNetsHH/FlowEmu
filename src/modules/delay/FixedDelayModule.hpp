@@ -24,14 +24,14 @@ class FixedDelayModule : public Module {
 
 		void setDelay(uint64_t delay);
 
-		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
-		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 	private:
 		Mqtt &mqtt;
 		std::atomic<uint64_t> delay;
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
 		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+
+		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		boost::asio::high_resolution_timer timer_lr;
 		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_lr;
 		void setQueueTimeoutLr();
@@ -39,6 +39,7 @@ class FixedDelayModule : public Module {
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
+		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 		boost::asio::high_resolution_timer timer_rl;
 		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_rl;
 		void setQueueTimeoutRl();

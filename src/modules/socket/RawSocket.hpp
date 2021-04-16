@@ -27,13 +27,13 @@ class RawSocket : public Module {
 		}
 
 	private:
+		ReceivingPort<std::shared_ptr<Packet>> input_port;
+		SendingPort<std::shared_ptr<Packet>> output_port;
+
 		void send(std::shared_ptr<Packet> packet);
 
 		void start_receive();
 		void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
-
-		SendingPort<std::shared_ptr<Packet>> output_port;
-		ReceivingPort<std::shared_ptr<Packet>> input_port;
 
 		boost::asio::generic::raw_protocol::socket socket;
 		boost::array<uint8_t, 10000> recv_buffer;

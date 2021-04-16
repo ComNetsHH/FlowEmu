@@ -21,14 +21,14 @@ class ThroughputMeter : public Module {
 			return "throughput_meter";
 		}
 
-		void receive(std::shared_ptr<Packet> packet);
-
 	private:
 		Mqtt &mqtt;
 		std::string module_id;
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
+
+		void receive(std::shared_ptr<Packet> packet);
 
 		boost::asio::high_resolution_timer timer;
 		uint64_t bytes_sum = 0;

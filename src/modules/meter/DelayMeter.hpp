@@ -20,13 +20,13 @@ class DelayMeter : public Module {
 			return "delay_meter";
 		}
 
-		void receive(std::shared_ptr<Packet> packet);
-
 	private:
 		Mqtt &mqtt;
 
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
+
+		void receive(std::shared_ptr<Packet> packet);
 
 		boost::asio::high_resolution_timer timer;
 		std::deque<std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>> creation_time_points;
