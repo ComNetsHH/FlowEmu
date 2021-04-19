@@ -88,7 +88,11 @@
 }
 
 .node .content li {
-	padding: 8px;
+	padding: 4px 8px;
+}
+
+.node .content li:last-child {
+	padding-bottom: 8px;
 }
 
 .node_library .node .content .label {
