@@ -499,6 +499,10 @@ class Node {
 					var label = new NodeContentLabel(item.label);
 					that.addContentItem(label);
 					break;
+				case "parameter":
+					var parameter = new NodeContentParameter(item.id, item.label, item.unit, item.integer, item.min, item.max, item.step);
+					that.addContentItem(parameter);
+					break;
 				case "flow":
 					var flow = new NodeContentFlow();
 					item.ports.left.forEach(function(port_data) {
@@ -553,6 +557,97 @@ class NodeContentLabel extends NodeContentItem {
 		var data = {
 			"type": "label",
 			"label": this.getLabel()
+		};
+
+		return data;
+	}
+}
+
+class NodeContentParameter extends NodeContentItem {
+	id = undefined;
+	label = undefined;
+	unit = undefined;
+	integer = undefined;
+	min = undefined;
+	max = undefined;
+	step = undefined;
+
+	constructor(id, label, unit, integer, min, max, step) {
+		super();
+		this.element.classList.add("parameter");
+
+		this.id = id;
+		this.label = label;
+		this.unit = unit;
+		this.integer = integer;
+		this.min = min;
+		this.max = max;
+		this.step = step;
+
+		var element_label = document.createElement("a");
+		element_label.innerHTML = label + ":";
+		this.element.appendChild(element_label);
+
+		var element_step_down = document.createElement("div");
+		element_step_down.classList.add("step");
+		element_step_down.innerHTML = "<";
+		element_step_down.addEventListener("click", function(e) {
+			element_input.value = parseFloat(element_input.value) - step;
+			element_input.dispatchEvent(new Event("change"));
+		});
+		element_step_down.addEventListener("mousemove", function(e) {
+			e.stopPropagation();
+		});
+		this.element.appendChild(element_step_down);
+
+		var element_input = document.createElement("input");
+		element_input.type = "text"
+		element_input.value = min;
+		element_input.addEventListener("change", function(e) {
+			if(integer) {
+				this.value = parseInt(this.value)
+			} else {
+				this.value = parseFloat(this.value)
+			}
+
+			if(this.value < min) {
+				this.value = min;
+			} else if(this.value > max) {
+				this.value = max;
+			}
+		});
+		element_input.addEventListener("mousemove", function(e) {
+			e.stopPropagation();
+		});
+		this.element.appendChild(element_input);
+
+		var element_step_up = document.createElement("div");
+		element_step_up.classList.add("step");
+		element_step_up.innerHTML = ">";
+		element_step_up.addEventListener("click", function(e) {
+			element_input.value = parseFloat(element_input.value) + step;
+			element_input.dispatchEvent(new Event("change"));
+		});
+		element_step_up.addEventListener("mousemove", function(e) {
+			e.stopPropagation();
+		});
+		this.element.appendChild(element_step_up);
+
+		var element_unit = document.createElement("a");
+		element_unit.innerHTML = this.unit;
+		this.element.appendChild(element_unit);
+	}
+
+	serialize() {
+		var data = {
+			"type": "parameter",
+			"id": this.id,
+			"label": this.id,
+			"unit": this.unit,
+			"integer": this.integer,
+			"min": this.min,
+			"max": this.max,
+			"step": this.step
 		};
 
 		return data;

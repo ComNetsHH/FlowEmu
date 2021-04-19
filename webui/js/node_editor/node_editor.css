@@ -99,6 +99,48 @@
 	display: none !important;
 }
 
+.node .content .parameter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.node .content .parameter input[type=text] {
+	flex: 1 1 auto;
+	width: 100%;
+
+	padding: 4px;
+	margin: 0;
+	border: none;
+
+	background: rgb(75, 75, 75);
+	color: white;
+
+	text-align: center;
+}
+
+.node .content .parameter input[type=text]:focus {
+	outline: none;
+}
+
+.node .content .parameter .step {
+	height: 27px;
+	padding: 4px;
+	line-height: 19px;
+
+	background: rgb(90, 90, 90);
+}
+
+.node .content .parameter .step:first-of-type {
+	margin-left: 8px;
+	border-radius: 3px 0 0 3px;
+}
+
+.node .content .parameter .step:last-of-type {
+	margin-right: 8px;
+	border-radius: 0 3px 3px 0;
+}
+
 .node .content .flow {
 	display: flex;
 	padding: 4px 8px;
