@@ -21,17 +21,22 @@ void signalHandler(int signum) {
 }
 
 int main(int argc, const char *argv[]) {
+	string mqtt_broker = "localhost";
 	string interface_source = "in";
 	string interface_sink = "out";
-	if(argc > 2) {
-		interface_source = argv[1];
-		interface_sink = argv[2];
+
+	if(argc > 1) {
+		mqtt_broker = argv[1];
+	}
+	if(argc > 3) {
+		interface_source = argv[2];
+		interface_sink = argv[3];
 	}
 
 	cout << "Starting emulator..." << endl;
 
 	// MQTT
-	Mqtt mqtt("localhost", 1883, "channel_emulator");
+	Mqtt mqtt(mqtt_broker, 1883, "channel_emulator");
 
 	// Module manager
 	ModuleManager module_manager(io_service, mqtt);

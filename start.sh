@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# MQTT broker
+MQTT_BROKER="$HOSTNAME"
+
 # Build normal emulator Docker image
 DOCKER_FILE_EMULATOR="Dockerfile"
 DOCKER_IMAGE_EMULATOR="channel_emulator"
@@ -67,7 +70,7 @@ docker run -d -it --privileged --name sink $DOCKER_IMAGE_SOURCE_SINK
 setup_network > /dev/null
 
 # Start emulator
-docker exec -it channel channel_emulator
+docker exec -it channel channel_emulator $MQTT_BROKER
 
 # Stop and delete Docker containers and network namespaces
 cleanup > /dev/null
