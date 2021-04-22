@@ -113,7 +113,7 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			uncorrelated_loss.addContentItem(flow)
-			uncorrelated_loss.addContentItem(new NodeContentLabel("Loss: 10%"));
+			uncorrelated_loss.addContentItem(new NodeContentParameter("loss", "Loss", "%", false, 0, 100, 1));
 			loss_group.addNode(uncorrelated_loss);
 
 			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
@@ -125,10 +125,10 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			gilbert_elliot_loss.addContentItem(flow)
-			gilbert_elliot_loss.addContentItem(new NodeContentLabel("p_01: 1/1000ms"));
-			gilbert_elliot_loss.addContentItem(new NodeContentLabel("p_10: 1/1000ms"));
-			gilbert_elliot_loss.addContentItem(new NodeContentLabel("e_0: 0%"));
-			gilbert_elliot_loss.addContentItem(new NodeContentLabel("e_1: 100%"));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p_01", "p_01", "1/ms", false, 0, null, 10));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p_10", "p_10", "1/ms", false, 0, null, 10));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e_0", "e_0", "%", false, 0, 100, 1));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e_1", "e_1", "%", false, 0, 100, 1));
 			loss_group.addNode(gilbert_elliot_loss);
 
 			node_library.addGroup(loss_group);
@@ -145,7 +145,7 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			fixed_delay.addContentItem(flow)
-			fixed_delay.addContentItem(new NodeContentLabel("Delay: 50ms"));
+			fixed_delay.addContentItem(new NodeContentParameter("delay", "Delay", "ms", false, 0, null, 10));
 			delay_group.addNode(fixed_delay);
 
 			node_library.addGroup(delay_group);
