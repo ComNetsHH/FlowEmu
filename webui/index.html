@@ -61,6 +61,20 @@
 				}
 			});
 
+			subscribe("get/module/+/+", function(topic, message) {
+				var r = new RegExp("get\\/module\\/(\\w+)/(\\w+)");
+				var m;
+				if((m = r.exec(topic)) === null) {
+					return;
+				}
+				var node_id = m[1];
+				var parameter_id = m[2];
+
+				if(node_id in node_editor.nodes && parameter_id in node_editor.nodes[node_id].parameters) {
+					node_editor.nodes[node_id].parameters[parameter_id].setValue(parseFloat(message));
+				}
+			});
+
 			node_editor.setNodeAddHandler(function(node) {
 				publish("set/module/" + node.id, node.serialize());
 			});
@@ -81,6 +95,9 @@
 				publish("set/paths", node_editor.serializePaths());
 			});
 
+			node_editor.setParameterChangeHandler(function(node, parameter_id, value) {
+				publish("set/module/" + node.id + "/" + parameter_id, value.toString());
+			});
 
 			var node_library = new NodeLibrary("#node_library");
 			node_library.connectNodeEditor(node_editor);

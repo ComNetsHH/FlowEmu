@@ -18,6 +18,7 @@ class NodeEditor {
 	node_remove_handler = undefined;
 	path_add_handler = undefined;
 	path_remove_handler = undefined;
+	parameter_change_handler = undefined;
 
 	constructor(div) {
 		this.element = document.querySelector(div);
@@ -336,6 +337,10 @@ class NodeEditor {
 		this.path_remove_handler = handler;
 	}
 
+	setParameterChangeHandler(handler) {
+		this.parameter_change_handler = handler;
+	}
+
 	serializeNodes() {
 		var data = {};
 		for(let key in this.nodes) {
@@ -378,6 +383,7 @@ class Node {
 	title = undefined;
 	content_items = [];
 	ports = {};
+	parameters = {};
 
 	drag_offset = {"x": 0, "y": 0};
 
@@ -432,6 +438,10 @@ class Node {
 			item.ports_right.forEach(function(port) {
 				that.ports[port.getId()] = port;
 			});
+		}
+
+		if(item instanceof NodeContentParameter) {
+			this.parameters[item.id] = item;
 		}
 
 		this.content.appendChild(item.element);
@@ -619,6 +629,10 @@ class NodeContentParameter extends NodeContentItem {
 			} else if(that.max != null && this.value > that.max) {
 				this.value = that.max;
 			}
+
+			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
+				that.parent.parent.parameter_change_handler(that.parent, that.id, this.value);
+			}
 		});
 		this.element_input.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
@@ -640,6 +654,10 @@ class NodeContentParameter extends NodeContentItem {
 		var element_unit = document.createElement("a");
 		element_unit.innerHTML = this.unit;
 		this.element.appendChild(element_unit);
+	}
+
+	setValue(value) {
+		this.element_input.value = value;
 	}
 
 	serialize() {
