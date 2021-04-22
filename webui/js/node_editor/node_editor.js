@@ -642,7 +642,7 @@ class NodeContentParameter extends NodeContentItem {
 		var data = {
 			"type": "parameter",
 			"id": this.id,
-			"label": this.id,
+			"label": this.label,
 			"unit": this.unit,
 			"integer": this.integer,
 			"min": this.min,
