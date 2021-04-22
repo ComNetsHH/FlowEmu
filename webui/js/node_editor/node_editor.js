@@ -572,6 +572,8 @@ class NodeContentParameter extends NodeContentItem {
 	max = undefined;
 	step = undefined;
 
+	element_input = undefined;
+
 	constructor(id, label, unit, integer, min, max, step) {
 		super();
 		this.element.classList.add("parameter");
@@ -584,6 +586,8 @@ class NodeContentParameter extends NodeContentItem {
 		this.max = max;
 		this.step = step;
 
+		var that = this;
+
 		var element_label = document.createElement("a");
 		element_label.innerHTML = label + ":";
 		this.element.appendChild(element_label);
@@ -592,19 +596,18 @@ class NodeContentParameter extends NodeContentItem {
 		element_step_down.classList.add("step");
 		element_step_down.innerHTML = "<";
 		element_step_down.addEventListener("click", function(e) {
-			element_input.value = parseFloat(element_input.value) - step;
-			element_input.dispatchEvent(new Event("change"));
+			that.element_input.value = parseFloat(that.element_input.value) - step;
+			that.element_input.dispatchEvent(new Event("change"));
 		});
 		element_step_down.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
 		});
 		this.element.appendChild(element_step_down);
 
-		var element_input = document.createElement("input");
-		element_input.type = "text"
-		element_input.value = min != null ? min : 0;
-		var that = this;
-		element_input.addEventListener("change", function(e) {
+		this.element_input = document.createElement("input");
+		this.element_input.type = "text"
+		this.element_input.value = min != null ? min : 0;
+		this.element_input.addEventListener("change", function(e) {
 			if(that.integer) {
 				this.value = parseInt(this.value)
 			} else {
@@ -617,17 +620,17 @@ class NodeContentParameter extends NodeContentItem {
 				this.value = that.max;
 			}
 		});
-		element_input.addEventListener("mousemove", function(e) {
+		this.element_input.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
 		});
-		this.element.appendChild(element_input);
+		this.element.appendChild(this.element_input);
 
 		var element_step_up = document.createElement("div");
 		element_step_up.classList.add("step");
 		element_step_up.innerHTML = ">";
 		element_step_up.addEventListener("click", function(e) {
-			element_input.value = parseFloat(element_input.value) + step;
-			element_input.dispatchEvent(new Event("change"));
+			that.element_input.value = parseFloat(that.element_input.value) + step;
+			that.element_input.dispatchEvent(new Event("change"));
 		});
 		element_step_up.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
