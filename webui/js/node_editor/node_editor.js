@@ -603,17 +603,18 @@ class NodeContentParameter extends NodeContentItem {
 		var element_input = document.createElement("input");
 		element_input.type = "text"
 		element_input.value = min != null ? min : 0;
+		var that = this;
 		element_input.addEventListener("change", function(e) {
-			if(integer) {
+			if(that.integer) {
 				this.value = parseInt(this.value)
 			} else {
 				this.value = parseFloat(this.value)
 			}
 
-			if(min != null && this.value < min) {
-				this.value = min;
-			} else if(max != null && this.value > max) {
-				this.value = max;
+			if(that.min != null && this.value < that.min) {
+				this.value = that.min;
+			} else if(that.max != null && this.value > that.max) {
+				this.value = that.max;
 			}
 		});
 		element_input.addEventListener("mousemove", function(e) {
