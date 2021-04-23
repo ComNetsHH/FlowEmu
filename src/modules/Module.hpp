@@ -7,6 +7,7 @@
 
 #include <json/json.h>
 
+#include "Parameter.hpp"
 #include "Port.hpp"
 
 class Module {
@@ -18,6 +19,13 @@ class Module {
 			std::string label;
 			Side side;
 			Port* port;
+		};
+
+		struct ParameterInfo {
+			std::string id;
+			std::string label;
+			std::string unit;
+			Parameter* parameter;
 		};
 
 		virtual const char* getType() const = 0;
@@ -76,6 +84,19 @@ class Module {
 
 			json_content.append(json_flow);
 
+			for(auto const& entry : parameters) {
+				Json::Value json_parameter;
+				json_parameter["type"] = "parameter";
+				json_parameter["id"] = entry.second.id;
+				json_parameter["label"] = entry.second.label;
+				json_parameter["unit"] = entry.second.unit;
+				json_parameter["integer"] = false;
+				json_parameter["min"] = entry.second.parameter->getMin();
+				json_parameter["max"] = entry.second.parameter->getMax();
+				json_parameter["step"] = entry.second.parameter->getStep();
+				json_content.append(json_parameter);
+			}
+
 			json_root["content"] = json_content;
 
 			return json_root;
@@ -99,6 +120,14 @@ class Module {
 			return ports.at(id);
 		}
 
+		const std::map<std::string, ParameterInfo>& getParameters() {
+			return parameters;
+		}
+
+		ParameterInfo getParameter(std::string id) {
+			return parameters.at(id);
+		}
+
 	protected:
 		void addPort(PortInfo port_info) {
 			ports[port_info.id] = port_info;
@@ -113,12 +142,18 @@ class Module {
 			}
 		}
 
+		void addParameter(ParameterInfo parameter_info) {
+			parameters[parameter_info.id] = parameter_info;
+		}
+
 	private:
 		std::string name = "UNNAMED MODULE";
 
 		std::map<std::string, PortInfo> ports;
 		std::list<PortInfo> ports_info_left;
 		std::list<PortInfo> ports_info_right;
+
+		std::map<std::string, ParameterInfo> parameters;
 
 		int gui_position_x = 0;
 		int gui_position_y = 0;
