@@ -116,6 +116,10 @@ class Module {
 			}
 		}
 
+		const std::map<std::string, PortInfo>& getPorts() {
+			return ports;
+		}
+
 		PortInfo getPort(std::string id) {
 			return ports.at(id);
 		}
