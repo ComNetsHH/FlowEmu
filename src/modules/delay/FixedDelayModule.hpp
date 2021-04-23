@@ -4,32 +4,29 @@
 #include <cstdint>
 #include <queue>
 #include <utility>
-#include <atomic>
 #include <chrono>
 
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class FixedDelayModule : public Module {
 	public:
-		FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay);
+		FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay);
 		~FixedDelayModule();
 
 		const char* getType() const {
 			return "fixed_delay";
 		}
 
-		void setDelay(uint64_t delay);
+		void handleDelayChange();
 
 	private:
-		Mqtt &mqtt;
-		std::atomic<uint64_t> delay;
-
 		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
 		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+
+		Parameter parameter_delay = {0, 0, std::numeric_limits<double>::quiet_NaN(), 10};
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		boost::asio::high_resolution_timer timer_lr;

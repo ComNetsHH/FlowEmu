@@ -4,35 +4,29 @@
 
 using namespace std;
 
-FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t delay) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
+FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay) : timer_lr(io_service), timer_rl(io_service) {
 	setName("Fixed Delay");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
 	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+	addParameter({"delay", "Delay", "ms", &parameter_delay});
 
 	input_port_lr.setReceiveHandler(bind(&FixedDelayModule::receiveFromLeftModule, this, placeholders::_1));
 	input_port_rl.setReceiveHandler(bind(&FixedDelayModule::receiveFromRightModule, this, placeholders::_1));
 
-	setDelay(delay);
+	parameter_delay.addChangeHandler(bind(&FixedDelayModule::handleDelayChange, this));
 
-	mqtt.subscribe("set/fixed_delay/delay", [&](const string &topic, const string &message) {
-		uint64_t delay = stoul(message);
-		setDelay(delay);
-	});
+	parameter_delay.set(delay);
 }
 
-void FixedDelayModule::setDelay(uint64_t delay) {
-	this->delay = delay;
-
+void FixedDelayModule::handleDelayChange() {
 	setQueueTimeoutLr();
 	setQueueTimeoutRl();
-
-	mqtt.publish("get/fixed_delay/delay", to_string(delay), true);
 }
 
 void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
-	if(delay == 0) {
+	if(parameter_delay.get() == 0) {
 		output_port_lr.send(packet);
 		return;
 	}
@@ -48,7 +42,7 @@ void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 
 void FixedDelayModule::setQueueTimeoutLr() {
 	timer_lr.cancel();
-	timer_lr.expires_at(packet_queue_lr.front().first + chrono::milliseconds(delay.load()));
+	timer_lr.expires_at(packet_queue_lr.front().first + chrono::milliseconds((uint64_t) parameter_delay.get()));
 	timer_lr.async_wait(boost::bind(&FixedDelayModule::processQueueLr, this, boost::asio::placeholders::error));
 }
 
@@ -57,7 +51,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds(delay.load());
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_delay.get());
 
 	while(!packet_queue_lr.empty()) {
 		if(packet_queue_lr.front().first <= chrono_deadline) {
@@ -71,7 +65,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 }
 
 void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
-	if(delay == 0) {
+	if(parameter_delay.get() == 0) {
 		output_port_rl.send(packet);
 		return;
 	}
@@ -87,7 +81,7 @@ void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 
 void FixedDelayModule::setQueueTimeoutRl() {
 	timer_rl.cancel();
-	timer_rl.expires_at(packet_queue_rl.front().first + chrono::milliseconds(delay.load()));
+	timer_rl.expires_at(packet_queue_rl.front().first + chrono::milliseconds((uint64_t) parameter_delay.get()));
 	timer_rl.async_wait(boost::bind(&FixedDelayModule::processQueueRl, this, boost::asio::placeholders::error));
 }
 
@@ -96,7 +90,7 @@ void FixedDelayModule::processQueueRl(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds(delay.load());
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_delay.get());
 
 	while(!packet_queue_rl.empty()) {
 		if(packet_queue_rl.front().first <= chrono_deadline) {
