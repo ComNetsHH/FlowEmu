@@ -204,10 +204,10 @@ void ModuleManager::updateModule(string id, Json::Value json_root, bool publish)
 		return;
 	}
 
-	modules[id]->deserialize(json_root);
+	modules.at(id)->deserialize(json_root);
 
 	if(publish) {
-		mqtt.publish("get/module/" + id, modules[id]->serialize(), true, true);
+		mqtt.publish("get/module/" + id, modules.at(id)->serialize(), true, true);
 	}
 }
 
