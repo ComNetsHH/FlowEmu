@@ -8,12 +8,11 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class DelayMeter : public Module {
 	public:
-		DelayMeter(boost::asio::io_service &io_service, Mqtt &mqtt);
+		DelayMeter(boost::asio::io_service &io_service);
 		~DelayMeter();
 
 		const char* getType() const {
@@ -21,10 +20,12 @@ class DelayMeter : public Module {
 		}
 
 	private:
-		Mqtt &mqtt;
-
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
+
+		Statistic statistic_min;
+		Statistic statistic_max;
+		Statistic statistic_mean;
 
 		void receive(std::shared_ptr<Packet> packet);
 

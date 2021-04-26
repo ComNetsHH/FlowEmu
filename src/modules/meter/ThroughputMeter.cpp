@@ -1,15 +1,15 @@
 #include "ThroughputMeter.hpp"
 
-//#include <iostream>
-
 #include <boost/bind.hpp>
 
 using namespace std;
 
-ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service, Mqtt &mqtt, const string &module_id) : timer(io_service), mqtt(mqtt), module_id(module_id) {
+ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io_service) {
 	setName("Throughput Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addStatistic({"bytes_per_second", "Bytes per second", "B/s", &statistic_bytes_per_second});
+	addStatistic({"packets_per_second", "Packets per second", "packets/s", &statistic_packets_per_second});
 
 	input_port.setReceiveHandler(bind(&ThroughputMeter::receive, this, placeholders::_1));
 
@@ -42,9 +42,8 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
-	//cout << bytes_sum << " bytes/s (" << (double) bytes_sum * 8 / 1000 / 1000 << " Mbit/s)" << " - " << bytes.size() << " packets/s" << endl;
-	mqtt.publish("get/" + module_id + "/bytes_per_second", to_string(bytes_sum), true);
-	mqtt.publish("get/" + module_id + "/packets_per_second", to_string(bytes.size()), true);
+	statistic_bytes_per_second.set(bytes_sum);
+	statistic_packets_per_second.set(bytes.size());
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));

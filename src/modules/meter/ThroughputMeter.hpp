@@ -9,12 +9,11 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class ThroughputMeter : public Module {
 	public:
-		ThroughputMeter(boost::asio::io_service &io_service, Mqtt &mqtt, const std::string &module_id);
+		ThroughputMeter(boost::asio::io_service &io_service);
 		~ThroughputMeter();
 
 		const char* getType() const {
@@ -22,11 +21,11 @@ class ThroughputMeter : public Module {
 		}
 
 	private:
-		Mqtt &mqtt;
-		std::string module_id;
-
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
+
+		Statistic statistic_bytes_per_second;
+		Statistic statistic_packets_per_second;
 
 		void receive(std::shared_ptr<Packet> packet);
 

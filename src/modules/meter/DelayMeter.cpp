@@ -1,16 +1,18 @@
 #include "DelayMeter.hpp"
 
-//#include <iostream>
 #include <limits>
 
 #include <boost/bind.hpp>
 
 using namespace std;
 
-DelayMeter::DelayMeter(boost::asio::io_service &io_service, Mqtt &mqtt) : timer(io_service), mqtt(mqtt) {
+DelayMeter::DelayMeter(boost::asio::io_service &io_service) : timer(io_service) {
 	setName("Delay Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addStatistic({"min", "Minimum", "ms", &statistic_min});
+	addStatistic({"max", "Maximum", "ms", &statistic_max});
+	addStatistic({"mean", "Mean", "ms", &statistic_mean});
 
 	input_port.setReceiveHandler(bind(&DelayMeter::receive, this, placeholders::_1));
 
@@ -64,10 +66,9 @@ void DelayMeter::process(const boost::system::error_code& error) {
 		mean_delay /= samples_num;
 	}
 
-	//cout << "Min: " << min_delay / 1000000 << " ms | Mean: " << mean_delay / 1000000 << " ms | Max: " << max_delay / 1000000 << " ms" << endl;
-	mqtt.publish("get/delay_meter/min", to_string(min_delay), true);
-	mqtt.publish("get/delay_meter/max", to_string(max_delay), true);
-	mqtt.publish("get/delay_meter/mean", to_string(mean_delay), true);
+	statistic_min.set((double) min_delay / 1000000);
+	statistic_max.set((double) max_delay / 1000000);
+	statistic_mean.set(mean_delay / 1000000);
 
 	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
 	timer.async_wait(boost::bind(&DelayMeter::process, this, boost::asio::placeholders::error));

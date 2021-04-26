@@ -42,9 +42,9 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				} else if(type == "uncorrelated_loss") {
 					new_module = make_shared<UncorrelatedLossModule>(mqtt, 0.1);
 				} else if(type == "delay_meter") {
-					new_module = make_shared<DelayMeter>(io_service, mqtt);
+					new_module = make_shared<DelayMeter>(io_service);
 				} else if(type == "throughput_meter") {
-					new_module = make_shared<ThroughputMeter>(io_service, mqtt, "throughput_meter");
+					new_module = make_shared<ThroughputMeter>(io_service);
 				} else if(type == "null") {
 					new_module = make_shared<NullModule>();
 				#ifdef MACHINE_LEARNING
