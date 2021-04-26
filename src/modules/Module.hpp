@@ -9,6 +9,7 @@
 
 #include "Parameter.hpp"
 #include "Port.hpp"
+#include "Statistic.hpp"
 
 class Module {
 	public:
@@ -26,6 +27,13 @@ class Module {
 			std::string label;
 			std::string unit;
 			Parameter* parameter;
+		};
+
+		struct StatisticInfo {
+			std::string id;
+			std::string label;
+			std::string unit;
+			Statistic* statistic;
 		};
 
 		virtual const char* getType() const = 0;
@@ -97,6 +105,15 @@ class Module {
 				json_content.append(json_parameter);
 			}
 
+			for(auto const& entry : statistics) {
+				Json::Value json_statistic;
+				json_statistic["type"] = "statistic";
+				json_statistic["id"] = entry.second.id;
+				json_statistic["label"] = entry.second.label;
+				json_statistic["unit"] = entry.second.unit;
+				json_content.append(json_statistic);
+			}
+
 			json_root["content"] = json_content;
 
 			return json_root;
@@ -132,6 +149,14 @@ class Module {
 			return parameters.at(id);
 		}
 
+		const std::map<std::string, StatisticInfo>& getStatistics() {
+			return statistics;
+		}
+
+		StatisticInfo getStatistic(std::string id) {
+			return statistics.at(id);
+		}
+
 	protected:
 		void addPort(PortInfo port_info) {
 			ports[port_info.id] = port_info;
@@ -150,6 +175,10 @@ class Module {
 			parameters[parameter_info.id] = parameter_info;
 		}
 
+		void addStatistic(StatisticInfo statistic_info) {
+			statistics[statistic_info.id] = statistic_info;
+		}
+
 	private:
 		std::string name = "UNNAMED MODULE";
 
@@ -158,6 +187,8 @@ class Module {
 		std::list<PortInfo> ports_info_right;
 
 		std::map<std::string, ParameterInfo> parameters;
+
+		std::map<std::string, StatisticInfo> statistics;
 
 		int gui_position_x = 0;
 		int gui_position_y = 0;

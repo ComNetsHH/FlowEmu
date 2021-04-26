@@ -77,6 +77,15 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					});
 				}
 
+				for(const auto& entry : new_module->getStatistics()) {
+					const string &statistic_id = entry.second.id;
+					const auto statistic = entry.second.statistic;
+
+					statistic->addHandler([&, node_id, statistic_id](double value) {
+						mqtt.publish("get/module/" + node_id + "/" + statistic_id, to_string(value), true, true);
+					});
+				}
+
 				addModule(node_id, new_module, false);
 				updateModule(node_id, json_root);
 			} else {
