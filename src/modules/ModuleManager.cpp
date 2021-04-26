@@ -63,29 +63,6 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					return;
 				}
 
-				for(const auto& entry : new_module->getParameters()) {
-					const string &parameter_id = entry.second.id;
-					const auto parameter = entry.second.parameter;
-
-					mqtt.subscribe("set/module/" + node_id + "/" + parameter_id, [&, parameter](const string &topic, const string &payload) {
-						parameter->set(stod(payload));
-					});
-
-					mqtt.publish("get/module/" + node_id + "/" + parameter_id, to_string(parameter->get()), true, true);
-					parameter->addChangeHandler([&, node_id, parameter_id](double value) {
-						mqtt.publish("get/module/" + node_id + "/" + parameter_id, to_string(value), true, true);
-					});
-				}
-
-				for(const auto& entry : new_module->getStatistics()) {
-					const string &statistic_id = entry.second.id;
-					const auto statistic = entry.second.statistic;
-
-					statistic->addHandler([&, node_id, statistic_id](double value) {
-						mqtt.publish("get/module/" + node_id + "/" + statistic_id, to_string(value), true, true);
-					});
-				}
-
 				addModule(node_id, new_module, false);
 				updateModule(node_id, json_root);
 			} else {
@@ -191,6 +168,29 @@ void ModuleManager::addModule(string id, shared_ptr<Module> module, bool publish
 
 	cout << "Add module " + id + "!" << endl;
 	modules[id] = module;
+
+	for(const auto& entry : module->getParameters()) {
+		const string &parameter_id = entry.second.id;
+		const auto parameter = entry.second.parameter;
+
+		mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter](const string &topic, const string &payload) {
+			parameter->set(stod(payload));
+		});
+
+		mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter->get()), true, true);
+		parameter->addChangeHandler([&, id, parameter_id](double value) {
+			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value), true, true);
+		});
+	}
+
+	for(const auto& entry : module->getStatistics()) {
+		const string &statistic_id = entry.second.id;
+		const auto statistic = entry.second.statistic;
+
+		statistic->addHandler([&, id, statistic_id](double value) {
+			mqtt.publish("get/module/" + id + "/" + statistic_id, to_string(value), true, true);
+		});
+	}
 
 	if(publish) {
 		mqtt.publish("get/module/" + id, module->serialize(), true, true);
