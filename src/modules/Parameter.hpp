@@ -17,10 +17,6 @@ class Parameter {
 		}
 
 		void set(double value) {
-			if(value == this->value.load()) {
-				return;
-			}
-
 			this->value.store(value);
 
 			for(const auto& handler : change_handlers) {
