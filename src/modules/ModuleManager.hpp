@@ -15,6 +15,7 @@
 class ModuleManager {
 	public:
 		ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt);
+		~ModuleManager();
 
 		void addModule(std::string id, std::shared_ptr<Module> module, bool publish = true);
 		void updateModule(std::string id, Json::Value json_root, bool publish = true);

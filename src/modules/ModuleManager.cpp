@@ -1,6 +1,7 @@
 #include "ModuleManager.hpp"
 
 #include <iostream>
+#include <list>
 #include <memory>
 #include <regex>
 
@@ -248,4 +249,15 @@ void ModuleManager::removeModule(string id, bool publish) {
 
 	cout << "Remove module " + id + "!" << endl;
 	modules.erase(id);
+}
+
+ModuleManager::~ModuleManager() {
+	list<string> module_ids;
+	for(const auto& module : modules) {
+		module_ids.emplace_back(module.first);
+	}
+
+	for(const auto& module_id : module_ids) {
+		removeModule(module_id, true);
+	}
 }
