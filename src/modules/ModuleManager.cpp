@@ -58,7 +58,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				} else if(type == "fixed_interval_rate") {
 					new_module = make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1));
 				} else if(type == "trace_rate") {
-					new_module = make_shared<TraceRateModule>(io_service, mqtt, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up");
+					new_module = make_shared<TraceRateModule>(io_service, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up");
 				} else {
 					cerr << "Unknown module type: " << type << endl;
 					return;

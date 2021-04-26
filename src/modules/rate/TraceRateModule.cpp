@@ -6,7 +6,7 @@
 
 using namespace std;
 
-TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, const string &downlink_trace_filename, const string &uplink_trace_filename) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
+TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, const string &downlink_trace_filename, const string &uplink_trace_filename) : timer_lr(io_service), timer_rl(io_service) {
 	setName("Trace Rate");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
@@ -15,12 +15,6 @@ TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, Mqtt &mqtt
 
 	loadTrace(trace_lr, downlink_trace_filename);
 	loadTrace(trace_rl, uplink_trace_filename);
-
-	mqtt.subscribe("set/trace_rate", [&](const string &topic, const string &message) {
-		if(message == "reset") {
-			reset();
-		}
-	});
 
 	reset();
 }
