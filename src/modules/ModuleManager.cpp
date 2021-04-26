@@ -220,6 +220,20 @@ void ModuleManager::removeModule(string id, bool publish) {
 		return;
 	}
 
+	if(publish) {
+		for(const auto& entry : modules.at(id)->getParameters()) {
+			const string &parameter_id = entry.second.id;
+
+			mqtt.publish("get/module/" + id + "/" + parameter_id, nullptr, true, true);
+		};
+
+		for(const auto& entry : modules.at(id)->getStatistics()) {
+			const string &statistic_id = entry.second.id;
+
+			mqtt.publish("get/module/" + id + "/" + statistic_id, nullptr, true, true);
+		};
+	}
+
 	for(auto it = paths.begin(); it != paths.end(); /*++it*/) {
 		if(it->from_node_id == id || it->to_node_id == id) {
 			it->from_port_info.port->disconnect();
