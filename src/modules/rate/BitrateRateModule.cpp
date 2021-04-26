@@ -4,10 +4,11 @@
 
 using namespace std;
 
-BitrateRateModule::BitrateRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, uint64_t bitrate) : timer(io_service), mqtt(mqtt) {
+BitrateRateModule::BitrateRateModule(boost::asio::io_service &io_service, uint64_t bitrate) : timer(io_service) {
 	setName("Bitrate Rate");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addParameter({"bitrate", "Bitrate", "bit/s", &parameter_bitrate});
 
 	input_port.setNotifyHandler([&]() {
 		if(active) {
@@ -18,18 +19,7 @@ BitrateRateModule::BitrateRateModule(boost::asio::io_service &io_service, Mqtt &
 		timer.async_wait(boost::bind(&BitrateRateModule::process, this, boost::asio::placeholders::error));
 	});
 
-	setBitrate(bitrate);
-
-	mqtt.subscribe("set/bitrate_rate/bitrate", [&](const string &topic, const string &message) {
-		uint64_t bitrate = stoul(message);
-		setBitrate(bitrate);
-	});
-}
-
-void BitrateRateModule::setBitrate(uint64_t bitrate) {
-	this->bitrate = bitrate;
-
-	mqtt.publish("get/bitrate_rate/bitrate", to_string(bitrate), true);
+	parameter_bitrate.set(bitrate);
 }
 
 void BitrateRateModule::process(const boost::system::error_code& error) {
@@ -37,8 +27,8 @@ void BitrateRateModule::process(const boost::system::error_code& error) {
 		return;
 	}
 
-	uint64_t bitrate_local = bitrate.load();
-	if(bitrate_local == 0) {
+	uint64_t bitrate = parameter_bitrate.get();
+	if(bitrate == 0) {
 		return;
 	}
 
@@ -48,7 +38,7 @@ void BitrateRateModule::process(const boost::system::error_code& error) {
 
 		active = true;
 
-		timer.expires_at(timer.expiry() + chrono::nanoseconds((uint64_t) 1000000000 * packet->getBytes().size()*8 / bitrate_local));
+		timer.expires_at(timer.expiry() + chrono::nanoseconds((uint64_t) 1000000000 * packet->getBytes().size()*8 / bitrate));
 		timer.async_wait(boost::bind(&BitrateRateModule::process, this, boost::asio::placeholders::error));
 	} else {
 		active = false;

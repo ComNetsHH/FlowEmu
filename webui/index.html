@@ -183,6 +183,7 @@
 			flow.addPort("left", new Port("in", "requesting", "In"));
 			flow.addPort("right", new Port("out", "sending", "Out"));
 			bitrate_rate.addContentItem(flow)
+			bitrate_rate.addContentItem(new NodeContentParameter("bitrate", "Bitrate", "bit/s", true, 0, null, 1000));
 			rate_group.addNode(bitrate_rate);
 
 			var fixed_interval_rate = new Node("fixed_interval_rate");

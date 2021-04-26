@@ -54,7 +54,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				} else if(type == "fifo_queue") {
 					new_module = make_shared<FifoQueueModule>(io_service, mqtt, 100);
 				} else if(type == "bitrate_rate") {
-					new_module = make_shared<BitrateRateModule>(io_service, mqtt, 1000000);
+					new_module = make_shared<BitrateRateModule>(io_service, 1000000);
 				} else if(type == "fixed_interval_rate") {
 					new_module = make_shared<FixedIntervalRateModule>(io_service, mqtt, chrono::milliseconds(1));
 				} else if(type == "trace_rate") {
