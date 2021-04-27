@@ -38,7 +38,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				if(type == "fixed_delay") {
 					new_module = make_shared<FixedDelayModule>(io_service, 50);
 				} else if(type == "gilbert_elliot_loss") {
-					new_module = make_shared<GilbertElliotLossModule>(io_service, mqtt, 0.001, 0.001, 0, 1);
+					new_module = make_shared<GilbertElliotLossModule>(io_service, 0.001, 0.001, 0, 100);
 				} else if(type == "uncorrelated_loss") {
 					new_module = make_shared<UncorrelatedLossModule>(10);
 				} else if(type == "delay_meter") {

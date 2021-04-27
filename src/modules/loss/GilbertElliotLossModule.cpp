@@ -6,95 +6,62 @@
 
 using namespace std;
 
-GilbertElliotLossModule::GilbertElliotLossModule(boost::asio::io_service &io_service, Mqtt &mqtt, double p01, double p10, double e0, double e1, uint32_t seed_transition, uint32_t seed_loss) : timer_transition(io_service), mqtt(mqtt) {
+GilbertElliotLossModule::GilbertElliotLossModule(boost::asio::io_service &io_service, double p01, double p10, double e0, double e1, uint32_t seed_transition, uint32_t seed_loss) : timer_transition(io_service) {
 	setName("Gilbert-Elliot Loss");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
 	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+	addParameter({"p01", "p_01", "1/ms", &parameter_p01});
+	addParameter({"p10", "p_10", "1/ms", &parameter_p10});
+	addParameter({"e0", "e_0", "%", &parameter_e0});
+	addParameter({"e1", "e_1", "%", &parameter_e1});
+	addParameter({"seed_transition", "Transition Seed", "", &parameter_seed_transition});
+	addParameter({"seed_loss", "Loss Seed", "", &parameter_seed_loss});
+	addStatistic({"state", "State", "", &statistic_state});
 
 	input_port_lr.setReceiveHandler(bind(&GilbertElliotLossModule::receiveFromLeftModule, this, placeholders::_1));
 	input_port_rl.setReceiveHandler(bind(&GilbertElliotLossModule::receiveFromRightModule, this, placeholders::_1));
 
-	setModelParameters(p01, p10, e0, e1);
-	setSeedTransition(seed_transition);
-	setSeedLoss(seed_loss);
-
-	mqtt.subscribe("set/gilbert_elliot_loss/model_parameters", [&](const string &topic, const Json::Value &json_root) {
-		double p01 = json_root.get("p01", 0).asDouble();
-		double p10 = json_root.get("p10", 0).asDouble();
-		double e0 = json_root.get("e0", 0).asDouble();
-		double e1 = json_root.get("e1", 1).asDouble();
-		setModelParameters(p01, p10, e0, e1);
+	parameter_p01.addChangeHandler([&](double value) {
+		distribution_p01.reset(new exponential_distribution<double>(value));
+	});
+	parameter_p10.addChangeHandler([&](double value) {
+		distribution_p10.reset(new exponential_distribution<double>(value));
+	});
+	parameter_e0.addChangeHandler([&](double value) {
+		distribution_e0.reset(new bernoulli_distribution(value / 100));
+	});
+	parameter_e1.addChangeHandler([&](double value) {
+		distribution_e1.reset(new bernoulli_distribution(value / 100));
 	});
 
-	mqtt.subscribe("set/gilbert_elliot_loss/seed_transition", [&](const string &topic, const string &message) {
-		uint32_t seed_transition = stoul(message);
-		setSeedTransition(seed_transition);
-	});
+	parameter_p01.set(p01);
+	parameter_p10.set(p10);
+	parameter_e0.set(e0);
+	parameter_e1.set(e1);
+	parameter_seed_transition.set(seed_transition);
+	parameter_seed_loss.set(seed_loss);
 
-	mqtt.subscribe("set/gilbert_elliot_loss/seed_loss", [&](const string &topic, const string &message) {
-		uint32_t seed_loss = stoul(message);
-		setSeedLoss(seed_loss);
-	});
-
-	mqtt.subscribe("set/gilbert_elliot_loss", [&](const string &topic, const string &message) {
-		if(message == "reset") {
-			reset();
-		}
-	});
+	parameter_seed_transition.addChangeHandler(bind(&GilbertElliotLossModule::reset, this));
+	parameter_seed_loss.addChangeHandler(bind(&GilbertElliotLossModule::reset, this));
 
 	reset();
-}
-
-void GilbertElliotLossModule::setModelParameters(double p01, double p10, double e0, double e1) {
-	this->p01 = p01;
-	this->p10 = p10;
-	this->e0 = e0;
-	this->e1 = e1;
-
-	distribution_p01.reset(new exponential_distribution<double>(p01));
-	distribution_p10.reset(new exponential_distribution<double>(p10));
-	distribution_e0.reset(new bernoulli_distribution(e0));
-	distribution_e1.reset(new bernoulli_distribution(e1));
-
-	Json::Value model_parameters;
-	model_parameters["p01"] = p01;
-	model_parameters["p10"] = p10;
-	model_parameters["e0"] = e0;
-	model_parameters["e1"] = e1;
-	mqtt.publish("get/gilbert_elliot_loss/model_parameters", model_parameters, true);
-}
-
-void GilbertElliotLossModule::setSeedTransition(uint32_t seed_transition) {
-	this->seed_transition = seed_transition;
-
-	generator_transition.seed(seed_transition);
-
-	mqtt.publish("get/gilbert_elliot_loss/seed_transition", to_string(seed_transition), true);
-}
-
-void GilbertElliotLossModule::setSeedLoss(uint32_t seed_loss) {
-	this->seed_loss = seed_loss;
-
-	generator_loss.seed(seed_loss);
-
-	mqtt.publish("get/gilbert_elliot_loss/seed_loss", to_string(seed_loss), true);
 }
 
 void GilbertElliotLossModule::reset() {
 	timer_transition.cancel();
 
-	generator_transition.seed(seed_transition);
-	generator_loss.seed(seed_loss);
+	generator_transition.seed(parameter_seed_transition.get());
+	generator_loss.seed(parameter_seed_loss.get());
 	state = 0;
 
 	chrono::high_resolution_clock::duration sojourn_time = chrono::nanoseconds((uint64_t) ((*distribution_p01)(generator_transition) * 1000000));
-	//cout << "Gilbert-Elliot model: Stay in state 0 with loss probability " << e0 << " for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
+	//cout << "Gilbert-Elliot model: Stay in state 0 with " << parameter_e0.get() << "\% loss for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
 	timer_transition.expires_from_now(sojourn_time);
 	timer_transition.async_wait(boost::bind(&GilbertElliotLossModule::transition, this, boost::asio::placeholders::error));
 
-	mqtt.publish("get/gilbert_elliot_loss/state", to_string(state), true);
+	statistic_state.set(state);
 }
 
 void GilbertElliotLossModule::transition(const boost::system::error_code& error) {
@@ -106,19 +73,19 @@ void GilbertElliotLossModule::transition(const boost::system::error_code& error)
 		state = 1;
 
 		chrono::high_resolution_clock::duration sojourn_time = chrono::nanoseconds((uint64_t) ((*distribution_p10)(generator_transition) * 1000000));
-		//cout << "Gilbert-Elliot model: Stay in state 1 with loss probability " << e1 << " for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
+		//cout << "Gilbert-Elliot model: Stay in state 1 with " << parameter_e1.get() << "\% loss for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
 		timer_transition.expires_at(timer_transition.expiry() + sojourn_time);
 	} else {
 		state = 0;
 
 		chrono::high_resolution_clock::duration sojourn_time = chrono::nanoseconds((uint64_t) ((*distribution_p01)(generator_transition) * 1000000));
-		//cout << "Gilbert-Elliot model: Stay in state 0 with loss probability " << e0 << " for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
+		//cout << "Gilbert-Elliot model: Stay in state 0 with " << parameter_e0.get() << "\% loss for " << (double) sojourn_time.count() / 1000000 << "ms" << endl;
 		timer_transition.expires_at(timer_transition.expiry() + sojourn_time);
 	}
 
 	timer_transition.async_wait(boost::bind(&GilbertElliotLossModule::transition, this, boost::asio::placeholders::error));
 
-	mqtt.publish("get/gilbert_elliot_loss/state", to_string(state), true);
+	statistic_state.set(state);
 }
 
 bool GilbertElliotLossModule::isLost() {

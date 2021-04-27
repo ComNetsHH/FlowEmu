@@ -9,34 +9,32 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class GilbertElliotLossModule : public Module {
 	public:
-		GilbertElliotLossModule(boost::asio::io_service &io_service, Mqtt &mqtt, double p01, double p10, double e0 = 0, double e1 = 1, uint32_t seed_transition = 1, uint32_t seed_loss = 1);
+		GilbertElliotLossModule(boost::asio::io_service &io_service, double p01, double p10, double e0 = 0, double e1 = 100, uint32_t seed_transition = 1, uint32_t seed_loss = 1);
 		~GilbertElliotLossModule();
 
 		const char* getType() const {
 			return "gilbert_elliot_loss";
 		}
 
-		void setModelParameters(double p01, double p10, double e0 = 0, double e1 = 1);
-		void setSeedTransition(uint32_t seed_transition);
-		void setSeedLoss(uint32_t seed_loss);
-
 		void reset();
 
 	private:
-		Mqtt &mqtt;
+		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
+		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
+		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
-		std::atomic<double> p01;
-		std::atomic<double> p10;
-		std::atomic<double> e0;
-		std::atomic<double> e1;
-		std::atomic<uint32_t> seed_transition;
-		std::atomic<uint32_t> seed_loss;
-		std::atomic<bool> state;
+		Parameter parameter_p01 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
+		Parameter parameter_p10 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
+		Parameter parameter_e0 = {0, 0, 100, 1};
+		Parameter parameter_e1 = {100, 0, 100, 1};
+		Parameter parameter_seed_transition = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		Parameter parameter_seed_loss = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		Statistic statistic_state;
 
 		std::default_random_engine generator_transition;
 		std::default_random_engine generator_loss;
@@ -45,15 +43,10 @@ class GilbertElliotLossModule : public Module {
 		std::unique_ptr<std::bernoulli_distribution> distribution_e0;
 		std::unique_ptr<std::bernoulli_distribution> distribution_e1;
 
-		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
-		SendingPort<std::shared_ptr<Packet>> output_port_lr;
-
-		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
-		SendingPort<std::shared_ptr<Packet>> output_port_rl;
-
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		void receiveFromRightModule(std::shared_ptr<Packet> packet);
 
+		std::atomic<bool> state;
 		boost::asio::high_resolution_timer timer_transition;
 		void transition(const boost::system::error_code& error);
 		bool isLost();

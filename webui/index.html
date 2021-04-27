@@ -126,10 +126,12 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			gilbert_elliot_loss.addContentItem(flow)
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p_01", "p_01", "1/ms", false, 0, null, 10));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p_10", "p_10", "1/ms", false, 0, null, 10));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e_0", "e_0", "%", false, 0, 100, 1));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e_1", "e_1", "%", false, 0, 100, 1));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p01", "p_01", "1/ms", false, 0, null, 0.001));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p10", "p_10", "1/ms", false, 0, null, 0.001));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e0", "e_0", "%", false, 0, 100, 1));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e1", "e_1", "%", false, 0, 100, 1));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("seed_transition", "Transition Seed", "", true, 0, null, 1));
+			gilbert_elliot_loss.addContentItem(new NodeContentParameter("seed_loss", "Loss Seed", "", true, 0, null, 1));
 			loss_group.addNode(gilbert_elliot_loss);
 
 			node_library.addGroup(loss_group);
