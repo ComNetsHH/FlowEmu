@@ -52,7 +52,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					new_module = make_shared<DQLQueueModule>(io_service, mqtt, 100, 0.001);
 				#endif
 				} else if(type == "fifo_queue") {
-					new_module = make_shared<FifoQueueModule>(io_service, mqtt, 100);
+					new_module = make_shared<FifoQueueModule>(io_service, 100);
 				} else if(type == "bitrate_rate") {
 					new_module = make_shared<BitrateRateModule>(io_service, 1000000);
 				} else if(type == "fixed_interval_rate") {

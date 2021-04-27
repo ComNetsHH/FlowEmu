@@ -172,6 +172,7 @@
 			flow.addPort("left", new Port("in", "receiving", "In"));
 			flow.addPort("right", new Port("out", "responding", "Out"));
 			fifo_queue.addContentItem(flow)
+			fifo_queue.addContentItem(new NodeContentParameter("buffer_size", "Buffer Size", "packets", true, 0, null, 1));
 			queue_group.addNode(fifo_queue);
 
 			node_library.addGroup(queue_group);

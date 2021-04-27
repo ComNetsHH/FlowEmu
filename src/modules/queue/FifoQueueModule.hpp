@@ -8,26 +8,23 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class FifoQueueModule : public Module {
 	public:
-		FifoQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, size_t buffer_size);
+		FifoQueueModule(boost::asio::io_service &io_service, size_t buffer_size);
 
 		const char* getType() const {
 			return "fifo_queue";
 		}
 
-		void setBufferSize(size_t buffer_size);
-
 	private:
-		Mqtt &mqtt;
-
-		std::atomic<size_t> buffer_size;
-
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		RespondingPort<std::shared_ptr<Packet>> output_port;
+
+		Parameter parameter_buffer_size = {100, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+
+		Statistic statistic_queue_length;
 
 		std::queue<std::shared_ptr<Packet>> packet_queue;
 
