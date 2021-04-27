@@ -158,6 +158,27 @@ class NodeEditor {
 			modified = true;
 		}
 
+		node_data.content.forEach(function(item) {
+			switch(item.type) {
+				case "parameter":
+					if(!(item.id in node.parameters)) {
+						var parameter = new NodeContentParameter(item.id, item.label, item.unit, item.integer, item.min, item.max, item.step);
+						node.addContentItem(parameter);
+
+						modified = true;
+					}
+					break;
+				case "statistic":
+					if(!(item.id in node.statistics)) {
+						var statistic = new NodeContentStatistic(item.id, item.label, item.unit, item.integer);
+						node.addContentItem(statistic);
+
+						modified = true;
+					}
+					break;
+			}
+		});
+
 		if(call_callback && modified && this.node_change_handler !== undefined) {
 			this.node_change_handler(node);
 		}
