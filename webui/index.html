@@ -117,8 +117,6 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			uncorrelated_loss.addContentItem(flow)
-			uncorrelated_loss.addContentItem(new NodeContentParameter("loss", "Loss", "%", false, 0, 100, 1));
-			uncorrelated_loss.addContentItem(new NodeContentParameter("seed", "Seed", "", true, 0, null, 1));
 			loss_group.addNode(uncorrelated_loss);
 
 			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
@@ -130,12 +128,6 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			gilbert_elliot_loss.addContentItem(flow)
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p01", "p_01", "1/ms", false, 0, null, 0.001));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("p10", "p_10", "1/ms", false, 0, null, 0.001));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e0", "e_0", "%", false, 0, 100, 1));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("e1", "e_1", "%", false, 0, 100, 1));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("seed_transition", "Transition Seed", "", true, 0, null, 1));
-			gilbert_elliot_loss.addContentItem(new NodeContentParameter("seed_loss", "Loss Seed", "", true, 0, null, 1));
 			loss_group.addNode(gilbert_elliot_loss);
 
 			node_library.addGroup(loss_group);
@@ -152,7 +144,6 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			fixed_delay.addContentItem(flow)
-			fixed_delay.addContentItem(new NodeContentParameter("delay", "Delay", "ms", false, 0, null, 10));
 			delay_group.addNode(fixed_delay);
 
 			node_library.addGroup(delay_group);
@@ -167,8 +158,6 @@
 			flow.addPort("left", new Port("in", "receiving", "In"));
 			flow.addPort("right", new Port("out", "responding", "Out"));
 			dql_queue.addContentItem(flow)
-			dql_queue.addContentItem(new NodeContentParameter("buffer_size", "Buffer", "packets", true, 0, null, 1));
-			dql_queue.addContentItem(new NodeContentParameter("epsilon", "Epsilon", "", false, 0, 1, 0.001));
 			queue_group.addNode(dql_queue);
 
 			var fifo_queue = new Node("fifo_queue");
@@ -178,7 +167,6 @@
 			flow.addPort("left", new Port("in", "receiving", "In"));
 			flow.addPort("right", new Port("out", "responding", "Out"));
 			fifo_queue.addContentItem(flow)
-			fifo_queue.addContentItem(new NodeContentParameter("buffer_size", "Buffer Size", "packets", true, 0, null, 1));
 			queue_group.addNode(fifo_queue);
 
 			node_library.addGroup(queue_group);
@@ -193,7 +181,6 @@
 			flow.addPort("left", new Port("in", "requesting", "In"));
 			flow.addPort("right", new Port("out", "sending", "Out"));
 			bitrate_rate.addContentItem(flow)
-			bitrate_rate.addContentItem(new NodeContentParameter("bitrate", "Bitrate", "bit/s", true, 0, null, 1000));
 			rate_group.addNode(bitrate_rate);
 
 			var fixed_interval_rate = new Node("fixed_interval_rate");
@@ -205,8 +192,6 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "requesting", "In"));
 			fixed_interval_rate.addContentItem(flow)
-			fixed_interval_rate.addContentItem(new NodeContentParameter("interval", "Interval", "ms", false, 0, null, 1));
-			fixed_interval_rate.addContentItem(new NodeContentParameter("rate", "Rate", "packets/s", false, 0, null, 1));
 			rate_group.addNode(fixed_interval_rate);
 
 			var trace_rate = new Node("trace_rate");
