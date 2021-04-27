@@ -13,27 +13,27 @@
 
 #include "../Module.hpp"
 #include "../../ml/DeepQLearning.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class DQLQueueModule : public Module {
 	public:
-		DQLQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, size_t buffer_size, double epsilon);
+		DQLQueueModule(boost::asio::io_service &io_service, size_t buffer_size, double epsilon);
 		~DQLQueueModule();
 
 		const char* getType() const {
 			return "dql_queue";
 		}
 
-		void setBufferSize(size_t buffer_size);
-		void setEpsilon(double epsilon);
-
 	private:
-		Mqtt &mqtt;
-		DeepQLearning deep_q_learning;
+		ReceivingPort<std::shared_ptr<Packet>> input_port;
+		RespondingPort<std::shared_ptr<Packet>> output_port;
 
-		std::atomic<size_t> buffer_size;
-		std::atomic<double> epsilon;
+		Parameter parameter_buffer_size = {100, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		Parameter parameter_epsilon = {0.001, 0, 1, 0.001};
+
+		Statistic statistic_queue_length;
+
+		DeepQLearning deep_q_learning;
 
 		tensorflow::Tensor observation_tf;
 		tensorflow::Tensor observation_new_tf;
@@ -41,9 +41,6 @@ class DQLQueueModule : public Module {
 
 		std::unique_ptr<std::thread> training_thread;
 		std::atomic<bool> running;
-
-		ReceivingPort<std::shared_ptr<Packet>> input_port;
-		RespondingPort<std::shared_ptr<Packet>> output_port;
 
 		std::queue<std::shared_ptr<Packet>> packet_queue;
 

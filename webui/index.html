@@ -163,6 +163,8 @@
 			flow.addPort("left", new Port("in", "receiving", "In"));
 			flow.addPort("right", new Port("out", "responding", "Out"));
 			dql_queue.addContentItem(flow)
+			dql_queue.addContentItem(new NodeContentParameter("buffer_size", "Buffer", "packets", true, 0, null, 1));
+			dql_queue.addContentItem(new NodeContentParameter("epsilon", "Epsilon", "", false, 0, 1, 0.001));
 			queue_group.addNode(dql_queue);
 
 			var fifo_queue = new Node("fifo_queue");

@@ -4,27 +4,19 @@
 
 using namespace std;
 
-DQLQueueModule::DQLQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, size_t buffer_size, double epsilon) : timer_statistics(io_service), mqtt(mqtt), deep_q_learning(10, 3, 2, 0, 1, 1000000UL, false, "ml_models/graph.meta", "ml_models/graph") {
+DQLQueueModule::DQLQueueModule(boost::asio::io_service &io_service, size_t buffer_size, double epsilon) : timer_statistics(io_service), deep_q_learning(10, 3, 2, 0, 1, 1000000UL, false, "ml_models/graph.meta", "ml_models/graph") {
 	setName("DQL Queue");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addParameter({"buffer_size", "Buffer", "packets", &parameter_buffer_size});
+	addParameter({"epsilon", "Epsilon", "", &parameter_epsilon});
+	addStatistic({"queue_length", "Queue", "packets", &statistic_queue_length});
 
 	input_port.setReceiveHandler(bind(&DQLQueueModule::enqueue, this, placeholders::_1));
 	output_port.setRequestHandler(bind(&DQLQueueModule::dequeue, this));
 
-	setBufferSize(buffer_size);
-	setEpsilon(epsilon);
-
-	// MQTT
-	mqtt.subscribe("set/dql_queue/buffer_size", [&](const string &topic, const string &message) {
-		size_t buffer_size = stoul(message);
-		setBufferSize(buffer_size);
-	});
-
-	mqtt.subscribe("set/dql_queue/epsilon", [&](const string &topic, const string &message) {
-		double epsilon = stod(message);
-		setEpsilon(epsilon);
-	});
+	parameter_buffer_size.set(buffer_size);
+	parameter_epsilon.set(epsilon);
 
 	// Create observation matrices
 	tensorflow::TensorShape observation_shape = tensorflow::TensorShape({10, 3});
@@ -50,20 +42,8 @@ DQLQueueModule::DQLQueueModule(boost::asio::io_service &io_service, Mqtt &mqtt, 
 	timer_statistics.async_wait(boost::bind(&DQLQueueModule::statistics, this, boost::asio::placeholders::error));
 }
 
-void DQLQueueModule::setBufferSize(size_t buffer_size) {
-	this->buffer_size = buffer_size;
-
-	mqtt.publish("get/dql_queue/buffer_size", to_string(buffer_size), true);
-}
-
-void DQLQueueModule::setEpsilon(double epsilon) {
-	this->epsilon = epsilon;
-
-	mqtt.publish("get/dql_queue/epsilon", to_string(epsilon), true);
-}
-
 void DQLQueueModule::enqueue(shared_ptr<Packet> packet) {
-	if(packet_queue.size() >= buffer_size) {
+	if(packet_queue.size() >= parameter_buffer_size.get()) {
 		return;
 	}
 
@@ -77,7 +57,7 @@ shared_ptr<Packet> DQLQueueModule::dequeue() {
 	auto observation_new = observation_new_tf.tensor<float, 2>();
 
 	// Get prediction
-	tensorflow::int64 action = deep_q_learning.getPrediction(observation_tf, epsilon.load());
+	tensorflow::int64 action = deep_q_learning.getPrediction(observation_tf, parameter_epsilon.get());
 
 	// Drop packet
 	if(action == 0 && !packet_queue.empty()) {
@@ -97,7 +77,7 @@ shared_ptr<Packet> DQLQueueModule::dequeue() {
 	size_t queue_length = packet_queue.size();
 	for(int y = 0; y < 10; y++) {
 		double a = pow(0.1, y);
-		observation_new(y, 0) = (1.0 - a) * observation(y, 0) + a * (1.0 - ((double) queue_length / buffer_size));
+		observation_new(y, 0) = (1.0 - a) * observation(y, 0) + a * (1.0 - ((double) queue_length / parameter_buffer_size.get()));
 		observation_new(y, 1) = (1.0 - a) * observation(y, 1) + a * (double) packet_sent;
 		observation_new(y, 2) = (1.0 - a) * observation(y, 2) + a * (double) action;
 	}
@@ -118,7 +98,7 @@ void DQLQueueModule::statistics(const boost::system::error_code& error) {
 		return;
 	}
 
-	mqtt.publish("get/dql_queue/queue_length", to_string(packet_queue.size()), true);
+	statistic_queue_length.set(packet_queue.size());
 
 	auto observation = observation_tf.tensor<float, 2>();
 	for(int x = 0; x < 3; x++) {

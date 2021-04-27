@@ -49,7 +49,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 					new_module = make_shared<NullModule>();
 				#ifdef MACHINE_LEARNING
 				} else if(type == "dql_queue") {
-					new_module = make_shared<DQLQueueModule>(io_service, mqtt, 100, 0.001);
+					new_module = make_shared<DQLQueueModule>(io_service, 100, 0.001);
 				#endif
 				} else if(type == "fifo_queue") {
 					new_module = make_shared<FifoQueueModule>(io_service, 100);
