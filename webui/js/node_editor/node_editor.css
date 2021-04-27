@@ -141,6 +141,18 @@
 	border-radius: 0 3px 3px 0;
 }
 
+.node .content .statistic {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.node .content .statistic .value {
+	flex: 1 1 auto;
+	margin: 0 8px;
+	text-align: right;
+}
+
 .node .content .flow {
 	display: flex;
 	padding: 4px 8px;

@@ -68,10 +68,14 @@
 					return;
 				}
 				var node_id = m[1];
-				var parameter_id = m[2];
+				var value_id = m[2];
 
-				if(node_id in node_editor.nodes && parameter_id in node_editor.nodes[node_id].parameters) {
-					node_editor.nodes[node_id].parameters[parameter_id].setValue(parseFloat(message));
+				if(node_id in node_editor.nodes) {
+					if(value_id in node_editor.nodes[node_id].parameters) {
+						node_editor.nodes[node_id].parameters[value_id].setValue(parseFloat(message));
+					} else if(value_id in node_editor.nodes[node_id].statistics) {
+						node_editor.nodes[node_id].statistics[value_id].setValue(parseFloat(message));
+					}
 				}
 			});
 

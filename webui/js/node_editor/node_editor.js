@@ -384,6 +384,7 @@ class Node {
 	content_items = [];
 	ports = {};
 	parameters = {};
+	statistics = {};
 
 	drag_offset = {"x": 0, "y": 0};
 
@@ -442,6 +443,10 @@ class Node {
 
 		if(item instanceof NodeContentParameter) {
 			this.parameters[item.id] = item;
+		}
+
+		if(item instanceof NodeContentStatistic) {
+			this.statistics[item.id] = item;
 		}
 
 		this.content.appendChild(item.element);
@@ -512,6 +517,10 @@ class Node {
 				case "parameter":
 					var parameter = new NodeContentParameter(item.id, item.label, item.unit, item.integer, item.min, item.max, item.step);
 					that.addContentItem(parameter);
+					break;
+				case "statistic":
+					var statistic = new NodeContentStatistic(item.id, item.label, item.unit, item.integer);
+					that.addContentItem(statistic);
 					break;
 				case "flow":
 					var flow = new NodeContentFlow();
@@ -670,6 +679,55 @@ class NodeContentParameter extends NodeContentItem {
 			"min": this.min,
 			"max": this.max,
 			"step": this.step
+		};
+
+		return data;
+	}
+}
+
+class NodeContentStatistic extends NodeContentItem {
+	id = undefined;
+	label = undefined;
+	unit = undefined;
+	integer = undefined;
+
+	element_value = undefined;
+
+	constructor(id, label, unit, integer) {
+		super();
+		this.element.classList.add("statistic");
+
+		this.id = id;
+		this.label = label;
+		this.unit = unit;
+		this.integer = integer;
+
+		var element_label = document.createElement("a");
+		element_label.classList.add("label")
+		element_label.innerHTML = label + ":";
+		this.element.appendChild(element_label);
+
+		this.element_value = document.createElement("a");
+		this.element_value.classList.add("value")
+		this.element.appendChild(this.element_value);
+
+		var element_unit = document.createElement("a");
+		element_unit.classList.add("unit")
+		element_unit.innerHTML = this.unit;
+		this.element.appendChild(element_unit);
+	}
+
+	setValue(value) {
+		this.element_value.innerHTML = value;
+	}
+
+	serialize() {
+		var data = {
+			"type": "statistic",
+			"id": this.id,
+			"label": this.label,
+			"unit": this.unit,
+			"integer": this.integer,
 		};
 
 		return data;
