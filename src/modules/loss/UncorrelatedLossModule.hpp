@@ -9,34 +9,27 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class UncorrelatedLossModule : public Module {
 	public:
-		UncorrelatedLossModule(Mqtt &mqtt, double p, uint32_t seed = 1);
+		UncorrelatedLossModule(double loss, uint32_t seed = 1);
 
 		const char* getType() const {
 			return "uncorrelated_loss";
 		}
 
-		void setLossProbability(double p);
-		void setSeed(uint32_t seed);
-
 	private:
-		Mqtt &mqtt;
+		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
+		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
+		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
-		std::atomic<double> p;
-		std::atomic<uint32_t> seed;
+		Parameter parameter_loss = {10, 0, 100, 1};
+		Parameter parameter_seed = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 
 		std::default_random_engine generator_loss;
 		std::unique_ptr<std::bernoulli_distribution> distribution;
-
-		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
-		SendingPort<std::shared_ptr<Packet>> output_port_lr;
-
-		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
-		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		void receiveFromRightModule(std::shared_ptr<Packet> packet);

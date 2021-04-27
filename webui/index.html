@@ -114,6 +114,7 @@
 			flow.addPort("right", new Port("rl_in", "receiving", "In"));
 			uncorrelated_loss.addContentItem(flow)
 			uncorrelated_loss.addContentItem(new NodeContentParameter("loss", "Loss", "%", false, 0, 100, 1));
+			uncorrelated_loss.addContentItem(new NodeContentParameter("seed", "Seed", "", true, 0, null, 1));
 			loss_group.addNode(uncorrelated_loss);
 
 			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
