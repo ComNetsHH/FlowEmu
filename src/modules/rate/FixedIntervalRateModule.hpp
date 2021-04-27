@@ -9,33 +9,29 @@
 #include <boost/asio.hpp>
 
 #include "../Module.hpp"
-#include "../../utils/Mqtt.hpp"
 #include "../../utils/Packet.hpp"
 
 class FixedIntervalRateModule : public Module {
 	public:
-		FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, std::chrono::high_resolution_clock::duration interval);
+		FixedIntervalRateModule(boost::asio::io_service &io_service, std::chrono::high_resolution_clock::duration interval);
 		~FixedIntervalRateModule();
 
 		const char* getType() const {
 			return "fixed_interval_rate";
 		}
 
-		void setInterval(std::chrono::high_resolution_clock::duration interval);
-		void setRate(uint64_t rate);
-
 	private:
-		Mqtt &mqtt;
-
-		std::atomic<std::chrono::high_resolution_clock::duration> interval;
-
 		RequestingPort<std::shared_ptr<Packet>> input_port_lr;
 		SendingPort<std::shared_ptr<Packet>> output_port_lr;
+		RequestingPort<std::shared_ptr<Packet>> input_port_rl;
+		SendingPort<std::shared_ptr<Packet>> output_port_rl;
+
+		Parameter parameter_interval = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		Parameter parameter_rate = {1000, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+
 		boost::asio::high_resolution_timer timer_lr;
 		void processLr(const boost::system::error_code& error);
 
-		RequestingPort<std::shared_ptr<Packet>> input_port_rl;
-		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 		boost::asio::high_resolution_timer timer_rl;
 		void processRl(const boost::system::error_code& error);
 };

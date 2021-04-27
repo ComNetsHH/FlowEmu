@@ -4,24 +4,33 @@
 
 using namespace std;
 
-FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, Mqtt &mqtt, chrono::high_resolution_clock::duration interval) : timer_lr(io_service), timer_rl(io_service), mqtt(mqtt) {
+FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, chrono::high_resolution_clock::duration interval) : timer_lr(io_service), timer_rl(io_service) {
 	setName("Fixed Interval Rate");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
 	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+	addParameter({"interval", "Interval", "ms", &parameter_interval});
+	addParameter({"rate", "Rate", "packets/s", &parameter_rate});
 
-	setInterval(chrono::nanoseconds(interval));
+	parameter_interval.addChangeHandler([&](double value) {
+		double rate = parameter_rate.get();
+		double rate_from_interval = 1000 / value;
 
-	mqtt.subscribe("set/fixed_interval_rate/interval", [&](const string &topic, const string &message) {
-		uint64_t interval = stoul(message);
-		setInterval(chrono::nanoseconds(interval));
+		if(rate != rate_from_interval) {
+			parameter_rate.set(rate_from_interval);
+		}
+	});
+	parameter_rate.addChangeHandler([&](double value) {
+		double interval = parameter_interval.get();
+		double interval_from_rate = 1000 / value;
+
+		if(interval != interval_from_rate) {
+			parameter_interval.set(interval_from_rate);
+		}
 	});
 
-	mqtt.subscribe("set/fixed_interval_rate/rate", [&](const string &topic, const string &message) {
-		uint64_t rate = stoul(message);
-		setRate(rate);
-	});
+	parameter_interval.set((double) chrono::nanoseconds(interval).count() / 1000000);
 
 	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 
@@ -30,20 +39,6 @@ FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_ser
 
 	timer_rl.expires_at(now);
 	timer_rl.async_wait(boost::bind(&FixedIntervalRateModule::processRl, this, boost::asio::placeholders::error));
-}
-
-void FixedIntervalRateModule::setInterval(chrono::high_resolution_clock::duration interval) {
-	this->interval = interval;
-
-	mqtt.publish("get/fixed_interval_rate/interval", to_string(chrono::nanoseconds(interval).count()), true);
-	mqtt.publish("get/fixed_interval_rate/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
-}
-
-void FixedIntervalRateModule::setRate(uint64_t rate) {
-	this->interval = chrono::nanoseconds(1000000000 / rate);
-
-	mqtt.publish("get/fixed_interval_rate/interval", to_string(chrono::nanoseconds(interval).count()), true);
-	mqtt.publish("get/fixed_interval_rate/rate", to_string(1000000000 / chrono::nanoseconds(interval).count()), true);
 }
 
 void FixedIntervalRateModule::processLr(const boost::system::error_code& error) {
@@ -56,7 +51,7 @@ void FixedIntervalRateModule::processLr(const boost::system::error_code& error) 
 		output_port_lr.send(packet);
 	}
 
-	timer_lr.expires_at(timer_lr.expiry() + interval.load());
+	timer_lr.expires_at(timer_lr.expiry() + chrono::nanoseconds((uint64_t) (parameter_interval.get() * 1000000)));
 	timer_lr.async_wait(boost::bind(&FixedIntervalRateModule::processLr, this, boost::asio::placeholders::error));
 }
 
@@ -70,7 +65,7 @@ void FixedIntervalRateModule::processRl(const boost::system::error_code& error) 
 		output_port_rl.send(packet);
 	}
 
-	timer_rl.expires_at(timer_rl.expiry() + interval.load());
+	timer_rl.expires_at(timer_rl.expiry() + chrono::nanoseconds((uint64_t) (parameter_interval.get() * 1000000)));
 	timer_rl.async_wait(boost::bind(&FixedIntervalRateModule::processRl, this, boost::asio::placeholders::error));
 }
 

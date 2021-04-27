@@ -195,6 +195,8 @@
 			flow.addPort("right", new Port("lr_out", "sending", "Out"));
 			flow.addPort("right", new Port("rl_in", "requesting", "In"));
 			fixed_interval_rate.addContentItem(flow)
+			fixed_interval_rate.addContentItem(new NodeContentParameter("interval", "Interval", "ms", false, 0, null, 1));
+			fixed_interval_rate.addContentItem(new NodeContentParameter("rate", "Rate", "packets/s", false, 0, null, 1));
 			rate_group.addNode(fixed_interval_rate);
 
 			var trace_rate = new Node("trace_rate");
