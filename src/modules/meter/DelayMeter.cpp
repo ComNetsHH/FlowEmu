@@ -10,8 +10,8 @@ DelayMeter::DelayMeter(boost::asio::io_service &io_service) : timer(io_service) 
 	setName("Delay Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
-	addStatistic({"min", "Minimum", "ms", &statistic_min});
-	addStatistic({"max", "Maximum", "ms", &statistic_max});
+	addStatistic({"min", "Min.", "ms", &statistic_min});
+	addStatistic({"max", "Max.", "ms", &statistic_max});
 	addStatistic({"mean", "Mean", "ms", &statistic_mean});
 
 	input_port.setReceiveHandler(bind(&DelayMeter::receive, this, placeholders::_1));

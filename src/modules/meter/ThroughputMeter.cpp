@@ -8,8 +8,8 @@ ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io
 	setName("Throughput Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
-	addStatistic({"bytes_per_second", "Bytes per second", "B/s", &statistic_bytes_per_second});
-	addStatistic({"packets_per_second", "Packets per second", "packets/s", &statistic_packets_per_second});
+	addStatistic({"bytes_per_second", "Bytes", "B/s", &statistic_bytes_per_second});
+	addStatistic({"packets_per_second", "Packets", "packets/s", &statistic_packets_per_second});
 
 	input_port.setReceiveHandler(bind(&ThroughputMeter::receive, this, placeholders::_1));
 
