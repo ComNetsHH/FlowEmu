@@ -86,7 +86,7 @@
 			});
 
 			node_editor.setNodeChangeHandler(function(node, callback_data) {
-				if(callback_data != "mqtt_node_change") {
+				if(callback_data != "mqtt_node_update") {
 					publish("set/module/" + node.id, node.serialize());
 				}
 			});
