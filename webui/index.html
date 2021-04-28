@@ -75,6 +75,7 @@
 
 			node_editor.setNodeRemoveHandler(function(node, callback_data) {
 				if(callback_data != "mqtt_node_remove") {
+					publish("set/paths", node_editor.serializePaths());
 					publish("set/module/" + node.id, null);
 				}
 
@@ -88,7 +89,7 @@
 			});
 
 			node_editor.setPathRemoveHandler(function(path, callback_data) {
-				if(callback_data != "mqtt_path_update") {
+				if(callback_data != "mqtt_path_update" && callback_data != "node_remove") {
 					publish("set/paths", node_editor.serializePaths());
 				}
 			});

@@ -210,7 +210,7 @@ class NodeEditor {
 		var that = this;
 		this.paths.forEach(function(path) {
 			if(path.port_from.parent.parent === node || path.port_to.parent.parent === node) {
-				that.removePath(path);
+				that.removePath(path, "node_remove");
 			}
 		});
 
