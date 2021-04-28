@@ -18,7 +18,9 @@ class NodeEditor {
 	node_remove_handler = undefined;
 	path_add_handler = undefined;
 	path_remove_handler = undefined;
+	parameter_add_handler = undefined;
 	parameter_change_handler = undefined;
+	statistic_add_handler = undefined;
 
 	constructor(div) {
 		this.element = document.querySelector(div);
@@ -116,6 +118,18 @@ class NodeEditor {
 		node.parent = this;
 
 		this.element.appendChild(node.element);
+
+		for(let id in node.parameters) {
+			if(this.parameter_add_handler !== undefined) {
+				this.parameter_add_handler(node, id);
+			}
+		}
+
+		for(let id in node.statistics) {
+			if(this.statistic_add_handler !== undefined) {
+				this.statistic_add_handler(node, id);
+			}
+		}
 
 		node.element.style.transform = "translate(" + this.pan.x + "px, " + this.pan.y + "px)";
 
@@ -358,8 +372,16 @@ class NodeEditor {
 		this.path_remove_handler = handler;
 	}
 
+	setParameterAddHandler(handler) {
+		this.parameter_add_handler = handler;
+	}
+
 	setParameterChangeHandler(handler) {
 		this.parameter_change_handler = handler;
+	}
+
+	setStatisticAddHandler(handler) {
+		this.statistic_add_handler = handler;
 	}
 
 	serializeNodes() {
@@ -464,10 +486,18 @@ class Node {
 
 		if(item instanceof NodeContentParameter) {
 			this.parameters[item.id] = item;
+
+			if(this.parent !== undefined && this.parent.parameter_add_handler !== undefined) {
+				this.parent.parameter_add_handler(this, item.id);
+			}
 		}
 
 		if(item instanceof NodeContentStatistic) {
 			this.statistics[item.id] = item;
+
+			if(this.parent !== undefined && this.parent.statistic_add_handler !== undefined) {
+				this.parent.statistic_add_handler(this, item.id);
+			}
 		}
 
 		this.content.appendChild(item.element);
