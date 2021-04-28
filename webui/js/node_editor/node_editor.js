@@ -199,10 +199,6 @@ class NodeEditor {
 	}
 
 	removeNode(node, callback_data = null) {
-		if(this.node_remove_handler !== undefined) {
-			this.node_remove_handler(node, callback_data);
-		}
-
 		if(this.selected_element === node) {
 			this.selected_element = undefined;
 		}
@@ -217,6 +213,10 @@ class NodeEditor {
 				that.removePath(path);
 			}
 		});
+
+		if(this.node_remove_handler !== undefined) {
+			this.node_remove_handler(node, callback_data);
+		}
 
 		node.element.remove();
 		delete this.nodes[node.id];
