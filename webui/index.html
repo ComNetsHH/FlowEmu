@@ -42,14 +42,14 @@
 
 				if(node_id in node_editor.nodes) {
 					if(node_data !== null) {
-						node_editor.updateNode(node_id, node_data, false);
+						node_editor.updateNode(node_id, node_data, "mqtt_node_update");
 					} else {
-						node_editor.removeNode(node_editor.nodes[node_id], false);
+						node_editor.removeNode(node_editor.nodes[node_id], "mqtt_node_remove");
 					}
 				} else if(node_data !== null) {
 					var node = new Node(node_id);
 					node.deserialize(node_data);
-					node_editor.addNode(node, false);
+					node_editor.addNode(node, "mqtt_node_add");
 				}
 			});
 
@@ -57,7 +57,7 @@
 				var paths_data = (message.length > 0 ? JSON.parse(message) : null);
 
 				if(paths_data) {
-					node_editor.updatePaths(paths_data, false);
+					node_editor.updatePaths(paths_data, "mqtt_path_update");
 				}
 			});
 
@@ -79,24 +79,34 @@
 				}
 			});
 
-			node_editor.setNodeAddHandler(function(node) {
-				publish("set/module/" + node.id, node.serialize());
+			node_editor.setNodeAddHandler(function(node, callback_data) {
+				if(callback_data != "mqtt_node_add") {
+					publish("set/module/" + node.id, node.serialize());
+				}
 			});
 
-			node_editor.setNodeChangeHandler(function(node) {
-				publish("set/module/" + node.id, node.serialize());
+			node_editor.setNodeChangeHandler(function(node, callback_data) {
+				if(callback_data != "mqtt_node_change") {
+					publish("set/module/" + node.id, node.serialize());
+				}
 			});
 
-			node_editor.setNodeRemoveHandler(function(node) {
-				publish("set/module/" + node.id, null);
+			node_editor.setNodeRemoveHandler(function(node, callback_data) {
+				if(callback_data != "mqtt_node_remove") {
+					publish("set/module/" + node.id, null);
+				}
 			});
 
-			node_editor.setPathAddHandler(function(path) {
-				publish("set/paths", node_editor.serializePaths());
+			node_editor.setPathAddHandler(function(path, callback_data) {
+				if(callback_data != "mqtt_path_update") {
+					publish("set/paths", node_editor.serializePaths());
+				}
 			});
 
-			node_editor.setPathRemoveHandler(function(path) {
-				publish("set/paths", node_editor.serializePaths());
+			node_editor.setPathRemoveHandler(function(path, callback_data) {
+				if(callback_data != "mqtt_path_update") {
+					publish("set/paths", node_editor.serializePaths());
+				}
 			});
 
 			node_editor.setParameterChangeHandler(function(node, parameter_id, value) {

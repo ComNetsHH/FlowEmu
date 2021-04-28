@@ -107,9 +107,9 @@ class NodeEditor {
 		});
 	}
 
-	addNode(node, call_callback = true) {
-		if(call_callback && this.node_add_handler !== undefined) {
-			this.node_add_handler(node);
+	addNode(node, callback_data = null) {
+		if(this.node_add_handler !== undefined) {
+			this.node_add_handler(node, callback_data);
 		}
 
 		this.nodes[node.id] = node;
@@ -133,7 +133,7 @@ class NodeEditor {
 		});
 	}
 
-	updateNode(node_id, node_data, call_callback = true) {
+	updateNode(node_id, node_data, callback_data = null) {
 		if(!(node_id in this.nodes)) {
 			log.error("Node with ID " + node_id + " does not exist!");
 			return;
@@ -179,14 +179,14 @@ class NodeEditor {
 			}
 		});
 
-		if(call_callback && modified && this.node_change_handler !== undefined) {
-			this.node_change_handler(node);
+		if(modified && this.node_change_handler !== undefined) {
+			this.node_change_handler(node, callback_data);
 		}
 	}
 
-	removeNode(node, call_callback = true) {
-		if(call_callback && this.node_remove_handler !== undefined) {
-			this.node_remove_handler(node);
+	removeNode(node, callback_data = null) {
+		if(this.node_remove_handler !== undefined) {
+			this.node_remove_handler(node, callback_data);
 		}
 
 		if(this.selected_element === node) {
@@ -208,52 +208,52 @@ class NodeEditor {
 		delete this.nodes[node.id];
 	}
 
-	addPath(path, call_callback = true) {
+	addPath(path, callback_data = null) {
 		this.paths.push(path);
 		path.parent = this;
 
 		this.svg.appendChild(path.element);
 
 		if(path.mouse === undefined) {
-			if(call_callback && this.path_add_handler !== undefined) {
-				this.path_add_handler(path);
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path, callback_data);
 			}
 		}
 	}
 
-	updatePathFrom(path, from, call_callback = true) {
+	updatePathFrom(path, from, callback_data = null) {
 		var old_path_mouse = path.mouse;
 
 		path.setPortFrom(from);
 
 		if(old_path_mouse == "from" && from !== "mouse") {
-			if(call_callback && this.path_add_handler !== undefined) {
-				this.path_add_handler(path);
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path, callback_data);
 			}
 		} else if(from === "mouse") {
-			if(call_callback && this.path_remove_handler !== undefined) {
-				this.path_remove_handler(path);
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path, callback_data);
 			}
 		}
 	}
 
-	updatePathTo(path, to, call_callback = true) {
+	updatePathTo(path, to, callback_data = null) {
 		var old_path_mouse = path.mouse;
 
 		path.setPortTo(to);
 
 		if(old_path_mouse == "to" && to !== "mouse") {
-			if(call_callback && this.path_add_handler !== undefined) {
-				this.path_add_handler(path);
+			if(this.path_add_handler !== undefined) {
+				this.path_add_handler(path, callback_data);
 			}
 		} else if(to === "mouse") {
-			if(call_callback && this.path_remove_handler !== undefined) {
-				this.path_remove_handler(path);
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path, callback_data);
 			}
 		}
 	}
 
-	updatePaths(paths_data, call_callback = true) {
+	updatePaths(paths_data, callback_data = null) {
 		var that = this;
 
 		this.paths.forEach(function(path1) {
@@ -275,7 +275,7 @@ class NodeEditor {
 			});
 
 			if(!found) {
-				that.removePath(path1, call_callback);
+				that.removePath(path1, callback_data);
 			}
 		});
 
@@ -308,15 +308,15 @@ class NodeEditor {
 				let from = that.nodes[path1_data.from.node].ports[path1_data.from.port];
 				let to = that.nodes[path1_data.to.node].ports[path1_data.to.port];
 
-				that.addPath(new Path(from, to), call_callback);
+				that.addPath(new Path(from, to), callback_data);
 			}
 		});
 	}
 
-	removePath(path, call_callback = true) {
+	removePath(path, callback_data = null) {
 		if(path.mouse === undefined) {
-			if(call_callback && this.path_remove_handler !== undefined) {
-				this.path_remove_handler(path);
+			if(this.path_remove_handler !== undefined) {
+				this.path_remove_handler(path, callback_data);
 			}
 		}
 
