@@ -61,24 +61,6 @@
 				}
 			});
 
-			subscribe("get/module/+/+", function(topic, message) {
-				var r = new RegExp("get\\/module\\/(\\w+)/(\\w+)");
-				var m;
-				if((m = r.exec(topic)) === null) {
-					return;
-				}
-				var node_id = m[1];
-				var value_id = m[2];
-
-				if(node_id in node_editor.nodes) {
-					if(value_id in node_editor.nodes[node_id].parameters) {
-						node_editor.nodes[node_id].parameters[value_id].setValue(parseFloat(message));
-					} else if(value_id in node_editor.nodes[node_id].statistics) {
-						node_editor.nodes[node_id].statistics[value_id].setValue(parseFloat(message));
-					}
-				}
-			});
-
 			node_editor.setNodeAddHandler(function(node, callback_data) {
 				if(callback_data != "mqtt_node_add") {
 					publish("set/module/" + node.id, node.serialize());
@@ -95,6 +77,8 @@
 				if(callback_data != "mqtt_node_remove") {
 					publish("set/module/" + node.id, null);
 				}
+
+				unsubscribe("get/module/" + node.id + "/+");
 			});
 
 			node_editor.setPathAddHandler(function(path, callback_data) {
@@ -109,8 +93,24 @@
 				}
 			});
 
+			node_editor.setParameterAddHandler(function(node, id) {
+				subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
+					if(node.id in node_editor.nodes && id in node_editor.nodes[node.id].parameters) {
+						node_editor.nodes[node.id].parameters[id].setValue(parseFloat(message));
+					}
+				});
+			});
+
 			node_editor.setParameterChangeHandler(function(node, parameter_id, value) {
 				publish("set/module/" + node.id + "/" + parameter_id, value.toString());
+			});
+
+			node_editor.setStatisticAddHandler(function(node, id) {
+				subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
+					if(node.id in node_editor.nodes && id in node_editor.nodes[node.id].statistics) {
+						node_editor.nodes[node.id].statistics[id].setValue(parseFloat(message));
+					}
+				});
 			});
 
 			var node_library = new NodeLibrary("#node_library");
