@@ -46,7 +46,7 @@ class Module {
 			return this->name;
 		}
 
-		Json::Value serialize() {
+		Json::Value serialize() const {
 			Json::Value json_root;
 			json_root["title"] = name;
 			json_root["type"] = getType();
@@ -119,7 +119,7 @@ class Module {
 			return json_root;
 		}
 
-		void deserialize(Json::Value json_root) {
+		void deserialize(const Json::Value &json_root) {
 			name = json_root.get("title", name).asString();
 
 			if(json_root.isMember("position")) {
