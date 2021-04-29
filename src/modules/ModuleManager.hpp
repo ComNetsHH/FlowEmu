@@ -17,9 +17,21 @@ class ModuleManager {
 		ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt);
 		~ModuleManager();
 
-		void addModule(std::string id, std::shared_ptr<Module> module, bool publish = true);
-		void updateModule(std::string id, Json::Value json_root, bool publish = true);
-		void removeModule(std::string id, bool publish = true);
+		void addModule(const std::string &id, const Json::Value &json_root, bool publish = true);
+		void addModule(const std::string &id, std::shared_ptr<Module> module, bool publish = true);
+		void updateModule(const std::string &id, const Json::Value &json_root, bool publish = true);
+		void removeModule(const std::string &id, bool publish = true, bool publish_paths = true);
+		void updateModules(const Json::Value &json_root, bool publish = true);
+
+		void addPath(const Json::Value &json_root, bool publish = true);
+		void addPath(Path path, bool publish = true);
+		std::list<Path>::iterator removePath(std::list<Path>::iterator it, bool publish = true);
+		void updatePaths(const Json::Value &json_root, bool publish = true);
+
+		Json::Value serializeModules();
+		Json::Value serializePaths();
+		Json::Value serialize();
+		void deserialize(const Json::Value &json_root, bool publish = true);
 	private:
 		boost::asio::io_service &io_service;
 		Mqtt &mqtt;
