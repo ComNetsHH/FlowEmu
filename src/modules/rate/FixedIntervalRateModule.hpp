@@ -29,11 +29,8 @@ class FixedIntervalRateModule : public Module {
 		Parameter parameter_interval = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 		Parameter parameter_rate = {1000, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 
-		boost::asio::high_resolution_timer timer_lr;
-		void processLr(const boost::system::error_code& error);
-
-		boost::asio::high_resolution_timer timer_rl;
-		void processRl(const boost::system::error_code& error);
+		boost::asio::high_resolution_timer timer;
+		void process(const boost::system::error_code& error);
 };
 
 #endif

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, chrono::high_resolution_clock::duration interval) : timer_lr(io_service), timer_rl(io_service) {
+FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_service, chrono::high_resolution_clock::duration interval) : timer(io_service) {
 	setName("Fixed Interval Rate");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
@@ -32,44 +32,29 @@ FixedIntervalRateModule::FixedIntervalRateModule(boost::asio::io_service &io_ser
 
 	parameter_interval.set((double) chrono::nanoseconds(interval).count() / 1000000);
 
-	chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
-
-	timer_lr.expires_at(now);
-	timer_lr.async_wait(boost::bind(&FixedIntervalRateModule::processLr, this, boost::asio::placeholders::error));
-
-	timer_rl.expires_at(now);
-	timer_rl.async_wait(boost::bind(&FixedIntervalRateModule::processRl, this, boost::asio::placeholders::error));
+	timer.expires_at(chrono::high_resolution_clock::now());
+	timer.async_wait(boost::bind(&FixedIntervalRateModule::process, this, boost::asio::placeholders::error));
 }
 
-void FixedIntervalRateModule::processLr(const boost::system::error_code& error) {
+void FixedIntervalRateModule::process(const boost::system::error_code& error) {
 	if(error == boost::asio::error::operation_aborted) {
 		return;
 	}
 
-	auto packet = input_port_lr.request();
-	if(packet != nullptr) {
-		output_port_lr.send(packet);
+	auto packet_lr = input_port_lr.request();
+	if(packet_lr != nullptr) {
+		output_port_lr.send(packet_lr);
 	}
 
-	timer_lr.expires_at(timer_lr.expiry() + chrono::nanoseconds((uint64_t) (parameter_interval.get() * 1000000)));
-	timer_lr.async_wait(boost::bind(&FixedIntervalRateModule::processLr, this, boost::asio::placeholders::error));
-}
-
-void FixedIntervalRateModule::processRl(const boost::system::error_code& error) {
-	if(error == boost::asio::error::operation_aborted) {
-		return;
+	auto packet_rl = input_port_rl.request();
+	if(packet_rl != nullptr) {
+		output_port_rl.send(packet_rl);
 	}
 
-	auto packet = input_port_rl.request();
-	if(packet != nullptr) {
-		output_port_rl.send(packet);
-	}
-
-	timer_rl.expires_at(timer_rl.expiry() + chrono::nanoseconds((uint64_t) (parameter_interval.get() * 1000000)));
-	timer_rl.async_wait(boost::bind(&FixedIntervalRateModule::processRl, this, boost::asio::placeholders::error));
+	timer.expires_at(timer.expiry() + chrono::nanoseconds((uint64_t) (parameter_interval.get() * 1000000)));
+	timer.async_wait(boost::bind(&FixedIntervalRateModule::process, this, boost::asio::placeholders::error));
 }
 
 FixedIntervalRateModule::~FixedIntervalRateModule() {
-	timer_lr.cancel();
-	timer_rl.cancel();
+	timer.cancel();
 }
