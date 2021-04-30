@@ -32,6 +32,10 @@ class ModuleManager {
 		Json::Value serializePaths();
 		Json::Value serialize();
 		void deserialize(const Json::Value &json_root, bool publish = true);
+
+		void loadFromFile(const std::string &filename);
+		void saveToFile(const std::string &filename);
+
 	private:
 		boost::asio::io_service &io_service;
 		Mqtt &mqtt;

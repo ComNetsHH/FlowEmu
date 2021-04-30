@@ -1,5 +1,7 @@
 #include "ModuleManager.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <memory>
@@ -317,6 +319,35 @@ Json::Value ModuleManager::serialize() {
 void ModuleManager::deserialize(const Json::Value &json_root, bool publish) {
 	updateModules(json_root["modules"], publish);
 	updatePaths(json_root["paths"], publish);
+}
+
+void ModuleManager::loadFromFile(const string &filename) {
+	if(!filesystem::exists(filename)) {
+		cerr << "File " << filename << " does not exist!" << endl;
+		return;
+	}
+
+	Json::Value json_root;
+
+	ifstream file(filename);
+	file >> json_root;
+	file.close();
+
+	deserialize(json_root);
+}
+
+void ModuleManager::saveToFile(const string &filename) {
+	filesystem::path path(filename);
+	filesystem::create_directories(path.parent_path());
+
+	Json::StreamWriterBuilder stream_writer_builder;
+	stream_writer_builder["indentation"] = "\t";
+
+	unique_ptr<Json::StreamWriter> stream_writer(stream_writer_builder.newStreamWriter());
+
+	ofstream file(filename);
+	stream_writer->write(serialize(), &file);
+	file.close();
 }
 
 ModuleManager::~ModuleManager() {
