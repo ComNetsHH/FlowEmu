@@ -47,6 +47,24 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 		updatePaths(json_root);
 	});
 
+	mqtt.subscribe("load", [&](const string &topic, const string &payload) {
+		if(!regex_match(payload, regex("[\\w-]+"))) {
+			cerr << "Invalid filename!" << endl;
+			return;
+		}
+
+		loadFromFile("config/graphs/" + payload + ".json");
+	});
+
+	mqtt.subscribe("save", [&](const string &topic, const string &payload) {
+		if(!regex_match(payload, regex("[\\w-]+"))) {
+			cerr << "Invalid filename!" << endl;
+			return;
+		}
+
+		saveToFile("config/graphs/" + payload + ".json");
+	});
+
 	mqtt.publish("get/paths", Json::arrayValue, true, true);
 }
 
