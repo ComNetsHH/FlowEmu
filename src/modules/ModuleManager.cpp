@@ -176,20 +176,20 @@ void ModuleManager::removeModule(const string &id, bool publish, bool publish_pa
 }
 
 void ModuleManager::updateModules(const Json::Value &json_root, bool publish) {
-	for(auto it = json_root.begin(); it != json_root.end(); ++it) {
-		if(modules.find(it.name()) == modules.end()) {
-			addModule(it.name(), *it, publish);
-		} else {
-			updateModule(it.name(), *it, publish);
-		}
-	}
-
 	for(const auto& module : modules) {
 		if(json_root.isMember(module.first)){
 			continue;
 		}
 
 		removeModule(module.first, publish);
+	}
+
+	for(auto it = json_root.begin(); it != json_root.end(); ++it) {
+		if(modules.find(it.name()) == modules.end()) {
+			addModule(it.name(), *it, publish);
+		} else {
+			updateModule(it.name(), *it, publish);
+		}
 	}
 }
 
@@ -233,30 +233,6 @@ list<Path>::iterator ModuleManager::removePath(list<Path>::iterator it, bool pub
 }
 
 void ModuleManager::updatePaths(const Json::Value &json_root, bool publish) {
-	for(const auto& json_path : json_root) {
-		if(!(json_path.isMember("from") && json_path.isMember("to"))) {
-			continue;
-		}
-
-		Path path;
-		path.deserialize(json_path);
-
-		bool found = false;
-		for(const auto& item : paths) {
-			if(item.from_node_id == path.from_node_id &&
-				item.from_port_id == path.from_port_id &&
-				item.to_node_id == path.to_node_id     &&
-				item.to_port_id == path.to_port_id        ) {
-				found = true;
-				break;
-			}
-		}
-
-		if(!found) {
-			addPath(path, false);
-		}
-	}
-
 	for(auto it = paths.begin(); it != paths.end(); /*++it*/) {
 		bool found = false;
 		for(const auto& json_path : json_root) {
@@ -280,6 +256,30 @@ void ModuleManager::updatePaths(const Json::Value &json_root, bool publish) {
 			it = removePath(it, false);
 		} else {
 			++it;
+		}
+	}
+
+	for(const auto& json_path : json_root) {
+		if(!(json_path.isMember("from") && json_path.isMember("to"))) {
+			continue;
+		}
+
+		Path path;
+		path.deserialize(json_path);
+
+		bool found = false;
+		for(const auto& item : paths) {
+			if(item.from_node_id == path.from_node_id &&
+				item.from_port_id == path.from_port_id &&
+				item.to_node_id == path.to_node_id     &&
+				item.to_port_id == path.to_port_id        ) {
+				found = true;
+				break;
+			}
+		}
+
+		if(!found) {
+			addPath(path, false);
 		}
 	}
 
