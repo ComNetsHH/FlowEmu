@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install build dependencies
 RUN apt-get update \
-	&& apt-get install -y build-essential pkg-config cmake ccache libboost-dev libmosquitto-dev libjsoncpp-dev libprotobuf-dev \
+	&& apt-get install -y build-essential pkg-config cmake ccache libboost-dev libboost-program-options-dev libmosquitto-dev libjsoncpp-dev libprotobuf-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 
@@ -44,7 +44,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install runtime dependencies
 RUN apt-get update \
-	&& apt-get install -y libmosquitto1 libjsoncpp1 iproute2 iputils-ping iperf libprotobuf-dev \
+	&& apt-get install -y libboost-program-options1.71.0 libmosquitto1 libjsoncpp1 iproute2 iputils-ping iperf libprotobuf-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Add machine learning models

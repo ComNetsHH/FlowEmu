@@ -1,5 +1,9 @@
 find_package(PkgConfig REQUIRED)
+
+find_package(Boost COMPONENTS program_options REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
+
+include_directories("${Boost_INCLUDE_DIR}")
 
 if(JSONCPP_INCLUDE_DIRS)
 	include_directories("${JSONCPP_INCLUDE_DIRS}")
@@ -29,6 +33,7 @@ set_property(TARGET channel_emulator PROPERTY CXX_STANDARD 17)
 set_property(TARGET channel_emulator PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(channel_emulator
+	${Boost_LIBRARIES}
 	mosquitto
 	${JSONCPP_LIBRARIES}
 	pthread

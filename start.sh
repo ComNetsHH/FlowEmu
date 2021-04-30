@@ -70,7 +70,7 @@ docker run -d -it --privileged --name sink $DOCKER_IMAGE_SOURCE_SINK
 setup_network > /dev/null
 
 # Start emulator
-docker exec -it channel channel_emulator $MQTT_BROKER
+docker exec -it channel channel_emulator --mqtt-host=$MQTT_BROKER --interface-source=in --interface-sink=out
 
 # Stop and delete Docker containers and network namespaces
 cleanup > /dev/null

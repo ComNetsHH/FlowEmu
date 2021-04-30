@@ -56,7 +56,7 @@ docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_EMULATOR
 setup_network > /dev/null
 
 # Start emulator
-docker exec -it channel channel_emulator $MQTT_BROKER $INTERFACE_SOURCE $INTERFACE_SINK
+docker exec -it channel channel_emulator --mqtt-host=$MQTT_BROKER --interface-source=$INTERFACE_SOURCE --interface-sink=$INTERFACE_SINK
 
 # Stop and delete Docker container and network namespace
 cleanup > /dev/null
