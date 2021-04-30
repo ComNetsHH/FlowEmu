@@ -45,6 +45,9 @@ int main(int argc, const char *argv[]) {
 	module_manager.addModule("socket_source", make_shared<RawSocket>(io_service, interface_source, Module::PortInfo::Side::right));
 	module_manager.addModule("socket_sink", make_shared<RawSocket>(io_service, interface_sink, Module::PortInfo::Side::left));
 
+	// Load from autosave file
+	module_manager.loadFromFile("config/graphs/autosave.json");
+
 	// MQTT loop
 	thread mqtt_thread([&](){
 		while(running) {
@@ -66,6 +69,9 @@ int main(int argc, const char *argv[]) {
 	running = false;
 
 	mqtt_thread.join();
+
+	// Save to autosave file
+	module_manager.saveToFile("config/graphs/autosave.json");
 
 	return 0;
 }
