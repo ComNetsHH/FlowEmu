@@ -99,6 +99,7 @@ class Module {
 				json_parameter["label"] = entry.second.label;
 				json_parameter["unit"] = entry.second.unit;
 				json_parameter["integer"] = false;
+				json_parameter["value"] = entry.second.parameter->get();
 				json_parameter["min"] = entry.second.parameter->getMin();
 				json_parameter["max"] = entry.second.parameter->getMax();
 				json_parameter["step"] = entry.second.parameter->getStep();
@@ -130,6 +131,17 @@ class Module {
 			if(json_root.isMember("size")) {
 				gui_width = json_root["size"].get("width", 0).asInt();
 				gui_height = json_root["size"].get("height", 0).asInt();
+			}
+
+			if(json_root.isMember("content")) {
+				for(const auto& item : json_root["content"]) {
+					if(item.get("type", "").asString() == "parameter" && item.isMember("value")) {
+						std::string id = item.get("id", "").asString();
+						double value = item.get("value", 0).asDouble();
+
+						getParameter(id).parameter->set(value);
+					}
+				}
 			}
 		}
 
