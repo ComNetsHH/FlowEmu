@@ -25,7 +25,7 @@ set(channel_emulator_SRCS
 
 add_executable(channel_emulator ${channel_emulator_SRCS})
 
-set_property(TARGET channel_emulator PROPERTY CXX_STANDARD 11)
+set_property(TARGET channel_emulator PROPERTY CXX_STANDARD 17)
 set_property(TARGET channel_emulator PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(channel_emulator
