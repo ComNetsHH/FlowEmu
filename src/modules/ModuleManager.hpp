@@ -22,6 +22,7 @@ class ModuleManager {
 		void updateModule(const std::string &id, const Json::Value &json_root, bool publish = true);
 		void removeModule(const std::string &id, bool publish = true, bool publish_paths = true);
 		void updateModules(const Json::Value &json_root, bool publish = true);
+		std::shared_ptr<Module> getModule(const std::string &id);
 
 		void addPath(const Json::Value &json_root, bool publish = true);
 		void addPath(Path path, bool publish = true);

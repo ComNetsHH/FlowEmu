@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 #include <regex>
+#include <stdexcept>
 
 #include "delay/FixedDelayModule.hpp"
 #include "loss/GilbertElliotLossModule.hpp"
@@ -235,6 +236,14 @@ void ModuleManager::addPath(Path path, bool publish) {
 
 	if(publish) {
 		mqtt.publish("get/paths", serializePaths(), true, true);
+	}
+}
+
+shared_ptr<Module> ModuleManager::getModule(const string &id) {
+	try {
+		return modules.at(id);
+	} catch(const out_of_range &e) {
+		throw out_of_range("Unknown module ID: " + id);
 	}
 }
 
