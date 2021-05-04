@@ -5,6 +5,7 @@
 #include "Mqtt.hpp"
 
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <chrono>
 
@@ -166,19 +167,16 @@ void Mqtt::on_message(const struct mosquitto_message* message) {
 
 				item.callback_string(topic, payload);
 			} else if(item.type == SubscriptionType::Json) {
-				Json::CharReader* json_reader = json_reader_builder.newCharReader();
+				unique_ptr<Json::CharReader> json_reader(json_reader_builder.newCharReader());
 				Json::Value json_root;
 				string err = "";
 
 				json_reader->parse((char*) message->payload, (char*) message->payload + message->payloadlen, &json_root, &err);
 				/* if(err != "") {
-					delete json_reader;
 					return;
 				} */
 
 				item.callback_json(topic, json_root);
-
-				delete json_reader;
 			} else if(item.type == SubscriptionType::Binary) {
 				item.callback_binary(topic, message->payload, message->payloadlen);
 			}
