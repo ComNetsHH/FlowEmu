@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
 #include <atomic>
@@ -29,6 +30,7 @@ int main(int argc, const char *argv[]) {
 	string mqtt_broker;
 	uint16_t mqtt_port;
 	string graph_file;
+	string graph;
 
 	po::options_description desc("Available options");
 	desc.add_options()
@@ -38,6 +40,7 @@ int main(int argc, const char *argv[]) {
 		("mqtt-host", po::value<string>(&mqtt_broker)->default_value("localhost"), "MQTT broker host")
 		("mqtt-port", po::value<uint16_t>(&mqtt_port)->default_value(1883), "MQTT broker port")
 		("graph-file", po::value<string>(&graph_file)->default_value("autosave"), "Graph file that will be loaded")
+		("graph", po::value<string>(&graph), "Graph data in JSON format that will be loaded")
 	;
 
 	po::variables_map vm;
@@ -69,7 +72,17 @@ int main(int argc, const char *argv[]) {
 	module_manager.addModule("socket_sink", make_shared<RawSocket>(io_service, interface_sink, Module::PortInfo::Side::left));
 
 	// Load from file
-	module_manager.loadFromFile("config/graphs/" + graph_file + ".json");
+	if(vm.count("graph")) {
+		Json::CharReaderBuilder json_reader_builder;
+		unique_ptr<Json::CharReader> json_reader(json_reader_builder.newCharReader());
+
+		Json::Value json_root;
+		json_reader->parse(graph.c_str(), graph.c_str() + graph.length(), &json_root, nullptr);
+
+		module_manager.deserialize(json_root);
+	} else {
+		module_manager.loadFromFile("config/graphs/" + graph_file + ".json");
+	}
 
 	// MQTT loop
 	thread mqtt_thread([&](){
