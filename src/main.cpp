@@ -71,7 +71,7 @@ int main(int argc, const char *argv[]) {
 	module_manager.addModule("socket_source", make_shared<RawSocket>(io_service, interface_source, Module::PortInfo::Side::right));
 	module_manager.addModule("socket_sink", make_shared<RawSocket>(io_service, interface_sink, Module::PortInfo::Side::left));
 
-	// Load from file
+	// Load graph
 	if(vm.count("graph")) {
 		Json::CharReaderBuilder json_reader_builder;
 		unique_ptr<Json::CharReader> json_reader(json_reader_builder.newCharReader());
