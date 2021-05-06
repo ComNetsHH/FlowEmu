@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <list>
+#include <stdexcept>
 
 #include <json/json.h>
 
@@ -150,7 +151,11 @@ class Module {
 		}
 
 		PortInfo getPort(std::string id) {
-			return ports.at(id);
+			try {
+				return ports.at(id);
+			} catch(const std::out_of_range &e) {
+				throw std::out_of_range("Unknown port ID: " + id);
+			}
 		}
 
 		const std::map<std::string, ParameterInfo>& getParameters() {
@@ -158,7 +163,11 @@ class Module {
 		}
 
 		ParameterInfo getParameter(std::string id) {
-			return parameters.at(id);
+			try {
+				return parameters.at(id);
+			} catch(const std::out_of_range &e) {
+				throw std::out_of_range("Unknown parameter ID: " + id);
+			}
 		}
 
 		const std::map<std::string, StatisticInfo>& getStatistics() {
@@ -166,7 +175,11 @@ class Module {
 		}
 
 		StatisticInfo getStatistic(std::string id) {
-			return statistics.at(id);
+			try {
+				return statistics.at(id);
+			} catch(const std::out_of_range &e) {
+				throw std::out_of_range("Unknown statistic ID: " + id);
+			}
 		}
 
 	protected:
