@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <regex>
 #include <string>
 #include <thread>
 #include <atomic>
@@ -44,7 +45,8 @@ int main(int argc, const char *argv[]) {
 	;
 
 	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::parsed_options parsed = po::command_line_parser(argc, argv).options(desc).allow_unregistered().run();
+	po::store(parsed, vm);
 	po::notify(vm);
 
 	if(vm.count("help")) {
@@ -82,6 +84,25 @@ int main(int argc, const char *argv[]) {
 		module_manager.deserialize(json_root);
 	} else {
 		module_manager.loadFromFile("config/graphs/" + graph_file + ".json");
+	}
+	
+	// Get module parameters from command line
+	for(const string& option : po::collect_unrecognized(parsed.options, po::collect_unrecognized_mode::exclude_positional)) {
+		regex r("--([\\w-]+)\\.([\\w-]+)=([\\d+.?\\d*]+)");
+		smatch m;
+		if(!(regex_search(option, m, r) && m.size() == 4)) {
+			continue;
+		}
+
+		string module_id = m.str(1);
+		string parameter_id = m.str(2);
+		double value = stod(m.str(3));
+
+		try {
+			module_manager.getModule(module_id)->getParameter(parameter_id).parameter->set(value);
+		} catch(const std::out_of_range &e) {
+			cerr << "Error while setting module parameter from command line: " << e.what() << endl;
+		}
 	}
 
 	// MQTT loop
