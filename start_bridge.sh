@@ -5,7 +5,7 @@ INTERFACE_SOURCE="emulator0"
 INTERFACE_SINK="emulator1"
 
 # MQTT broker
-MQTT_BROKER="$HOSTNAME"
+MQTT_BROKER="172.17.0.1"
 
 # Build normal emulator Docker image
 DOCKER_FILE_EMULATOR="Dockerfile"
