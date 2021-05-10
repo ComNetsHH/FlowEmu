@@ -33,7 +33,7 @@ function topic_matches_sub(sub, topic) {
 }
 
 /* ========== Connect ========== */
-var client = mqtt.connect({port: 9001, keepalive: 30, clean: true, resubscribe: false});
+var client = mqtt.connect({keepalive: 30, clean: true, resubscribe: false});
 
 client.on("connect", function() {
 	$.each(subscriptions, function(i, item) {
