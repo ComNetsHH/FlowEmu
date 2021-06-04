@@ -1,0 +1,17 @@
+[metadata]
+name = "Docker"
+description = "Docker environment"
+
+[config]
+mqtt.host = "172.17.0.1"
+
+interface.source = "in"
+interface.sink = "out"
+
+docker_container.source = "source"
+docker_container.channel = "channel"
+docker_container.sink = "sink"
+
+#run_prefix.source = ""
+#run_prefix.channel = ""
+#run_prefix.sink = ""
