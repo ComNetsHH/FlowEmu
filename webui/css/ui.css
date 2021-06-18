@@ -98,3 +98,7 @@ body > .content .node_library {
 body > .content .node_editor {
 	flex: 1 1 auto;
 }
+
+body > .content .node_settings {
+	flex: 0 0 auto;
+}

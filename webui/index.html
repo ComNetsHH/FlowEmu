@@ -33,6 +33,7 @@
 		<link rel="stylesheet" href="js/node_editor/node_editor.css">
 
 		<script src="js/node_editor/node_editor.js"></script>
+		<script src="js/chart/chart.min.js"></script>
 		<script src="js/mqtt/mqttjs.js"></script>
 		<script src="js/mqtt/mqtt.js"></script>
 	</head>
@@ -54,6 +55,11 @@
 		<div class="content">
 			<div id="node_library"></div>
 			<div id="node_editor"></div>
+			<div id="node_settings" class="node_settings">
+				<canvas id="queue_chart" width="400" height="250"></canvas>
+				<canvas id="delay_chart" width="400" height="250"></canvas>
+				<canvas id="throughput_chart" width="400" height="250"></canvas>
+			</div>
 		</div>
 
 		<script>
@@ -295,6 +301,190 @@
 			meter_group.addNode(throughput_meter);
 
 			node_library.addGroup(meter_group);
+
+
+			var queue_ctx = document.getElementById('queue_chart').getContext('2d');
+			var queue_chart = new Chart(queue_ctx, {
+				type: 'scatter',
+				data: {
+					datasets: [{
+						label: 'Queue Length',
+						data: [],
+						fill: false,
+						borderColor: 'orange',
+						showLine: true,
+						tension: 0
+					}]
+				},
+				options: {
+					responsive: true,
+					animations: true,
+					scales: {
+						x: {
+							display: false
+						},
+						y: {
+							display: true,
+							title: {
+								display: true,
+								text: "Packets"
+							}
+						}
+					}
+				}
+			});
+
+			const start_time = Date.now();
+			subscribe("get/module/fifo_queue/queue_length", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				queue_chart.data.datasets[0].data = queue_chart.data.datasets[0].data.filter(item => item.x > now - 35);
+				queue_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
+			});
+
+			setInterval(function() {
+				const now = (Date.now() - start_time) / 1000;
+				queue_chart.options.scales.x.max = now;
+				queue_chart.options.scales.x.min = now - 30;
+				queue_chart.update();
+			}, 100);
+
+
+			var delay_ctx = document.getElementById('delay_chart').getContext('2d');
+			var delay_chart = new Chart(delay_ctx, {
+				type: 'scatter',
+				data: {
+					datasets: [{
+						label: 'Mean Delay',
+						data: [],
+						fill: false,
+						borderColor: 'orange',
+						showLine: true,
+						tension: 0
+					},{
+						label: 'Min Delay',
+						data: [],
+						fill: false,
+						borderColor: 'rebeccapurple',
+						showLine: true,
+						tension: 0
+					},{
+						label: 'Max Delay',
+						data: [],
+						fill: false,
+						borderColor: 'rebeccapurple',
+						showLine: true,
+						tension: 0
+					}]
+				},
+				options: {
+					responsive: true,
+					animations: true,
+					scales: {
+						x: {
+							display: false
+						},
+						y: {
+							display: true,
+							title: {
+								display: true,
+								text: "ms"
+							}
+						}
+					}
+				}
+			});
+
+			subscribe("get/module/delay_meter/mean", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				delay_chart.data.datasets[0].data = delay_chart.data.datasets[0].data.filter(item => item.x > now - 35);
+				delay_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
+			});
+
+			subscribe("get/module/delay_meter/min", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				delay_chart.data.datasets[1].data = delay_chart.data.datasets[1].data.filter(item => item.x > now - 35);
+				delay_chart.data.datasets[1].data.push({x: now, y: parseFloat(message)});
+			});
+
+			subscribe("get/module/delay_meter/max", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				delay_chart.data.datasets[2].data = delay_chart.data.datasets[2].data.filter(item => item.x > now - 35);
+				delay_chart.data.datasets[2].data.push({x: now, y: parseFloat(message)});
+			});
+
+			setInterval(function() {
+				const now = (Date.now() - start_time) / 1000;
+				delay_chart.options.scales.x.max = now;
+				delay_chart.options.scales.x.min = now - 30;
+				delay_chart.update();
+			}, 100);
+
+
+			var throughput_ctx = document.getElementById('throughput_chart').getContext('2d');
+			var throughput_chart = new Chart(throughput_ctx, {
+				type: 'scatter',
+				data: {
+					datasets: [{
+						label: 'Bits/s',
+						yAxisID: 'y',
+						data: [],
+						fill: false,
+						borderColor: 'orange',
+						showLine: true
+					}, {
+						label: 'Packets/s',
+						yAxisID: 'y1',
+						data: [],
+						fill: false,
+						borderColor: 'rebeccapurple',
+						showLine: true
+					}]
+				},
+				options: {
+					responsive: true,
+					animations: true,
+					scales: {
+						x: {
+							display: false
+						},
+						y: {
+							display: true,
+							title: {
+								display: true,
+								text: "Bits/s"
+							},
+							position: 'left'
+						},
+						y1: {
+							display: true,
+							title: {
+								display: true,
+								text: "Packets/s"
+							},
+							position: 'right'
+						}
+					}
+				}
+			});
+
+			subscribe("get/module/throughput_meter/bytes_per_second", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				throughput_chart.data.datasets[0].data = throughput_chart.data.datasets[0].data.filter(item => item.x > now - 35);
+				throughput_chart.data.datasets[0].data.push({x: now, y: parseFloat(message) * 8});
+			});
+
+			subscribe("get/module/throughput_meter/packets_per_second", function(topic, message) {
+				const now = (Date.now() - start_time) / 1000;
+				throughput_chart.data.datasets[1].data = throughput_chart.data.datasets[1].data.filter(item => item.x > now - 35);
+				throughput_chart.data.datasets[1].data.push({x: now, y: parseFloat(message)});
+			});
+
+			setInterval(function() {
+				const now = (Date.now() - start_time) / 1000;
+				throughput_chart.options.scales.x.max = now;
+				throughput_chart.options.scales.x.min = now - 30;
+				throughput_chart.update();
+			}, 100);
 		</script>
 	</body>
 </html>
