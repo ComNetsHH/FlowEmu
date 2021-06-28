@@ -310,15 +310,14 @@
 					datasets: [{
 						label: 'Queue Length',
 						data: [],
-						fill: false,
 						borderColor: 'orange',
 						showLine: true,
-						tension: 0
 					}]
 				},
 				options: {
-					responsive: true,
-					animations: true,
+					animation: {
+						duration: 0
+					},
 					scales: {
 						x: {
 							display: false
@@ -356,29 +355,24 @@
 					datasets: [{
 						label: 'Mean Delay',
 						data: [],
-						fill: false,
 						borderColor: 'orange',
 						showLine: true,
-						tension: 0
 					},{
 						label: 'Min Delay',
 						data: [],
-						fill: false,
 						borderColor: 'rebeccapurple',
 						showLine: true,
-						tension: 0
 					},{
 						label: 'Max Delay',
 						data: [],
-						fill: false,
 						borderColor: 'rebeccapurple',
 						showLine: true,
-						tension: 0
 					}]
 				},
 				options: {
-					responsive: true,
-					animations: true,
+					animation: {
+						duration: 0
+					},
 					scales: {
 						x: {
 							display: false
@@ -428,21 +422,20 @@
 						label: 'Bits/s',
 						yAxisID: 'y',
 						data: [],
-						fill: false,
 						borderColor: 'orange',
 						showLine: true
 					}, {
 						label: 'Packets/s',
 						yAxisID: 'y1',
 						data: [],
-						fill: false,
 						borderColor: 'rebeccapurple',
 						showLine: true
 					}]
 				},
 				options: {
-					responsive: true,
-					animations: true,
+					animation: {
+						duration: 0
+					},
 					scales: {
 						x: {
 							display: false
