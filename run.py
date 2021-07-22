@@ -232,87 +232,96 @@ def main():
 	# Build emulator
 	environment.build()
 
-	# Check command-line arguments for test cases file
-	if(len(sys.argv) < 3):
-		print("Please provide a test cases file!")
-		exit(1)
-
-	# Load test cases file
-	config = Config(str(sys.argv[2]))
-
-	# Print config
-	#print(config.metadata)
-	#print(config.testcases)
-
-	# Create results directory and metadata file
-	results = Results("results", config.metadata["name"])
-	results.writeMetadata(environment.metadata, config.metadata)
-
 	# Prepare environment
 	environment.cleanup()
 	environment.setup()
 
-	# Run test cases
-	print("\033[1;33m--> Run test cases \'" + config.metadata["name"] + "\' by " + config.metadata["author"] + "\033[0m")
-	try:
-		# Run test case
-		for testcase in config.testcases:
-			# Skip other test cases if a specific test case is given as command-line argument
-			if len(sys.argv) > 3 and sys.argv[3] != testcase["name"]:
-				print("\033[1;33m--> Skip test case \'" + testcase["name"] + "\'\033[0m")
-				continue
+	# Check command-line arguments for test cases file
+	if(len(sys.argv) >= 3):
+		# Load test cases file
+		config = Config(str(sys.argv[2]))
 
-			# Write test case to results directory
-			results.writeTestcase(testcase)
+		# Print config
+		#print(config.metadata)
+		#print(config.testcases)
 
-			# Repeat test case
-			for repetition in range(0, testcase["repetitions"]):
-				testcase["repetition"] = repetition
-				results_path = results.getResultsDirectoryPath() + "/" + testcase["name"] + "_rep" + str(testcase["repetition"])
-				print("\033[1;33m--> Run test case \'" + testcase["name"] + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
+		# Create results directory and metadata file
+		results = Results("results", config.metadata["name"])
+		results.writeMetadata(environment.metadata, config.metadata)
 
-				# Get graph file from test case
-				graph_file = ""
-				if "graph-file" in testcase:
-					graph_file = " --graph-file=" + testcase["graph-file"]
+		# Run test cases
+		print("\033[1;33m--> Run test cases \'" + config.metadata["name"] + "\' by " + config.metadata["author"] + "\033[0m")
+		try:
+			# Run test case
+			for testcase in config.testcases:
+				# Skip other test cases if a specific test case is given as command-line argument
+				if len(sys.argv) > 3 and sys.argv[3] != testcase["name"]:
+					print("\033[1;33m--> Skip test case \'" + testcase["name"] + "\'\033[0m")
+					continue
 
-				# Get module parameters from test case
-				module_parameters = ""
-				for module in testcase.keys():
-					if(isinstance(testcase[module], dict)):
-						for parameter, value in testcase[module].items():
-							module_parameters += " --" + module + "." + parameter + "=" + str(value)
+				# Write test case to results directory
+				results.writeTestcase(testcase)
 
-				# Setup processes
-				process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
-				process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
-				process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
+				# Repeat test case
+				for repetition in range(0, testcase["repetitions"]):
+					testcase["repetition"] = repetition
+					results_path = results.getResultsDirectoryPath() + "/" + testcase["name"] + "_rep" + str(testcase["repetition"])
+					print("\033[1;33m--> Run test case \'" + testcase["name"] + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
 
-				# Start processes
-				process_channel.setLogfile(results_path + "_channel.out")
-				process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
+					# Get graph file from test case
+					graph_file = ""
+					if "graph-file" in testcase:
+						graph_file = " --graph-file=" + testcase["graph-file"]
 
-				if "sink-command" in testcase and testcase["sink-command"] != "":
-					process_sink.setLogfile(results_path + "_sink.out")
-					process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
+					# Get module parameters from test case
+					module_parameters = ""
+					for module in testcase.keys():
+						if(isinstance(testcase[module], dict)):
+							for parameter, value in testcase[module].items():
+								module_parameters += " --" + module + "." + parameter + "=" + str(value)
 
-				time.sleep(1)
+					# Setup processes
+					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
+					process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
+					process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
 
-				if "source-command" in testcase and testcase["source-command"] != "":
-					process_source.setLogfile(results_path + "_source.out")
-					process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
+					# Start processes
+					process_channel.setLogfile(results_path + "_channel.out")
+					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 
-				# Wait for source process to finish before stopping all other processes
-				process_source.wait()
-				process_sink.stop()
-				process_channel.stop()
+					if "sink-command" in testcase and testcase["sink-command"] != "":
+						process_sink.setLogfile(results_path + "_sink.out")
+						process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
 
-	# Catch keyboard interrupts
-	except KeyboardInterrupt:
-		# Cleanly terminate all processes
-		process_source.stop()
-		process_sink.stop()
-		process_channel.stop()
+					time.sleep(1)
+
+					if "source-command" in testcase and testcase["source-command"] != "":
+						process_source.setLogfile(results_path + "_source.out")
+						process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
+
+					# Wait for source process to finish before stopping all other processes
+					process_source.wait()
+					process_sink.stop()
+					process_channel.stop()
+
+		# Catch keyboard interrupts
+		except KeyboardInterrupt:
+			# Cleanly terminate all processes
+			process_source.stop()
+			process_sink.stop()
+			process_channel.stop()
+	else:
+		# Run emulator in interactive mode
+		try:
+			print("\033[1;33mRun emulator in interactive mode\033[0m")
+
+			process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
+			process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), ""))
+			process_channel.wait()
+
+		# Catch keyboard interrupts
+		except KeyboardInterrupt:
+			process_channel.stop()
 
 	# Cleanup environment
 	environment.cleanup()
