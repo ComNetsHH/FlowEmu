@@ -114,6 +114,7 @@ int main(int argc, const char *argv[]) {
 
 	// Loop
 	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
 
 	cout << "Successfully started emulator!" << endl;
 	/* while(running) {
