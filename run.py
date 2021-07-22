@@ -104,6 +104,9 @@ class Results:
 		with open(self.path + "/testcase_" + testcase["name"] + ".json", "w") as testcase_file:
 			json.dump(testcase, testcase_file)
 
+	# Get results directory path
+	def getResultsDirectoryPath(self):
+		return self.path
 
 class Process:
 	cmd = ""
@@ -265,6 +268,7 @@ def main():
 			# Repeat test case
 			for repetition in range(0, testcase["repetitions"]):
 				testcase["repetition"] = repetition
+				results_path = results.getResultsDirectoryPath() + "/" + testcase["name"] + "_rep" + str(testcase["repetition"])
 				print("\033[1;33m--> Run test case \'" + testcase["name"] + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
 
 				# Get graph file from test case
@@ -285,13 +289,17 @@ def main():
 				process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
 
 				# Start processes
+				process_channel.setLogfile(results_path + "_channel.out")
 				process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
+
 				if "sink-command" in testcase and testcase["sink-command"] != "":
+					process_sink.setLogfile(results_path + "_sink.out")
 					process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
 
 				time.sleep(1)
 
 				if "source-command" in testcase and testcase["source-command"] != "":
+					process_source.setLogfile(results_path + "_source.out")
 					process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
 
 				# Wait for source process to finish before stopping all other processes
