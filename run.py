@@ -263,7 +263,7 @@ def main():
 			results.writeTestcase(testcase)
 
 			# Repeat test case
-			for repetition in range(1, testcase["repetitions"] + 1):
+			for repetition in range(0, testcase["repetitions"]):
 				testcase["repetition"] = repetition
 				print("\033[1;33m--> Run test case \'" + testcase["name"] + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
 
