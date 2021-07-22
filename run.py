@@ -288,6 +288,9 @@ def main():
 				process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 				if "sink-command" in testcase and testcase["sink-command"] != "":
 					process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
+
+				time.sleep(1)
+
 				if "source-command" in testcase and testcase["source-command"] != "":
 					process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
 
