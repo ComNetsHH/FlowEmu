@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Build normal emulator Docker image
 DOCKER_FILE_EMULATOR="Dockerfile"

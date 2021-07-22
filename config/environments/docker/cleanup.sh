@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Stop and delete Docker containers and network namespaces
 cleanup() {
