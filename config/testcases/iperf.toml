@@ -1,0 +1,16 @@
+[metadata]
+name = "iPerf"
+description = "iPerf test case with two different buffer sizes at the bottleneck"
+author = "Daniel Stolpmann <daniel.stolpmann@tuhh.de>"
+
+[general]
+graph-file = "fixed_interval"
+source-command = "iperf -c 10.0.2.1 -t 10 -Z cubic"
+sink-command = "iperf -s"
+
+repetitions = 2
+
+fifo_queue.buffer_size = 10
+
+[deep-buffer]
+fifo_queue.buffer_size = 100
