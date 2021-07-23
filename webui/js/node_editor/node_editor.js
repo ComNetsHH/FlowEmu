@@ -100,7 +100,7 @@ class NodeEditor {
 
 		document.addEventListener("keydown", function(e) {
 			if(e.key === "Delete") {
-				if(that.selected_element instanceof Node) {
+				if(that.selected_element instanceof Node && that.selected_element.getRemovable() == true) {
 					that.removeNode(that.selected_element);
 				}
 
@@ -199,10 +199,6 @@ class NodeEditor {
 	}
 
 	removeNode(node, callback_data = null) {
-		if(node.getRemovable() == false) {
-			return;
-		}
-
 		if(this.selected_element === node) {
 			this.selected_element = undefined;
 		}
