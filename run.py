@@ -35,17 +35,23 @@ class Environment:
 	# Run build script
 	def build(self):
 		print("\033[1;33mBuild\033[0m")
-		os.system(self.path + "/build.sh")
+		status = os.system(self.path + "/build.sh")
+		if os.WEXITSTATUS(status) != 0:
+			raise RuntimeError
 
 	# Run setup script
 	def setup(self):
 		print("\033[1;33mSetup\033[0m")
-		os.system(self.path + "/setup.sh")
+		status = os.system(self.path + "/setup.sh")
+		if os.WEXITSTATUS(status) != 0:
+			raise RuntimeError
 
 	# Run cleanup script
 	def cleanup(self):
 		print("\033[1;33mCleanup\033[0m")
-		os.system(self.path + "/cleanup.sh")
+		status = os.system(self.path + "/cleanup.sh")
+		if os.WEXITSTATUS(status) != 0:
+			raise RuntimeError
 
 
 class Config:
@@ -230,11 +236,24 @@ def main():
 	environment = Environment(str(sys.argv[1]))
 
 	# Build emulator
-	environment.build()
+	try:
+		environment.build()
+	except RuntimeError:
+		print("Error while building emulator!")
+		exit(1)
 
 	# Prepare environment
-	environment.cleanup()
-	environment.setup()
+	try:
+		environment.cleanup()
+	except RuntimeError:
+		print("Error while cleaning up environment!")
+		exit(1)
+
+	try:
+		environment.setup()
+	except RuntimeError:
+		print("Error while setting up environment!")
+		exit(1)
 
 	# Check command-line arguments for test cases file
 	if(len(sys.argv) >= 3):
@@ -324,7 +343,11 @@ def main():
 			process_channel.stop()
 
 	# Cleanup environment
-	environment.cleanup()
+	try:
+		environment.cleanup()
+	except RuntimeError:
+		print("Error while cleaning up environment!")
+		exit(1)
 
 	exit(0)
 
