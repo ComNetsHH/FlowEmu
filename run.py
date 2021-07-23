@@ -16,6 +16,7 @@ start_time = time.time()
 class Environment:
 	path = ""
 	metadata = {}
+	operating_modes = {}
 	config = {}
 
 	def __init__(self, path):
@@ -33,6 +34,10 @@ class Environment:
 		# Get metadata
 		self.metadata["name"] = str(environment_toml["metadata"]["name"])
 		self.metadata["description"] = str(environment_toml["metadata"]["description"])
+
+		# Get supported operating modes
+		self.operating_modes["testcase"] = environment_toml["operating_modes"]["testcase"] if "operating_modes" in environment_toml and "testcase" in environment_toml["operating_modes"] else True
+		self.operating_modes["interactive"] = environment_toml["operating_modes"]["interactive"] if "operating_modes" in environment_toml and "interactive" in environment_toml["operating_modes"] else True
 
 		# Get config
 		self.config = environment_toml["config"]
@@ -249,6 +254,25 @@ def main():
 		print(error)
 		exit(1)
 
+	# Check command-line arguments for test cases file to get operating mode
+	operating_mode = "testcase" if len(sys.argv) >= 3 else "interactive"
+
+	# Check for incompatible operating mode
+	if operating_mode == "testcase" and environment.operating_modes["testcase"] == False:
+		print("Test case mode not supported by environment!")
+		exit(1)
+	if operating_mode == "interactive" and environment.operating_modes["interactive"] == False:
+		print("Interactive mode not supported by environment!")
+		exit(1)
+
+	# Load test cases file
+	if operating_mode == "testcase":
+		try:
+			config = Config(str(sys.argv[2]))
+		except RuntimeError as error:
+			print(error)
+			exit(1)
+
 	# Build emulator
 	try:
 		environment.build()
@@ -269,15 +293,8 @@ def main():
 		print("Error while setting up environment!")
 		exit(1)
 
-	# Check command-line arguments for test cases file
-	if(len(sys.argv) >= 3):
-		# Load test cases file
-		try:
-			config = Config(str(sys.argv[2]))
-		except RuntimeError as error:
-			print(error)
-			exit(1)
-
+	# Run emulator in test case mode
+	if operating_mode == "testcase":
 		# Print config
 		#print(config.metadata)
 		#print(config.testcases)
@@ -347,8 +364,9 @@ def main():
 			process_source.stop()
 			process_sink.stop()
 			process_channel.stop()
-	else:
-		# Run emulator in interactive mode
+
+	# Run emulator in interactive mode
+	if operating_mode == "interactive":
 		try:
 			print("\033[1;33mRun emulator in interactive mode\033[0m")
 

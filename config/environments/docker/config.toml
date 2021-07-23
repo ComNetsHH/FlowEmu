@@ -2,6 +2,10 @@
 name = "Docker"
 description = "Docker environment"
 
+[operating_modes]
+testcase = true
+interactive = true
+
 [config]
 mqtt.host = "172.17.0.1"
 
