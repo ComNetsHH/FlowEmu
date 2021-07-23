@@ -199,6 +199,10 @@ class NodeEditor {
 	}
 
 	removeNode(node, callback_data = null) {
+		if(node.getRemovable() == false) {
+			return;
+		}
+
 		if(this.selected_element === node) {
 			this.selected_element = undefined;
 		}
@@ -424,6 +428,7 @@ class Node {
 	parent = undefined;
 	type = undefined;
 	title = undefined;
+	removable = undefined;
 	content_items = [];
 	ports = {};
 	parameters = {};
@@ -467,6 +472,14 @@ class Node {
 
 	getTitle() {
 		return this.title;
+	}
+
+	setRemovable(removable) {
+		this.removable = removable
+	}
+
+	getRemovable() {
+		return this.removable;
 	}
 
 	addContentItem(item) {
@@ -541,6 +554,7 @@ class Node {
 		var data = {
 			"type": this.getType(),
 			"title": this.getTitle(),
+			"removable": this.getRemovable(),
 			"position": this.getPosition(),
 			"size": this.getSize(),
 			"content": []
@@ -556,6 +570,7 @@ class Node {
 	deserialize(node_data) {
 		this.setType(node_data.type);
 		this.setTitle(node_data.title);
+		this.setRemovable(node_data.removable);
 		this.setPosition(node_data.position);
 
 		var that = this;

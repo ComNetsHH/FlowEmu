@@ -47,10 +47,19 @@ class Module {
 			return this->name;
 		}
 
+		void setRemovable(bool removable) {
+			this->removable = removable;
+		}
+
+		bool getRemovable() const {
+			return this->removable;
+		}
+
 		Json::Value serialize() const {
 			Json::Value json_root;
 			json_root["title"] = name;
 			json_root["type"] = getType();
+			json_root["removable"] = removable;
 
 			Json::Value json_position;
 			json_position["x"] = gui_position_x;
@@ -206,6 +215,7 @@ class Module {
 
 	private:
 		std::string name = "UNNAMED MODULE";
+		bool removable = true;
 
 		std::map<std::string, PortInfo> ports;
 		std::list<PortInfo> ports_info_left;

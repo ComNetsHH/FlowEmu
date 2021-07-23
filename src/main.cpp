@@ -70,8 +70,12 @@ int main(int argc, const char *argv[]) {
 	ModuleManager module_manager(io_service, mqtt);
 
 	// Sockets
-	module_manager.addModule("socket_source", make_shared<RawSocket>(io_service, interface_source, Module::PortInfo::Side::right));
-	module_manager.addModule("socket_sink", make_shared<RawSocket>(io_service, interface_sink, Module::PortInfo::Side::left));
+	auto socket_source = make_shared<RawSocket>(io_service, interface_source, Module::PortInfo::Side::right);
+	socket_source->setRemovable(false);
+	module_manager.addModule("socket_source", socket_source);
+	auto socket_sink = make_shared<RawSocket>(io_service, interface_sink, Module::PortInfo::Side::left);
+	socket_sink->setRemovable(false);
+	module_manager.addModule("socket_sink", socket_sink);
 
 	// Load graph
 	if(vm.count("graph")) {
