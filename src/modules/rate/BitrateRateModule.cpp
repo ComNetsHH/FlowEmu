@@ -11,7 +11,7 @@ BitrateRateModule::BitrateRateModule(boost::asio::io_service &io_service, uint64
 	addParameter({"bitrate", "Bitrate", "bit/s", &parameter_bitrate});
 
 	input_port.setNotifyHandler([&]() {
-		if(active) {
+		if(current_transmission != nullptr) {
 			return;
 		}
 
@@ -27,6 +27,10 @@ void BitrateRateModule::process(const boost::system::error_code& error) {
 		return;
 	}
 
+	if(current_transmission != nullptr) {
+		output_port.send(current_transmission);
+	}
+
 	uint64_t bitrate = parameter_bitrate.get();
 	if(bitrate == 0) {
 		return;
@@ -34,14 +38,12 @@ void BitrateRateModule::process(const boost::system::error_code& error) {
 
 	auto packet = input_port.request();
 	if(packet != nullptr) {
-		output_port.send(packet);
-
-		active = true;
+		current_transmission = packet;
 
 		timer.expires_at(timer.expiry() + chrono::nanoseconds((uint64_t) 1000000000 * packet->getBytes().size()*8 / bitrate));
 		timer.async_wait(boost::bind(&BitrateRateModule::process, this, boost::asio::placeholders::error));
 	} else {
-		active = false;
+		current_transmission = nullptr;
 	}
 }
 

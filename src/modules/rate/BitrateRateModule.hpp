@@ -28,7 +28,7 @@ class BitrateRateModule : public Module {
 		Parameter parameter_bitrate = {1000000, 0, std::numeric_limits<double>::quiet_NaN(), 1000};
 
 		boost::asio::high_resolution_timer timer;
-		bool active = false;
+		std::shared_ptr<Packet> current_transmission = nullptr;
 		void process(const boost::system::error_code& error);
 };
 
