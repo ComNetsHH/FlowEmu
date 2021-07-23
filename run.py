@@ -250,7 +250,7 @@ def main():
 		results.writeMetadata(environment.metadata, config.metadata)
 
 		# Run test cases
-		print("\033[1;33m--> Run test cases \'" + config.metadata["name"] + "\' by " + config.metadata["author"] + "\033[0m")
+		print("\033[1;33mRun test cases \'" + config.metadata["name"] + "\' by " + config.metadata["author"] + "\033[0m")
 		try:
 			# Run test case
 			for testcase in config.testcases:
