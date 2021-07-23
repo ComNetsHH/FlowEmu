@@ -1,0 +1,17 @@
+[metadata]
+name = "Bridge"
+description = "Bridge mode"
+
+[operating_modes]
+testcase = false
+interactive = true
+
+[config]
+mqtt.host = "172.17.0.1"
+
+interface.source = "emulator0"
+interface.sink = "emulator1"
+
+docker_container.channel = "channel"
+
+#run_prefix.channel = ""
