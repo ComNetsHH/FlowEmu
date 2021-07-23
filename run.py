@@ -22,8 +22,13 @@ class Environment:
 		self.path = path
 
 		# Load config file
-		with open(self.path + "/config.toml", "r") as config_file:
-			environment_toml = toml.load(config_file)
+		try:
+			with open(self.path + "/config.toml", "r") as config_file:
+				environment_toml = toml.load(config_file)
+		except FileNotFoundError as error:
+			raise RuntimeError("Cannot open config file '" + self.path + "/config.toml': " + str(error))
+		except toml.decoder.TomlDecodeError as error:
+			raise RuntimeError("Invalid environment config file '" + self.path + "/config.toml': " + str(error))
 
 		# Get metadata
 		self.metadata["name"] = str(environment_toml["metadata"]["name"])
@@ -60,8 +65,13 @@ class Config:
 
 	def __init__(self, path):
 		# Load test cases file
-		with open(path, "r") as testcases_file:
-			testcases_toml = toml.load(testcases_file)
+		try:
+			with open(path, "r") as testcases_file:
+				testcases_toml = toml.load(testcases_file)
+		except FileNotFoundError as error:
+			raise RuntimeError("Cannot open test cases file '" + path + "': " + str(error))
+		except toml.decoder.TomlDecodeError as error:
+			raise RuntimeError("Invalid test cases file '" + path + "': " + str(error))
 
 		# Get metadata
 		self.metadata["name"] = str(testcases_toml["metadata"]["name"])
@@ -233,7 +243,11 @@ def main():
 		exit(1)
 
 	# Load environment config
-	environment = Environment(str(sys.argv[1]))
+	try:
+		environment = Environment(str(sys.argv[1]))
+	except RuntimeError as error:
+		print(error)
+		exit(1)
 
 	# Build emulator
 	try:
@@ -258,7 +272,11 @@ def main():
 	# Check command-line arguments for test cases file
 	if(len(sys.argv) >= 3):
 		# Load test cases file
-		config = Config(str(sys.argv[2]))
+		try:
+			config = Config(str(sys.argv[2]))
+		except RuntimeError as error:
+			print(error)
+			exit(1)
 
 		# Print config
 		#print(config.metadata)
