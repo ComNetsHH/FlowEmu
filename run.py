@@ -227,6 +227,27 @@ class Process:
 		self.wait()
 
 
+class SudoLoop:
+	thread = None
+
+	# Reset sudo timeout or ask for sudo password
+	def validate(self):
+		os.system("sudo -v")
+
+	# Sudo timeout reset loop
+	def loop(self):
+		while True:
+			time.sleep(60)
+			self.validate()
+
+	# Ask for sudo password and start sudo timeout reset loop
+	def run(self):
+		self.validate()
+
+		self.thread = Thread(target=self.loop, daemon=True)
+		self.thread.start()
+
+
 # Get value from nested dictionary if the key exists, otherwise return the default value
 def get(dict, keys, default=None):
 	element = dict
@@ -272,6 +293,10 @@ def main():
 		except RuntimeError as error:
 			print(error)
 			exit(1)
+
+	# Ask for sudo password and start sudo timeout reset loop
+	sudo_loop = SudoLoop()
+	sudo_loop.run()
 
 	# Build emulator
 	try:
