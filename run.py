@@ -244,7 +244,7 @@ def get(dict, keys, default=None):
 def main():
 	# Check command-line arguments for environment config directory
 	if(len(sys.argv) < 2):
-		print("Please provide an environment config directory!")
+		print("Please provide an environment config directory as command-line argument!")
 		exit(1)
 
 	# Load environment config
