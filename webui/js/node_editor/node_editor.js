@@ -100,7 +100,7 @@ class NodeEditor {
 
 		document.addEventListener("keydown", function(e) {
 			if(e.key === "Delete") {
-				if(that.selected_element instanceof Node && that.selected_element.getRemovable() == true) {
+				if(that.selected_element instanceof Node && that.selected_element.getRemovable() != false) {
 					that.removeNode(that.selected_element);
 				}
 
@@ -155,6 +155,12 @@ class NodeEditor {
 
 		var node = this.nodes[node_id];
 		var modified = false;
+
+		if(node.getRemovable() != node_data.removable) {
+			node.setRemovable(node_data.removable);
+
+			modified = true;
+		}
 
 		if(node.getPosition().x != node_data.position.x   ||
 		   node.getPosition().y != node_data.position.y   ||
