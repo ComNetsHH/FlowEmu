@@ -141,7 +141,9 @@ class NodeEditor {
 			node.select();
 
 			that.dragged_element = node;
-			node.drag_offset = {"x": e.layerX, "y": e.layerY};
+
+			const node_position = this.getBoundingClientRect();
+			node.drag_offset = {"x": e.clientX - node_position.x, "y": e.clientY - node_position.y};
 
 			e.stopPropagation();
 		});
