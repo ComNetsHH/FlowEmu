@@ -15,7 +15,7 @@ function topic_matches_sub(sub, topic) {
 
 	var result = (subParts.length == topicParts.length);
 
-	$.each(subParts, function(i, item) {
+	subParts.forEach(function(item, i) {
 		if(item == topicParts[i]) {
 			return;
 		} else if(item == "+") {
@@ -36,14 +36,14 @@ function topic_matches_sub(sub, topic) {
 var client = mqtt.connect({keepalive: 30, clean: true, resubscribe: false});
 
 client.on("connect", function() {
-	$.each(subscriptions, function(i, item) {
+	subscriptions.forEach(function(item) {
 		client.subscribe(item.topic);
 	});
 });
 
 
 client.on("message", function(topic, message, packet) {
-	$.each(subscriptions, function(i, item) {
+	subscriptions.forEach(function(item) {
 		if(topic_matches_sub(item.topic, topic)) {
 			item.callback(topic, message);
 		}
@@ -69,7 +69,7 @@ function subscribe(topic, callback) {
 	}
 
 	var message = "Subscriptions: "
-	$.each(subscriptions, function(i, item) {
+	subscriptions.forEach(function(item) {
 		message += item.topic;
 		message += " ";
 	});
@@ -78,16 +78,16 @@ function subscribe(topic, callback) {
 
 /* ========== Unsubscribe ========== */
 function unsubscribe(topic) {
-	subscriptions = $.map(subscriptions, function(item, i) {
+	subscriptions = subscriptions.filter(function(item) {
 		if(topic_matches_sub(topic, item.topic)) {
 			client.unsubscribe(item.topic);
-			return null;
+			return false;
 		}
-		return item;
+		return true;
 	});
 
 	var message = "Subscriptions: "
-	$.each(subscriptions, function(i, item) {
+	subscriptions.forEach(function(item) {
 		message += item.topic;
 		message += " ";
 	});
