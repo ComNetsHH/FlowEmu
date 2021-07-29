@@ -452,6 +452,7 @@ class Node {
 
 		this.header = document.createElement("div");
 		this.header.classList.add("header");
+		this.header.title = this.id;
 		this.element.appendChild(this.header);
 
 		this.content = document.createElement("ul");
@@ -493,16 +494,22 @@ class Node {
 		if(item instanceof NodeContentFlow) {
 			var that = this;
 			item.ports_left.forEach(function(port) {
+				port.element.title = that.id + "." + port.id;
+
 				that.ports[port.getId()] = port;
 			});
 
 			item.ports_right.forEach(function(port) {
+				port.element.title = that.id + "." + port.id;
+
 				that.ports[port.getId()] = port;
 			});
 		}
 
 		if(item instanceof NodeContentParameter) {
 			this.parameters[item.id] = item;
+
+			item.element_label.title = this.id + "." + item.id;
 
 			if(this.parent !== undefined && this.parent.parameter_add_handler !== undefined) {
 				this.parent.parameter_add_handler(this, item.id);
@@ -511,6 +518,8 @@ class Node {
 
 		if(item instanceof NodeContentStatistic) {
 			this.statistics[item.id] = item;
+
+			item.element_label.title = this.id + "." + item.id;
 
 			if(this.parent !== undefined && this.parent.statistic_add_handler !== undefined) {
 				this.parent.statistic_add_handler(this, item.id);
@@ -661,6 +670,7 @@ class NodeContentParameter extends NodeContentItem {
 	max = undefined;
 	step = undefined;
 
+	element_label = undefined;
 	element_input = undefined;
 
 	constructor(id, label, unit, integer, min, max, step) {
@@ -677,10 +687,10 @@ class NodeContentParameter extends NodeContentItem {
 
 		var that = this;
 
-		var element_label = document.createElement("a");
-		element_label.classList.add("label");
-		element_label.innerHTML = label + ":";
-		this.element.appendChild(element_label);
+		this.element_label = document.createElement("a");
+		this.element_label.classList.add("label");
+		this.element_label.innerHTML = label + ":";
+		this.element.appendChild(this.element_label);
 
 		var element_step_down = document.createElement("div");
 		element_step_down.classList.add("step");
@@ -764,6 +774,7 @@ class NodeContentStatistic extends NodeContentItem {
 	unit = undefined;
 	integer = undefined;
 
+	element_label = undefined;
 	element_value = undefined;
 
 	constructor(id, label, unit, integer) {
@@ -775,10 +786,10 @@ class NodeContentStatistic extends NodeContentItem {
 		this.unit = unit;
 		this.integer = integer;
 
-		var element_label = document.createElement("a");
-		element_label.classList.add("label");
-		element_label.innerHTML = label + ":";
-		this.element.appendChild(element_label);
+		this.element_label = document.createElement("a");
+		this.element_label.classList.add("label");
+		this.element_label.innerHTML = label + ":";
+		this.element.appendChild(this.element_label);
 
 		this.element_value = document.createElement("a");
 		this.element_value.classList.add("value");
@@ -839,6 +850,8 @@ class NodeContentFlow extends NodeContentItem {
 			case "left":
 				this.ports_left.push(port);
 				if(this.parent !== undefined) {
+					port.element.title = this.parent.id + "." + port.id;
+
 					this.parent.ports[port.id] = port;
 				}
 				this.left.appendChild(port.element);
@@ -846,6 +859,8 @@ class NodeContentFlow extends NodeContentItem {
 			case "right":
 				this.ports_right.push(port);
 				if(this.parent !== undefined) {
+					port.element.title = this.parent.id + "." + port.id;
+
 					this.parent.ports[port.id] = port;
 				}
 				this.right.appendChild(port.element);
