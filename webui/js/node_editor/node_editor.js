@@ -1160,13 +1160,14 @@ class NodeLibraryGroup {
 
 		var that = this;
 		node.element.addEventListener("mousedown", function(e) {
-			if(that.parent.node_editor === undefined) {
+			const node_editor = that.parent.node_editor;
+			if(node_editor === undefined) {
 				return;
 			}
 
 			let library_node_position = node.element.getBoundingClientRect();
-			let node_editor_position = that.parent.node_editor.element.getBoundingClientRect();
-			let node_editor_pan = that.parent.node_editor.pan;
+			let node_editor_position = node_editor.element.getBoundingClientRect();
+			let node_editor_pan = node_editor.pan;
 
 			var new_node = new Node();
 			new_node.deserialize(node.serialize());
@@ -1174,14 +1175,14 @@ class NodeLibraryGroup {
 				"x": library_node_position.x - node_editor_position.x - node_editor_pan.x,
 				"y": library_node_position.y - node_editor_position.y - node_editor_pan.y
 			});
-			that.parent.node_editor.addNode(new_node);
+			node_editor.addNode(new_node);
 
-			if(that.parent.node_editor.selected_element !== undefined) {
-				that.parent.node_editor.selected_element.unselect();
+			if(node_editor.selected_element !== undefined) {
+				node_editor.selected_element.unselect();
 			}
 			new_node.select();
 
-			that.parent.node_editor.dragged_element = new_node;
+			node_editor.dragged_element = new_node;
 			new_node.drag_offset = {"x": e.x - library_node_position.x, "y": e.y - library_node_position.y};
 
 			e.stopPropagation();
