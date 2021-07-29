@@ -1169,7 +1169,13 @@ class NodeLibraryGroup {
 			let node_editor_position = node_editor.element.getBoundingClientRect();
 			let node_editor_pan = node_editor.pan;
 
-			var new_node = new Node();
+			const node_type = node.getType();
+			let node_id = node_type;
+			for(let i = 2; node_id in node_editor.nodes; i++) {
+				node_id = node_type + "_" + i;
+			}
+
+			var new_node = new Node(node_id);
 			new_node.deserialize(node.serialize());
 			new_node.setPosition({
 				"x": library_node_position.x - node_editor_position.x - node_editor_pan.x,
