@@ -678,6 +678,7 @@ class NodeContentParameter extends NodeContentItem {
 		var that = this;
 
 		var element_label = document.createElement("a");
+		element_label.classList.add("label");
 		element_label.innerHTML = label + ":";
 		this.element.appendChild(element_label);
 
@@ -694,6 +695,7 @@ class NodeContentParameter extends NodeContentItem {
 		this.element.appendChild(element_step_down);
 
 		this.element_input = document.createElement("input");
+		this.element_input.classList.add("value_input");
 		this.element_input.type = "text"
 		this.element_input.value = min != null ? min : 0;
 		this.element_input.addEventListener("change", function(e) {
@@ -731,6 +733,7 @@ class NodeContentParameter extends NodeContentItem {
 		this.element.appendChild(element_step_up);
 
 		var element_unit = document.createElement("a");
+		element_unit.classList.add("unit");
 		element_unit.innerHTML = this.unit;
 		this.element.appendChild(element_unit);
 	}
