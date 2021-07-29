@@ -698,9 +698,9 @@ class NodeContentParameter extends NodeContentItem {
 		this.element_input.value = min != null ? min : 0;
 		this.element_input.addEventListener("change", function(e) {
 			if(that.integer) {
-				this.value = parseInt(this.value)
+				this.value = parseInt(this.value);
 			} else {
-				this.value = parseFloat(this.value)
+				this.value = parseFloat(this.value);
 			}
 
 			if(that.min != null && this.value < that.min) {
@@ -773,16 +773,16 @@ class NodeContentStatistic extends NodeContentItem {
 		this.integer = integer;
 
 		var element_label = document.createElement("a");
-		element_label.classList.add("label")
+		element_label.classList.add("label");
 		element_label.innerHTML = label + ":";
 		this.element.appendChild(element_label);
 
 		this.element_value = document.createElement("a");
-		this.element_value.classList.add("value")
+		this.element_value.classList.add("value");
 		this.element.appendChild(this.element_value);
 
 		var element_unit = document.createElement("a");
-		element_unit.classList.add("unit")
+		element_unit.classList.add("unit");
 		element_unit.innerHTML = this.unit;
 		this.element.appendChild(element_unit);
 	}
@@ -1053,8 +1053,8 @@ class Path {
 		const to_position = (this.mouse === "to" ? this.parent.mouse_position : this.port_to.getPosition());
 
 		const dist = Math.max(Math.abs(to_position.x - from_position.x) / 2, Math.min(Math.abs(to_position.y - from_position.y) * 2, 100));
-		const dist_from = ((this.port_from !== undefined && this.port_from.side === "left") || (this.port_from === undefined && this.port_to !== undefined && this.port_to.side === "right") ? (0 - dist) : dist)
-		const dist_to = ((this.port_to !== undefined && this.port_to.side === "left") || (this.port_to === undefined && this.port_from !== undefined && this.port_from.side === "right") ? (0 - dist) : dist)
+		const dist_from = ((this.port_from !== undefined && this.port_from.side === "left") || (this.port_from === undefined && this.port_to !== undefined && this.port_to.side === "right") ? (0 - dist) : dist);
+		const dist_to = ((this.port_to !== undefined && this.port_to.side === "left") || (this.port_to === undefined && this.port_from !== undefined && this.port_from.side === "right") ? (0 - dist) : dist);
 
 		var path_string = "";
 		path_string += "M ";
