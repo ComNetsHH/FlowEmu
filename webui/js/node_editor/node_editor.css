@@ -123,6 +123,10 @@
 	outline: none;
 }
 
+.node .content .parameter input[type=text].changed {
+	background: rgb(100, 100, 100);
+}
+
 .node .content .parameter .step {
 	flex: 1 0 auto;
 	width: 20px;

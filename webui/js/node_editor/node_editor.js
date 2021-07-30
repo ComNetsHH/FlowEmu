@@ -708,7 +708,12 @@ class NodeContentParameter extends NodeContentItem {
 		this.element_input.classList.add("value_input");
 		this.element_input.type = "text"
 		this.element_input.value = min != null ? min : 0;
+		this.element_input.addEventListener("keydown", function(e) {
+			this.classList.add("changed");
+		});
 		this.element_input.addEventListener("change", function(e) {
+			this.classList.remove("changed");
+
 			if(that.integer) {
 				this.value = parseInt(this.value);
 			} else {
@@ -749,6 +754,8 @@ class NodeContentParameter extends NodeContentItem {
 	}
 
 	setValue(value) {
+		this.element_input.classList.remove("changed");
+
 		this.element_input.value = value;
 	}
 
