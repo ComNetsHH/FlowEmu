@@ -472,7 +472,7 @@ class Node {
 
 	setTitle(title) {
 		this.title = title;
-		this.header.innerHTML = title;
+		this.header.textContent = title;
 	}
 
 	getTitle() {
@@ -644,7 +644,7 @@ class NodeContentLabel extends NodeContentItem {
 		this.element.classList.add("label");
 
 		this.label = label;
-		this.element.innerHTML = label;
+		this.element.textContent = label;
 	}
 
 	getLabel() {
@@ -689,12 +689,12 @@ class NodeContentParameter extends NodeContentItem {
 
 		this.element_label = document.createElement("a");
 		this.element_label.classList.add("label");
-		this.element_label.innerHTML = label + ":";
+		this.element_label.textContent = label + ":";
 		this.element.appendChild(this.element_label);
 
 		var element_step_down = document.createElement("div");
 		element_step_down.classList.add("step");
-		element_step_down.innerHTML = "<";
+		element_step_down.textContent = "<";
 		element_step_down.addEventListener("click", function(e) {
 			that.element_input.value = parseFloat(that.element_input.value) - step;
 			that.element_input.dispatchEvent(new Event("change"));
@@ -737,7 +737,7 @@ class NodeContentParameter extends NodeContentItem {
 
 		var element_step_up = document.createElement("div");
 		element_step_up.classList.add("step");
-		element_step_up.innerHTML = ">";
+		element_step_up.textContent = ">";
 		element_step_up.addEventListener("click", function(e) {
 			that.element_input.value = parseFloat(that.element_input.value) + step;
 			that.element_input.dispatchEvent(new Event("change"));
@@ -749,7 +749,7 @@ class NodeContentParameter extends NodeContentItem {
 
 		var element_unit = document.createElement("a");
 		element_unit.classList.add("unit");
-		element_unit.innerHTML = this.unit;
+		element_unit.textContent = this.unit;
 		this.element.appendChild(element_unit);
 	}
 
@@ -795,7 +795,7 @@ class NodeContentStatistic extends NodeContentItem {
 
 		this.element_label = document.createElement("a");
 		this.element_label.classList.add("label");
-		this.element_label.innerHTML = label + ":";
+		this.element_label.textContent = label + ":";
 		this.element.appendChild(this.element_label);
 
 		this.element_value = document.createElement("a");
@@ -804,12 +804,12 @@ class NodeContentStatistic extends NodeContentItem {
 
 		var element_unit = document.createElement("a");
 		element_unit.classList.add("unit");
-		element_unit.innerHTML = this.unit;
+		element_unit.textContent = this.unit;
 		this.element.appendChild(element_unit);
 	}
 
 	setValue(value) {
-		this.element_value.innerHTML = value;
+		this.element_value.textContent = value;
 	}
 
 	serialize() {
@@ -916,7 +916,7 @@ class Port {
 		this.setType(type);
 
 		this.label = label;
-		this.element.innerHTML = label;
+		this.element.textContent = label;
 
 		var that = this;
 		this.element.addEventListener("mousedown", function(e) {
@@ -1142,7 +1142,7 @@ class NodeLibraryGroup {
 
 		this.header = document.createElement("div");
 		this.header.classList.add("header");
-		this.header.innerHTML = title;
+		this.header.textContent = title;
 		this.element.appendChild(this.header);
 
 		this.content = document.createElement("ul");
