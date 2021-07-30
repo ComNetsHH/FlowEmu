@@ -666,6 +666,7 @@ class NodeContentParameter extends NodeContentItem {
 	label = undefined;
 	unit = undefined;
 	integer = undefined;
+	value = undefined;
 	min = undefined;
 	max = undefined;
 	step = undefined;
@@ -708,8 +709,19 @@ class NodeContentParameter extends NodeContentItem {
 		this.element_input.classList.add("value_input");
 		this.element_input.type = "text"
 		this.element_input.value = min != null ? min : 0;
-		this.element_input.addEventListener("keydown", function(e) {
-			this.classList.add("changed");
+		this.element_input.addEventListener("input", function(e) {
+			var value;
+			if(that.integer) {
+				value = parseInt(this.value);
+			} else {
+				value = parseFloat(this.value);
+			}
+
+			if(value !== that.value) {
+				this.classList.add("changed");
+			} else {
+				this.classList.remove("changed");
+			}
 		});
 		this.element_input.addEventListener("change", function(e) {
 			this.classList.remove("changed");
@@ -725,6 +737,8 @@ class NodeContentParameter extends NodeContentItem {
 			} else if(that.max != null && this.value > that.max) {
 				this.value = that.max;
 			}
+
+			that.value = this.value;
 
 			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
 				that.parent.parent.parameter_change_handler(that.parent, that.id, this.value);
@@ -756,6 +770,7 @@ class NodeContentParameter extends NodeContentItem {
 	setValue(value) {
 		this.element_input.classList.remove("changed");
 
+		this.value = value;
 		this.element_input.value = value;
 	}
 
