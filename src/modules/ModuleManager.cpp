@@ -125,17 +125,19 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 			try {
 				value = stod(payload);
 			} catch(const std::exception& e) {
-				return;
+				value = numeric_limits<double>::quiet_NaN();
 			}
 
 			if(isfinite(value)) {
 				parameter->set(value);
+			} else {
+				parameter->callChangeHandlers();
 			}
 		});
 
-		mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter->get()), true, true);
+		mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter->get()), true, false);
 		parameter->addChangeHandler([&, id, parameter_id](double value) {
-			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value), true, true);
+			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value), true, false);
 		});
 	}
 

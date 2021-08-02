@@ -16,15 +16,19 @@ class Parameter {
 			change_handlers.push_back(handler);
 		}
 
-		void set(double value) {
-			this->value.store(value);
-
+		void callChangeHandlers() {
 			for(const auto& handler : change_handlers) {
 				try {
 					handler(value);
 				} catch(const std::bad_function_call &e) {
 				}
 			}
+		}
+
+		void set(double value) {
+			this->value.store(value);
+
+			callChangeHandlers();
 		}
 
 		double get() {
