@@ -120,7 +120,17 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 		const auto parameter = entry.second.parameter;
 
 		mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter](const string &topic, const string &payload) {
-			parameter->set(stod(payload));
+			double value;
+
+			try {
+				value = stod(payload);
+			} catch(const std::exception& e) {
+				return;
+			}
+
+			if(isfinite(value)) {
+				parameter->set(value);
+			}
 		});
 
 		mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter->get()), true, true);
