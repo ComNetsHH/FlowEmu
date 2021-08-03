@@ -29,6 +29,42 @@ body > .header > a {
 	margin: 12px;
 }
 
+body > .header > .filler {
+	flex: 1 1 100%;
+}
+
+body > .header .graph_loadsave {
+	display: flex;
+	padding: 0 8px;
+}
+
+body > .header .graph_loadsave > * {
+	margin: 0 4px;
+}
+
+body > .header .graph_loadsave #graph_load {
+	margin-right: 12px;
+}
+
+body > .header .graph_loadsave select, body > .header .graph_loadsave input {
+	width: 150px;
+	outline: none;
+	border: none;
+
+	background: white;
+	color: black;
+}
+
+body > .header .graph_loadsave .button {
+	line-height: 32px;
+	padding: 0 16px;
+
+	background: rgb(50, 50, 50);
+	color: white;
+
+	user-select: none;
+}
+
 body > .content {
 	display: flex;
 	width: 100%;

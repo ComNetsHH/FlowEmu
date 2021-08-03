@@ -34,6 +34,7 @@ class ModuleManager {
 		Json::Value serialize();
 		void deserialize(const Json::Value &json_root, bool publish = true);
 
+		void publishFiles(const std::string &path);
 		void loadFromFile(const std::string &filename);
 		void saveToFile(const std::string &filename);
 

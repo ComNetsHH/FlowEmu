@@ -48,7 +48,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 		updatePaths(json_root);
 	});
 
-	mqtt.subscribe("load", [&](const string &topic, const string &payload) {
+	mqtt.subscribe("set/load", [&](const string &topic, const string &payload) {
 		if(!regex_match(payload, regex("[\\w-]+"))) {
 			cerr << "Invalid filename!" << endl;
 			return;
@@ -57,7 +57,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 		loadFromFile("config/graphs/" + payload + ".json");
 	});
 
-	mqtt.subscribe("save", [&](const string &topic, const string &payload) {
+	mqtt.subscribe("set/save", [&](const string &topic, const string &payload) {
 		if(!regex_match(payload, regex("[\\w-]+"))) {
 			cerr << "Invalid filename!" << endl;
 			return;
@@ -65,6 +65,8 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 
 		saveToFile("config/graphs/" + payload + ".json");
 	});
+
+	publishFiles("config/graphs");
 
 	mqtt.publish("get/paths", Json::arrayValue, true, true);
 }
@@ -360,6 +362,23 @@ void ModuleManager::deserialize(const Json::Value &json_root, bool publish) {
 	updatePaths(json_root["paths"], publish);
 }
 
+void ModuleManager::publishFiles(const string &path) {
+	if(!filesystem::exists(path)) {
+		cerr << "Path " << path << " does not exist!" << endl;
+		return;
+	}
+
+	Json::Value json_array = Json::arrayValue;
+
+	for(const auto &entry : filesystem::directory_iterator(path)) {
+		if(entry.path().extension().string() == ".json") {
+			json_array.append(entry.path().stem().string());
+		}
+	}
+
+	mqtt.publish("get/graphs", json_array, true, true);
+}
+
 void ModuleManager::loadFromFile(const string &filename) {
 	if(!filesystem::exists(filename)) {
 		cerr << "File " << filename << " does not exist!" << endl;
@@ -387,6 +406,8 @@ void ModuleManager::saveToFile(const string &filename) {
 	ofstream file(filename);
 	stream_writer->write(serialize(), &file);
 	file.close();
+
+	publishFiles(path.parent_path().string());
 }
 
 ModuleManager::~ModuleManager() {

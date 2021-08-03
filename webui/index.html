@@ -19,6 +19,16 @@
 		<div class="header">
 			<img class="logo" src="img/comnets_logo.png">
 			<!--<a>Channel Emulator</a>-->
+
+			<div class="filler"></div>
+
+			<div class="graph_loadsave">
+				<select id="graphs_list"></select>
+				<div class="button" id="graph_load">Load</div>
+
+				<input id="graph_filename"></input>
+				<div class="button" id="graph_save">Save</div>
+			</div>
 		</div>
 
 		<div class="content">
@@ -111,6 +121,32 @@
 						node_editor.nodes[node.id].statistics[id].setValue(parseFloat(message));
 					}
 				});
+			});
+
+			subscribe("get/graphs", function(topic, message) {
+				var graphs = (message.length > 0 ? JSON.parse(message) : []);
+				graphs = graphs.sort();
+
+				var graphs_list = document.getElementById("graphs_list");
+				graphs_list.innerHTML = "";
+				graphs.forEach(function(item) {
+					var option = document.createElement("option");
+					option.value = item;
+					option.label = item;
+					graphs_list.appendChild(option);
+				});
+			});
+
+			document.getElementById("graphs_list").addEventListener("change", function(e) {
+				document.getElementById("graph_filename").value = this.value;
+			});
+
+			document.getElementById("graph_load").addEventListener("click", function(e) {
+				publish("set/load", document.getElementById("graphs_list").value);
+			});
+
+			document.getElementById("graph_save").addEventListener("click", function(e) {
+				publish("set/save", document.getElementById("graph_filename").value);
 			});
 
 			var node_library = new NodeLibrary("#node_library");
