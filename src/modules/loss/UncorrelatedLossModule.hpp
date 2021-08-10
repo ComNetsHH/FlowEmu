@@ -28,7 +28,7 @@ class UncorrelatedLossModule : public Module {
 		Parameter parameter_loss = {10, 0, 100, 1};
 		Parameter parameter_seed = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 
-		std::default_random_engine generator_loss;
+		std::mt19937 generator_loss;
 		std::unique_ptr<std::bernoulli_distribution> distribution;
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);

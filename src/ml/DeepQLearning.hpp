@@ -51,7 +51,7 @@ class DeepQLearning {
 		size_t experience_replay_buffer_next_id = 0;
 		size_t experience_replay_buffer_max_id = 0;
 
-		std::default_random_engine random_generator;
+		std::mt19937 random_generator;
 	public:
 		DeepQLearning(unsigned int input_x, unsigned int input_y, unsigned int actions, unsigned int exploration_action_start, unsigned int exploration_action_end, size_t experience_replay_buffer_size = 1000000, bool use_gpu = false, const std::string &graph_filename = "graph.meta", const std::string &checkpoint_filename = "graph");
 

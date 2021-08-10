@@ -36,8 +36,8 @@ class GilbertElliotLossModule : public Module {
 		Parameter parameter_seed_loss = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 		Statistic statistic_state;
 
-		std::default_random_engine generator_transition;
-		std::default_random_engine generator_loss;
+		std::mt19937 generator_transition;
+		std::mt19937 generator_loss;
 		std::unique_ptr<std::exponential_distribution<double>> distribution_p01;
 		std::unique_ptr<std::exponential_distribution<double>> distribution_p10;
 		std::unique_ptr<std::bernoulli_distribution> distribution_e0;
