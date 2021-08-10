@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Build normal emulator Docker image
-DOCKER_FILE_EMULATOR="Dockerfile"
-DOCKER_IMAGE_EMULATOR="channel_emulator"
+# Build normal FlowEmu Docker image
+DOCKER_FILE_FLOWEMU="Dockerfile"
+DOCKER_IMAGE_FLOWEMU="flowemu"
 
-# Build emulator Docker image with machine learning support
-#DOCKER_FILE_EMULATOR="Dockerfile_ml"
-#DOCKER_IMAGE_EMULATOR="channel_emulator_ml"
+# Build FlowEmu Docker image with machine learning support
+#DOCKER_FILE_FLOWEMU="Dockerfile_ml"
+#DOCKER_IMAGE_FLOWEMU="flowemu_ml"
 
-# User emulator Docker image for source and sink
-DOCKER_IMAGE_SOURCE_SINK=$DOCKER_IMAGE_EMULATOR
+# User FlowEmu Docker image for source and sink
+DOCKER_IMAGE_SOURCE_SINK=$DOCKER_IMAGE_FLOWEMU

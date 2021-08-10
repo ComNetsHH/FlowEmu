@@ -3,7 +3,7 @@
 source config/environments/docker/config.sh
 
 # Start Docker containers
-docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_EMULATOR
+docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_FLOWEMU
 docker run -d -it --privileged --name source $DOCKER_IMAGE_SOURCE_SINK
 docker run -d -it --privileged --name sink $DOCKER_IMAGE_SOURCE_SINK
 

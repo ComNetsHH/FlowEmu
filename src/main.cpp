@@ -50,7 +50,7 @@ int main(int argc, const char *argv[]) {
 	po::notify(vm);
 
 	if(vm.count("help")) {
-		cout << "ComNets TUHH Channel Emulator" << endl;
+		cout << "FlowEmu" << endl;
 		cout << endl;
 		cout << desc << endl;
 		return 0;
@@ -61,10 +61,10 @@ int main(int argc, const char *argv[]) {
 		return 1;
 	}
 
-	cout << "Starting emulator..." << endl;
+	cout << "Starting FlowEmu..." << endl;
 
 	// MQTT
-	Mqtt mqtt(mqtt_broker, mqtt_port, "channel_emulator");
+	Mqtt mqtt(mqtt_broker, mqtt_port, "FlowEmu");
 
 	// Module manager
 	ModuleManager module_manager(io_service, mqtt);
@@ -120,14 +120,14 @@ int main(int argc, const char *argv[]) {
 	signal(SIGINT, signalHandler);
 	signal(SIGTERM, signalHandler);
 
-	cout << "Successfully started emulator!" << endl;
+	cout << "Successfully started FlowEmu!" << endl;
 	/* while(running) {
 		io_service.poll();
 	} */
 	io_service.run();
 
 	// Clean up
-	cout << "Stopping emulator..." << endl;
+	cout << "Stopping FlowEmu..." << endl;
 	running = false;
 
 	mqtt_thread.join();

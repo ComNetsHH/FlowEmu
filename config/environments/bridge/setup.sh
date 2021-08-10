@@ -3,7 +3,7 @@
 source config/environments/bridge/config.sh
 
 # Start Docker container
-docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_EMULATOR
+docker run -d -it -v $(pwd)/config:/config --name channel $DOCKER_IMAGE_FLOWEMU
 
 # Add interfaces to Docker container
 setup_network() {

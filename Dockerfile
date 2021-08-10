@@ -21,13 +21,13 @@ RUN apt-get update \
 #######################################
 FROM builder AS build
 
-# Add emulator source
-ADD CMakeLists.txt /channel_emulator/CMakeLists.txt
-ADD src /channel_emulator/src
+# Add FlowEmu source
+ADD CMakeLists.txt /flowemu/CMakeLists.txt
+ADD src /flowemu/src
 
-# Build channel emulator
-RUN mkdir -p /channel_emulator/BUILD \
-	&& cd /channel_emulator/BUILD \
+# Build FlowEmu
+RUN mkdir -p /flowemu/BUILD \
+	&& cd /flowemu/BUILD \
 	&& cmake .. \
 	&& make -j$(nproc)
 
@@ -47,5 +47,5 @@ RUN apt-get update \
 	&& apt-get install -y libboost-program-options1.71.0 libmosquitto1 libjsoncpp1 iproute2 iputils-ping iperf \
 	&& rm -rf /var/lib/apt/lists/*
 
-# Install channel emulator
-COPY --from=build /channel_emulator/BUILD/bin/* /usr/bin/
+# Install FlowEmu
+COPY --from=build /flowemu/BUILD/bin/* /usr/bin/

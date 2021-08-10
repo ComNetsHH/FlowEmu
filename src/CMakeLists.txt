@@ -9,7 +9,7 @@ if(JSONCPP_INCLUDE_DIRS)
 	include_directories("${JSONCPP_INCLUDE_DIRS}")
 endif(JSONCPP_INCLUDE_DIRS)
 
-set(channel_emulator_SRCS
+set(flowemu_SRCS
 	main.cpp
 	modules/ModuleManager.cpp
 	modules/delay/FixedDelayModule.cpp
@@ -27,12 +27,12 @@ set(channel_emulator_SRCS
 	utils/Packet.cpp
 )
 
-add_executable(channel_emulator ${channel_emulator_SRCS})
+add_executable(flowemu ${flowemu_SRCS})
 
-set_property(TARGET channel_emulator PROPERTY CXX_STANDARD 17)
-set_property(TARGET channel_emulator PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET flowemu PROPERTY CXX_STANDARD 17)
+set_property(TARGET flowemu PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(channel_emulator
+target_link_libraries(flowemu
 	${Boost_LIBRARIES}
 	mosquitto
 	${JSONCPP_LIBRARIES}
@@ -47,17 +47,17 @@ if(MACHINE_LEARNING)
 		include_directories("${Protobuf_INCLUDE_DIRS}")
 	endif(Protobuf_INCLUDE_DIRS)
 
-	target_compile_definitions(channel_emulator PRIVATE MACHINE_LEARNING)
+	target_compile_definitions(flowemu PRIVATE MACHINE_LEARNING)
 
-	target_sources(channel_emulator PRIVATE
+	target_sources(flowemu PRIVATE
 		ml/DeepQLearning.cpp
 		modules/queue/DQLQueueModule.cpp
 	)
 
-	target_link_libraries(channel_emulator
+	target_link_libraries(flowemu
 		TensorflowCC::TensorflowCC
 		${Protobuf_LIBRARIES}
 	)
 endif(MACHINE_LEARNING)
 
-install(TARGETS channel_emulator RUNTIME DESTINATION bin)
+install(TARGETS flowemu RUNTIME DESTINATION bin)

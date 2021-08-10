@@ -298,11 +298,11 @@ def main():
 	sudo_loop = SudoLoop()
 	sudo_loop.run()
 
-	# Build emulator
+	# Build FlowEmu
 	try:
 		environment.build()
 	except RuntimeError:
-		print("Error while building emulator!")
+		print("Error while building FlowEmu!")
 		exit(1)
 
 	# Prepare environment
@@ -318,7 +318,7 @@ def main():
 		print("Error while setting up environment!")
 		exit(1)
 
-	# Run emulator in test case mode
+	# Run FlowEmu in test case mode
 	if operating_mode == "testcase":
 		# Print config
 		#print(config.metadata)
@@ -366,7 +366,7 @@ def main():
 
 					# Start processes
 					process_channel.setLogfile(results_path + "_channel.out")
-					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
+					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 
 					if "sink-command" in testcase and testcase["sink-command"] != "":
 						process_sink.setLogfile(results_path + "_sink.out")
@@ -390,13 +390,13 @@ def main():
 			process_sink.stop()
 			process_channel.stop()
 
-	# Run emulator in interactive mode
+	# Run FlowEmu in interactive mode
 	if operating_mode == "interactive":
 		try:
-			print("\033[1;33mRun emulator in interactive mode\033[0m")
+			print("\033[1;33mRun FlowEmu in interactive mode\033[0m")
 
 			process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
-			process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "channel_emulator --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), ""))
+			process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), ""))
 			process_channel.wait()
 
 		# Catch keyboard interrupts

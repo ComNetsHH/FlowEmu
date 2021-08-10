@@ -1,4 +1,4 @@
-project(channel_emulator)
+project(flowemu)
 cmake_minimum_required(VERSION 3.5)
 
 option(MACHINE_LEARNING "Build with machine learning support" OFF)
