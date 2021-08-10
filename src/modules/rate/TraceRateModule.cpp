@@ -1,6 +1,7 @@
 #include "TraceRateModule.hpp"
 
 #include <fstream>
+#include <iostream>
 
 #include <boost/bind.hpp>
 
@@ -13,19 +14,23 @@ TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, const stri
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
 	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
 
-	loadTrace(trace_lr, downlink_trace_filename);
-	loadTrace(trace_rl, uplink_trace_filename);
+	try {
+		loadTrace(trace_lr, downlink_trace_filename);
+		loadTrace(trace_rl, uplink_trace_filename);
+	} catch(const runtime_error &e) {
+		cerr << e.what() << endl;
+	}
 
 	reset();
 }
 
 void TraceRateModule::loadTrace(vector<uint32_t> &trace, const string &trace_filename) {
+	trace.clear();
+
 	ifstream trace_file(trace_filename);
 	if(!trace_file.is_open()) {
 		throw runtime_error("Cannot open trace file: " + trace_filename + "!");
 	}
-
-	trace.clear();
 
 	string line;
 	while(getline(trace_file, line)) {
@@ -38,6 +43,10 @@ void TraceRateModule::loadTrace(vector<uint32_t> &trace, const string &trace_fil
 void TraceRateModule::reset() {
 	timer_lr.cancel();
 	timer_rl.cancel();
+
+	if(trace_lr.empty() || trace_rl.empty()) {
+		return;
+	}
 
 	trace_lr_itr = trace_lr.begin();
 	trace_rl_itr = trace_rl.begin();
