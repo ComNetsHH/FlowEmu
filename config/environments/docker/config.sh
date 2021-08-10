@@ -8,5 +8,5 @@ DOCKER_IMAGE_FLOWEMU="flowemu"
 #DOCKER_FILE_FLOWEMU="Dockerfile_ml"
 #DOCKER_IMAGE_FLOWEMU="flowemu_ml"
 
-# User FlowEmu Docker image for source and sink
+# Use FlowEmu Docker image for source and sink
 DOCKER_IMAGE_SOURCE_SINK=$DOCKER_IMAGE_FLOWEMU
