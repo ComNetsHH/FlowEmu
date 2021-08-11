@@ -40,7 +40,7 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 				updateModule(node_id, json_root);
 			}
 		} else {
-			removeModule(node_id);
+			removeModule(node_id, true, true, false);
 		}
 	});
 
@@ -170,17 +170,25 @@ void ModuleManager::updateModule(const string &id, const Json::Value &json_root,
 	}
 }
 
-void ModuleManager::removeModule(const string &id, bool publish, bool publish_paths) {
-	if(publish) {
-		mqtt.publish("get/module/" + id, nullptr, true, true);
-	}
-
+void ModuleManager::removeModule(const string &id, bool publish, bool publish_paths, bool force) {
 	if(modules.find(id) == modules.end()) {
 		cerr << "Module " + id + " does not exist!" << endl;
+
+		if(publish) {
+			mqtt.publish("get/module/" + id, nullptr, true, true);
+		}
+
+		return;
+	}
+
+	if(force == false && modules.at(id)->getRemovable() == false) {
+		cerr << "Module " + id + " is not removable!" << endl;
 		return;
 	}
 
 	if(publish) {
+		mqtt.publish("get/module/" + id, nullptr, true, true);
+
 		for(const auto& entry : modules.at(id)->getParameters()) {
 			const string &parameter_id = entry.second.id;
 
