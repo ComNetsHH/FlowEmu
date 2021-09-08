@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="44.249897mm"
-   height="9.2604103mm"
-   viewBox="0 0 44.249897 9.26041"
+   width="44.512501mm"
+   height="9.2600002mm"
+   viewBox="0 0 44.512501 9.2599999"
    version="1.1"
    id="svg5042"
    inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
@@ -30,20 +30,20 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:zoom="5.6568543"
-     inkscape:cx="97.31557"
-     inkscape:cy="60.104076"
-     inkscape:window-width="2560"
-     inkscape:window-height="1371"
-     inkscape:window-x="0"
+     inkscape:zoom="4"
+     inkscape:cx="98.375"
+     inkscape:cy="21"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
+     inkscape:window-x="3840"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1">
     <inkscape:grid
        type="xygrid"
        id="grid7163"
-       originx="3.6572e-07"
-       originy="-1e-06" />
+       originx="3.6572005e-07"
+       originy="-0.000211" />
   </sodipodi:namedview>
   <defs
      id="defs5039" />
@@ -51,93 +51,119 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-94.086492,-110.09709)">
-    <path
-       id="rect2608-7-6-4-4-3-5"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:1.375;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill"
-       d="m 95.409412,110.09709 c -0.7329,0 -1.32292,0.59001 -1.32292,1.32291 v 6.61459 c 0,0.7329 0.59002,1.32291 1.32292,1.32291 h 6.614578 c 0.72888,0 1.31598,-0.58372 1.3224,-1.31103 -4.074998,-7e-5 -5.397458,-0.79271 -9.259378,-0.79271 v -1.33481 c 4.07542,0 5.39782,0.79272 9.259898,0.79272 v -3.96513 c -1.85993,0 -3.0422,0.41805 -4.365108,0.88108 -1.32292,0.46302 -2.78597,0.97255 -4.89479,0.97255 v -1.3286 c 1.85994,0 3.0427,-0.41806 4.36562,-0.88108 1.32292,-0.46302 2.785458,-0.97049 4.894278,-0.97049 0,-0.7329 -0.59002,-1.32291 -1.32292,-1.32291 z m 7.936978,7.94938 h 5.3e-4 v -0.0119 c 0,0.004 -5.3e-4,0.008 -5.3e-4,0.0119 z"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575"
-       sodipodi:nodetypes="sssssccccccccscsscccc" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.194838"
-       id="rect6535-6"
-       width="9.2605228"
-       height="6.6264677"
-       x="94.086388"
-       y="127.29501"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/favicon.png"
-       inkscape:export-xdpi="351.08591"
-       inkscape:export-ydpi="351.08591" />
-    <path
-       id="rect2608-7-6-4-4-3-5-5"
-       style="fill:#ffa500;fill-opacity:1;stroke-width:1.375;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill"
-       d="m 95.409411,125.9721 c -0.7329,0 -1.32292,0.59001 -1.32292,1.32291 v 6.61459 c 0,0.7329 0.59002,1.32291 1.32292,1.32291 h 6.614579 c 0.72888,0 1.31598,-0.58372 1.3224,-1.31103 -4.074999,-7e-5 -5.397459,-0.79271 -9.259379,-0.79271 v -1.33481 c 4.07542,0 5.39782,0.79272 9.259899,0.79272 v -3.96513 c -1.85993,0 -3.0422,0.41805 -4.365109,0.88108 -1.32292,0.46302 -2.78597,0.97255 -4.89479,0.97255 v -1.3286 c 1.85994,0 3.0427,-0.41806 4.36562,-0.88108 1.32292,-0.46302 2.785459,-0.97049 4.894279,-0.97049 0,-0.7329 -0.59002,-1.32291 -1.32292,-1.32291 z m 7.936979,7.94938 h 5.3e-4 v -0.0119 c 0,0.004 -5.3e-4,0.008 -5.3e-4,0.0119 z"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/favicon.png"
-       inkscape:export-xdpi="351.08591"
-       inkscape:export-ydpi="351.08591"
-       sodipodi:nodetypes="sssssccccccccscsscccc" />
+     transform="translate(-94.086492,-110.0973)">
+    <text
+       xml:space="preserve"
+       style="font-size:2.98628px;line-height:125%;font-family:'Chalk-hand-lettering-shaded DEM';-inkscape-font-specification:'Chalk-hand-lettering-shaded DEM';letter-spacing:0px;word-spacing:0px;display:none;fill:#ffffff;stroke:#000000;stroke-width:0.2179px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="93.900368"
+       y="122.9836"
+       id="text2640-9-0-6"
+       transform="scale(0.99881489,1.0011865)"><tspan
+         sodipodi:role="line"
+         id="tspan2638-1-6-2"
+         x="0"
+         y="0"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2179px">Flow-based Network Emulator</tspan></text>
     <g
-       id="g9085-2"
-       style="stroke:#ffffff;stroke-width:1.5;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none"
-       transform="matrix(0.69919669,0,0,0.69919669,90.399329,13.901409)"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575">
+       id="g5502"
+       transform="translate(-9.6761325e-7,-3.7041677)"
+       inkscape:export-filename="/home/daniel/Work/flowemu/webui/favicon.png"
+       inkscape:export-xdpi="351.08594"
+       inkscape:export-ydpi="351.08594">
       <path
-         id="path7650-9"
-         style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="m 21.166666,144.19791 h 3.96875 m 0,-3.96875 h -3.96875 v 3.96875 3.96875"
-         sodipodi:nodetypes="cccccc" />
+         id="rect2608-7-6-4-4-3-5-7-5"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:1.37494;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill"
+         d="m 103.34691,127.29501 c 0,-0.73287 -0.5904,-1.32271 -1.32327,-1.32271 h -6.614291 c -0.73286,0 -1.32286,0.58998 -1.32286,1.32285 v 6.61429 c 0,0.73287 0.59,1.32286 1.32286,1.32286 h 6.614291 c 0.72885,0 1.31685,-0.59543 1.32327,-1.32271 z"
+         inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+         inkscape:export-xdpi="175.34915"
+         inkscape:export-ydpi="175.34915"
+         sodipodi:nodetypes="cssccsscc" />
+      <path
+         id="rect2608-7-6-4-4-3-5-7"
+         style="display:inline;fill:#ffa500;fill-opacity:1;stroke-width:1.37494;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill"
+         d="m 94.086488,131.52834 c 4.07524,0 5.39851,0.79375 9.260422,0.79375 v -3.43958 c -1.85985,0 -3.04247,0.42999 -4.365322,0.893 -1.32287,0.463 -2.78637,0.95908 -4.8951,0.95908 m 0,-1.5875 c 1.85986,0 3.04309,-0.4185 4.36595,-0.8815 1.32286,-0.463 2.785752,-0.97058 4.894472,-0.97058 0,-0.73287 -0.5904,-1.32271 -1.32327,-1.32271 h -6.614292 c -0.73286,0 -1.32286,0.58998 -1.32286,1.32285 m 0,6.61429 c 0,0.73287 0.59,1.32286 1.32286,1.32286 h 6.614292 c 0.72885,0 1.31685,-0.59543 1.32327,-1.32271 -4.074822,-7e-5 -5.398672,-0.79375 -9.260422,-0.79375"
+         inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+         inkscape:export-xdpi="175.34915"
+         inkscape:export-ydpi="175.34915"
+         sodipodi:nodetypes="ccccccscssccsscc" />
     </g>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.04879;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 109.92794,111.94917 v 5.54988"
-       id="path7798-3"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
-    <circle
-       style="fill:none;stroke:#ffffff;stroke-width:1.04879;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
-       id="path11399-1"
-       cx="113.26935"
-       cy="116.11168"
-       r="1.3874685"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
-    <path
-       id="path19288"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.04879;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 121.60573,114.72411 v 1.52621 c 0,0.47586 -0.24682,0.87282 -0.64749,1.08762 -0.40066,0.21481 -0.8943,0.21481 -1.29496,0 -0.40067,-0.2148 -0.64749,-0.61176 -0.64749,-1.04136 m 0,-1.57247 v 1.52621 c -10e-6,0.47586 -0.2292,0.87282 -0.60124,1.08762 -0.37205,0.21481 -0.83043,0.21481 -1.20247,0 -0.37205,-0.2148 -0.60124,-0.61176 -0.60124,-1.08762 v -1.52621"
-       sodipodi:nodetypes="ccsscccsscc"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
-    <path
-       id="path12526-7"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738461;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 123.58096,114.72478 h 2.93075 m 0,-2.93077 h -2.93075 v 5.86153 h 2.93075"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
-    <path
-       id="path19288-4"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738461;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 133.60712,117.65554 v -1.61192 c 0,-0.50257 -0.26068,-0.92184 -0.68384,-1.1487 -0.42317,-0.22686 -0.94453,-0.22686 -1.3677,0 -0.42316,0.22686 -0.68384,0.64613 -0.68384,1.09985 m 0,1.66077 v -1.61192 c 0,-0.50257 -0.24206,-0.92184 -0.635,-1.1487 -0.39294,-0.22686 -0.87706,-0.22686 -1.26999,0 -0.39294,0.22686 -0.635,0.64613 -0.635,1.1487 v 1.61192"
-       sodipodi:nodetypes="ccsscccsscc"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
-    <path
-       id="path19288-4-5"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738461;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 137.96716,114.72478 v 1.61191 c 0,0.50258 -0.24206,0.92183 -0.63499,1.1487 -0.39295,0.22687 -0.87707,0.22687 -1.27001,0 -0.39293,-0.22687 -0.63499,-0.64612 -0.63499,-1.1487 v -1.61191"
-       sodipodi:nodetypes="ccsscc"
-       inkscape:export-filename="/home/daniel/Documents/flowemu/webui/img/flowemu_logo.png"
-       inkscape:export-xdpi="351.29575"
-       inkscape:export-ydpi="351.29575" />
+    <g
+       id="g5514"
+       inkscape:export-filename="/home/daniel/Work/flowemu/webui/img/flowemu_logo.png"
+       inkscape:export-xdpi="351.08594"
+       inkscape:export-ydpi="351.08594">
+      <path
+         id="rect2608-7-6-4-4-3-5"
+         style="display:inline;fill:#ffffff;fill-opacity:1;stroke-width:1.37494;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers stroke fill"
+         d="m 94.086492,115.65334 c 4.07524,0 5.398509,0.79375 9.260418,0.79375 v -3.43958 c -1.85985,0 -3.04247,0.42999 -4.365325,0.893 -1.322861,0.463 -2.786366,0.95908 -4.895093,0.95908 m 0,-1.5875 c 1.859858,0 3.043085,-0.4185 4.365947,-0.8815 1.322861,-0.463 2.785751,-0.97058 4.894471,-0.97058 0,-0.73287 -0.5904,-1.32271 -1.32327,-1.32271 h -6.614287 c -0.732867,0 -1.322861,0.58998 -1.322861,1.32285 m 0,6.61429 c 0,0.73287 0.589994,1.32286 1.322861,1.32286 h 6.614287 c 0.72885,0 1.31685,-0.59543 1.32327,-1.32271 -4.07482,-7e-5 -5.398669,-0.79375 -9.260418,-0.79375"
+         inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+         inkscape:export-xdpi="175.34915"
+         inkscape:export-ydpi="175.34915"
+         sodipodi:nodetypes="ccccccscssccsscc" />
+      <g
+         id="g5498">
+        <g
+           id="g9085-2"
+           style="stroke:#ffffff;stroke-width:1.5;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none"
+           transform="matrix(0.69916574,0,0,0.69916574,90.664076,13.905874)"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915">
+          <path
+             id="path7650-9"
+             style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m 21.166666,144.19791 h 3.96875 m 0,-3.96875 h -3.96875 v 3.96875 3.96875"
+             sodipodi:nodetypes="cccccc" />
+        </g>
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.04874;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 110.1918,111.94929 v 5.54964"
+           id="path7798-3"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+        <circle
+           style="fill:none;stroke:#ffffff;stroke-width:1.04874;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+           id="path11399-1"
+           cx="113.53309"
+           cy="116.11162"
+           r="1.3874071"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+        <path
+           id="path19288"
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.04874;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 121.86907,114.72411 v 1.52614 c 0,0.47584 -0.24681,0.87278 -0.64746,1.08757 -0.40064,0.21481 -0.89426,0.21481 -1.2949,0 -0.40065,-0.21479 -0.64746,-0.61173 -0.64746,-1.04131 m 0,-1.5724 v 1.52614 c -1e-5,0.47584 -0.22919,0.87278 -0.60122,1.08757 -0.37203,0.21481 -0.83039,0.21481 -1.20241,0 -0.37204,-0.21479 -0.60122,-0.61173 -0.60122,-1.08757 v -1.52614"
+           sodipodi:nodetypes="ccsscccsscc"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+        <path
+           id="path12526-7"
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738428;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 123.84421,114.72478 h 2.93062 m 0,-2.93064 h -2.93062 v 5.86127 h 2.93062"
+           sodipodi:nodetypes="cccccc"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+        <path
+           id="path19288-4"
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738428;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 133.86993,117.65541 v -1.61185 c 0,-0.50255 -0.26067,-0.9218 -0.68381,-1.14865 -0.42315,-0.22685 -0.94449,-0.22685 -1.36764,0 -0.42314,0.22685 -0.68381,0.6461 -0.68381,1.0998 m 0,1.6607 v -1.61185 c 0,-0.50255 -0.24205,-0.9218 -0.63497,-1.14865 -0.39292,-0.22685 -0.87702,-0.22685 -1.26993,0 -0.39293,0.22685 -0.63498,0.6461 -0.63498,1.14865 v 1.61185"
+           sodipodi:nodetypes="ccsscccsscc"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+        <path
+           id="path19288-4-5"
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.738428;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 138.22978,114.72478 v 1.61184 c 0,0.50256 -0.24205,0.92179 -0.63496,1.14865 -0.39294,0.22686 -0.87704,0.22686 -1.26996,0 -0.39291,-0.22686 -0.63496,-0.64609 -0.63496,-1.14865 v -1.61184"
+           sodipodi:nodetypes="ccsscc"
+           inkscape:export-filename="/home/daniel/Work/channel_emulator/webui/img/flowemu_logo.png"
+           inkscape:export-xdpi="175.34915"
+           inkscape:export-ydpi="175.34915" />
+      </g>
+    </g>
   </g>
 </svg>
