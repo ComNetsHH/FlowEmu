@@ -1,3 +1,7 @@
+//
+// This module is work in progress and will not perform any meaningful actions!
+//
+
 #ifndef DQL_QUEUE_MODULE_HPP
 #define DQL_QUEUE_MODULE_HPP
 

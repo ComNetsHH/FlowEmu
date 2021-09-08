@@ -1,3 +1,7 @@
+//
+// This module is work in progress and will not perform any meaningful actions!
+//
+
 #include "DQLQueueModule.hpp"
 
 #include <boost/bind.hpp>
