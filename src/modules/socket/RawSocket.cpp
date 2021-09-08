@@ -30,7 +30,7 @@ RawSocket::RawSocket(boost::asio::io_service& io_service, std::string ifname, Po
 
 	input_port.setReceiveHandler(bind(&RawSocket::send, this, placeholders::_1));
 
-	start_receive();
+	startReceive();
 }
 
 void RawSocket::send(shared_ptr<Packet> packet) {
@@ -40,10 +40,10 @@ void RawSocket::send(shared_ptr<Packet> packet) {
 	socket.send(send_buffers);
 }
 
-void RawSocket::start_receive() {
+void RawSocket::startReceive() {
 	socket.async_receive(boost::asio::buffer(recv_buffer),
 	                     0,
-	                     boost::bind(&RawSocket::handle_receive,
+	                     boost::bind(&RawSocket::handleReceive,
 	                                 this,
 	                                 boost::asio::placeholders::error,
 	                                 boost::asio::placeholders::bytes_transferred
@@ -51,16 +51,16 @@ void RawSocket::start_receive() {
 	);
 }
 
-void RawSocket::handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
+void RawSocket::handleReceive(const boost::system::error_code& error, size_t bytes_transferred) {
 	if(error == boost::asio::error::operation_aborted) {
 		return;
 	}
 
-	if((!error || error == boost::asio::error::message_size)) {
+	if(!error || error == boost::asio::error::message_size) {
 		output_port.send(make_shared<Packet>(recv_buffer.data(), bytes_transferred));
 	}
 
-	start_receive();
+	startReceive();
 }
 
 RawSocket::~RawSocket() {

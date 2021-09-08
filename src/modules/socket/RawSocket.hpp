@@ -32,8 +32,8 @@ class RawSocket : public Module {
 
 		void send(std::shared_ptr<Packet> packet);
 
-		void start_receive();
-		void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
+		void startReceive();
+		void handleReceive(const boost::system::error_code& error, size_t bytes_transferred);
 
 		boost::asio::generic::raw_protocol::socket socket;
 		boost::array<uint8_t, 10000> recv_buffer;
