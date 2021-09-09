@@ -1,4 +1,26 @@
-// https://stackoverflow.com/a/27731722
+/*
+ * FlowEmu - Flow-Based Network Emulator
+ * Copyright (c) 2021 Institute of Communication Networks (ComNets),
+ *                    Hamburg University of Technology (TUHH),
+ *                    https://www.tuhh.de/comnets
+ * Copyright (c) 2021 Daniel Stolpmann <daniel.stolpmann@tuhh.de>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+// Reference: http://www.boost.org/doc/libs/1_35_0/doc/html/boost_asio/tutorial/tutdaytime6/src.html
+// Reference: https://stackoverflow.com/a/27731722
 
 #include "RawSocket.hpp"
 
