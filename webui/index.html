@@ -54,7 +54,10 @@
 
 		<div class="content">
 			<div id="node_library"></div>
-			<div id="node_editor"></div>
+			<div id="node_editor">
+				<div id="library_hide_button"><</div>
+				<div id="settings_hide_button">></div>
+			</div>
 			<div id="node_settings" class="node_settings">
 				<canvas id="queue_chart" width="400" height="250"></canvas>
 				<canvas id="delay_chart" width="400" height="250"></canvas>
@@ -302,6 +305,15 @@
 
 			node_library.addGroup(meter_group);
 
+			document.getElementById("library_hide_button").addEventListener("click", function(e) {
+				if(node_library.element.classList.contains("hidden")) {
+					node_library.element.classList.remove("hidden");
+					this.textContent = "<";
+				} else {
+					node_library.element.classList.add("hidden");
+					this.textContent = ">";
+				}
+			});
 
 			var queue_ctx = document.getElementById('queue_chart').getContext('2d');
 			var queue_chart = new Chart(queue_ctx, {
@@ -472,6 +484,17 @@
 				throughput_chart.options.scales.x.min = now - 30;
 				throughput_chart.update();
 			}, 100);
+
+			var node_settings = document.getElementById("node_settings");
+			document.getElementById("settings_hide_button").addEventListener("click", function(e) {
+				if(node_settings.classList.contains("hidden")) {
+					node_settings.classList.remove("hidden");
+					this.textContent = ">";
+				} else {
+					node_settings.classList.add("hidden");
+					this.textContent = "<";
+				}
+			});
 		</script>
 	</body>
 </html>
