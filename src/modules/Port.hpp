@@ -121,6 +121,8 @@ template<typename T> class RequestingPort : virtual public Port {
 			}
 
 			this->connected_port = casted_connected_port;
+
+			notify();
 		}
 
 		void disconnect() {
