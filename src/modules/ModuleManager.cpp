@@ -213,6 +213,8 @@ void ModuleManager::removeModule(const string &id, bool publish, bool publish_pa
 		for(const auto& entry : modules.at(id)->getParameters()) {
 			const string &parameter_id = entry.second.id;
 
+			mqtt.unsubscribe("set/module/" + id + "/" + parameter_id);
+
 			mqtt.publish("get/module/" + id + "/" + parameter_id, nullptr, true, true);
 		};
 
