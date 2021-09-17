@@ -49,6 +49,8 @@ class Mqtt {
 		void subscribeJson(const std::string &topic, std::function<void(const std::string &topic, const Json::Value &json)> callback);
 		void subscribeBinary(const std::string &topic, std::function<void(const std::string &topic, void* data, size_t size)> callback);
 
+		void unsubscribe(const std::string &topic);
+
 		void loop();
 
 		void on_connect(int rc);

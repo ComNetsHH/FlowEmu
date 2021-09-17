@@ -155,6 +155,21 @@ void Mqtt::subscribeBinary(const string &topic, function<void(const string &topi
 	}
 }
 
+/* ========== Unsubscribe ========== */
+void Mqtt::unsubscribe(const string &topic) {
+	for(auto it = subscriptions.begin(); it != subscriptions.end(); /*++it*/) {
+		if(it->topic == topic) {
+			if(connected) {
+				mosquitto_unsubscribe(mosq, NULL, topic.c_str());
+			}
+
+			it = subscriptions.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
 void Mqtt::on_connect(int rc) {
 	connected = true;
 
