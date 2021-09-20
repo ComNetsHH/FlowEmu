@@ -83,7 +83,8 @@ function publish(topic, payload) {
 
 /* ========== Subscribe ========== */
 function subscribe(topic, callback) {
-	subscriptions.push(new subscription(topic, callback));
+	sub = new subscription(topic, callback)
+	subscriptions.push(sub);
 
 	if(client.connected) {
 		client.subscribe(topic);
@@ -95,6 +96,8 @@ function subscribe(topic, callback) {
 		message += " ";
 	});
 	console.log(message);
+
+	return sub;
 }
 
 /* ========== Unsubscribe ========== */
@@ -106,6 +109,29 @@ function unsubscribe(topic) {
 		}
 		return true;
 	});
+
+	var message = "Subscriptions: "
+	subscriptions.forEach(function(item) {
+		message += item.topic;
+		message += " ";
+	});
+	console.log(message);
+}
+
+function unsubscribeByReference(subscription) {
+	var matches = 0;
+
+	subscriptions = subscriptions.filter(function(item) {
+		if(topic_matches_sub(subscription.topic, item.topic)) {
+			matches++;
+		}
+
+		return item !== subscription;
+	});
+
+	if(matches == 1) {
+		client.unsubscribe(subscription.topic);
+	}
 
 	var message = "Subscriptions: "
 	subscriptions.forEach(function(item) {
