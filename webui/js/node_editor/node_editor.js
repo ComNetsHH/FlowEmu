@@ -41,7 +41,9 @@ class NodeEditor {
 	path_remove_handler = undefined;
 	parameter_add_handler = undefined;
 	parameter_change_handler = undefined;
+	parameter_remove_handler = undefined;
 	statistic_add_handler = undefined;
+	statistic_remove_handler = undefined;
 
 	constructor(div) {
 		this.element = document.querySelector(div);
@@ -243,6 +245,18 @@ class NodeEditor {
 			}
 		});
 
+		for(let id in node.parameters) {
+			if(this.parameter_remove_handler !== undefined) {
+				this.parameter_remove_handler(node, id);
+			}
+		}
+
+		for(let id in node.statistics) {
+			if(this.statistic_remove_handler !== undefined) {
+				this.statistic_remove_handler(node, id);
+			}
+		}
+
 		if(this.node_remove_handler !== undefined) {
 			this.node_remove_handler(node, callback_data);
 		}
@@ -409,8 +423,16 @@ class NodeEditor {
 		this.parameter_change_handler = handler;
 	}
 
+	setParameterRemoveHandler(handler) {
+		this.parameter_remove_handler = handler;
+	}
+
 	setStatisticAddHandler(handler) {
 		this.statistic_add_handler = handler;
+	}
+
+	setStatisticRemoveHandler(handler) {
+		this.statistic_remove_handler = handler;
 	}
 
 	serializeNodes() {
