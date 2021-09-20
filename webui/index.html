@@ -68,6 +68,9 @@
 		<script>
 			var node_editor = new NodeEditor("#node_editor");
 
+			var node_parameter_subscriptions = {};
+			var node_statistic_subscriptions = {};
+
 			subscribe("get/module/+", function(topic, message) {
 				var r = new RegExp("get\\/module\\/(\\w+)");
 				var m;
@@ -116,8 +119,6 @@
 					publish("set/paths", node_editor.serializePaths());
 					publish("set/module/" + node.id, null);
 				}
-
-				unsubscribe("get/module/" + node.id + "/+");
 			});
 
 			node_editor.setPathAddHandler(function(path, callback_data) {
@@ -133,7 +134,7 @@
 			});
 
 			node_editor.setParameterAddHandler(function(node, id) {
-				subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
+				node_parameter_subscriptions[node.id + "." + id] = subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
 					if(node.id in node_editor.nodes && id in node_editor.nodes[node.id].parameters) {
 						node_editor.nodes[node.id].parameters[id].setValue(parseFloat(message));
 					}
@@ -144,12 +145,20 @@
 				publish("set/module/" + node.id + "/" + parameter_id, value.toString());
 			});
 
+			node_editor.setParameterRemoveHandler(function(node, id) {
+				unsubscribeByReference(node_parameter_subscriptions[node.id + "." + id]);
+			});
+
 			node_editor.setStatisticAddHandler(function(node, id) {
-				subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
+				node_statistic_subscriptions[node.id + "." + id] = subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
 					if(node.id in node_editor.nodes && id in node_editor.nodes[node.id].statistics) {
 						node_editor.nodes[node.id].statistics[id].setValue(parseFloat(message));
 					}
 				});
+			});
+
+			node_editor.setStatisticRemoveHandler(function(node, id) {
+				unsubscribeByReference(node_statistic_subscriptions[node.id + "." + id]);
 			});
 
 			subscribe("get/graphs", function(topic, message) {
