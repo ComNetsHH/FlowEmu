@@ -24,6 +24,7 @@
 
 #include <atomic>
 #include <functional>
+#include <iostream>
 #include <list>
 #include <string>
 
@@ -47,6 +48,14 @@ class Parameter {
 		}
 
 		void set(double value) {
+			if(value < min) {
+				std::cerr << "Parameter value of " << value << " subceeds minimum of " << min << "! Parameter value will be set to minimum." << std::endl;
+				value = min;
+			} else if(value > max) {
+				std::cerr << "Parameter value of " << value << " exceeds maximum of " << max << "! Parameter value will be set to maximum." << std::endl;
+				value = max;
+			}
+
 			this->value.store(value);
 
 			callChangeHandlers();
