@@ -59,6 +59,8 @@ class ModuleManager {
 		void loadFromFile(const std::string &filename);
 		void saveToFile(const std::string &filename);
 
+		void clear();
+
 	private:
 		boost::asio::io_service &io_service;
 		Mqtt &mqtt;

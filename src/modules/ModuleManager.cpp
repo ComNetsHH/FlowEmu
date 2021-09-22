@@ -441,7 +441,7 @@ void ModuleManager::saveToFile(const string &filename) {
 	publishFiles(path.parent_path().string());
 }
 
-ModuleManager::~ModuleManager() {
+void ModuleManager::clear() {
 	list<string> module_ids;
 	for(const auto& module : modules) {
 		module_ids.emplace_back(module.first);
@@ -450,4 +450,8 @@ ModuleManager::~ModuleManager() {
 	for(const auto& module_id : module_ids) {
 		removeModule(module_id, true);
 	}
+}
+
+ModuleManager::~ModuleManager() {
+	clear();
 }
