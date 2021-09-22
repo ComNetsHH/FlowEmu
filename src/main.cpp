@@ -37,6 +37,7 @@
 using namespace std;
 
 atomic<bool> running(true);
+atomic<bool> mqtt_running(true);
 boost::asio::io_service io_service;
 
 void signalHandler(int signum) {
@@ -130,9 +131,9 @@ int main(int argc, const char *argv[]) {
 		}
 	}
 
-	// MQTT loop
+	// Start MQTT thread
 	thread mqtt_thread([&](){
-		while(running) {
+		while(mqtt_running) {
 			mqtt.loop();
 		}
 	});
@@ -149,12 +150,16 @@ int main(int argc, const char *argv[]) {
 
 	// Clean up
 	cout << "Stopping FlowEmu..." << endl;
-	running = false;
-
-	mqtt_thread.join();
 
 	// Save to autosave file
 	module_manager.saveToFile("config/graphs/autosave.json");
+
+	// Remove all modules
+	module_manager.clear();
+
+	// Stop MQTT thread
+	mqtt_running = false;
+	mqtt_thread.join();
 
 	return 0;
 }
