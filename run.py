@@ -110,7 +110,11 @@ class Config:
 
 			# Add general parameters to test case
 			testcase = deepcopy(testcases_toml["general"])
-			testcase.update(config)
+			for key, value in config.items():
+				if key in testcase and isinstance(testcase[key], dict) and isinstance(value, dict):
+					testcase[key].update(value)
+				else:
+					testcase[key] = value
 
 			# Set test case name
 			testcase["name"] = name
