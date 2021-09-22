@@ -986,13 +986,23 @@ class Port {
 					that.getNodeEditor().loose_path.update();
 				} else {
 					if(that.getNodeEditor().loose_path.port_from === undefined) {
-						that.getNodeEditor().updatePathFrom(that.getNodeEditor().loose_path, that);
-						that.getNodeEditor().loose_path.update();
-						that.getNodeEditor().loose_path = undefined;
+						if((that.getType() == "sending" && that.getNodeEditor().loose_path.port_to.getType() == "receiving") ||
+						   (that.getType() == "receiving" && that.getNodeEditor().loose_path.port_to.getType() == "sending") ||
+						   (that.getType() == "requesting" && that.getNodeEditor().loose_path.port_to.getType() == "responding") ||
+						   (that.getType() == "responding" && that.getNodeEditor().loose_path.port_to.getType() == "requesting")) {
+							that.getNodeEditor().updatePathFrom(that.getNodeEditor().loose_path, that);
+							that.getNodeEditor().loose_path.update();
+							that.getNodeEditor().loose_path = undefined;
+						}
 					} else if(that.getNodeEditor().loose_path.port_to === undefined) {
-						that.getNodeEditor().updatePathTo(that.getNodeEditor().loose_path, that);
-						that.getNodeEditor().loose_path.update();
-						that.getNodeEditor().loose_path = undefined;
+						if((that.getType() == "sending" && that.getNodeEditor().loose_path.port_from.getType() == "receiving") ||
+						   (that.getType() == "receiving" && that.getNodeEditor().loose_path.port_from.getType() == "sending") ||
+						   (that.getType() == "requesting" && that.getNodeEditor().loose_path.port_from.getType() == "responding") ||
+						   (that.getType() == "responding" && that.getNodeEditor().loose_path.port_from.getType() == "requesting")) {
+							that.getNodeEditor().updatePathTo(that.getNodeEditor().loose_path, that);
+							that.getNodeEditor().loose_path.update();
+							that.getNodeEditor().loose_path = undefined;
+						}
 					}
 				}
 			} else if(that.getNodeEditor().loose_path === undefined) {
