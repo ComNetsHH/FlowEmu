@@ -380,6 +380,10 @@ def main():
 					for module in testcase.keys():
 						if(isinstance(testcase[module], dict)):
 							for parameter, value in testcase[module].items():
+								# Evaluate Python expression
+								if isinstance(value, str):
+									value = eval(value)
+
 								module_parameters += " --" + module + "." + parameter + "=" + str(value)
 
 					# Setup processes
