@@ -119,10 +119,9 @@ body > .content .node_settings.hidden {
 	width: 0;
 }
 
-#library_hide_button {
+.hide_button {
 	position: absolute;
 	top: 16px;
-	left: 0;
 	z-index: 1;
 
 	padding: 24px 8px;
@@ -132,15 +131,18 @@ body > .content .node_settings.hidden {
 	user-select: none;
 }
 
+.hide_button:hover {
+	background: rgb(30, 30, 30);
+}
+
+.hide_button:active {
+	background: rgb(20, 20, 20);
+}
+
+#library_hide_button {
+	left: 0;
+}
+
 #settings_hide_button {
-	position: absolute;
-	top: 16px;
 	right: 0;
-	z-index: 1;
-
-	padding: 24px 8px;
-
-	background: rgb(25, 25, 25);
-	color: white;
-	user-select: none;
 }
