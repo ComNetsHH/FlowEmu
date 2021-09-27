@@ -255,7 +255,9 @@ class SudoLoop:
 
 	# Reset sudo timeout or ask for sudo password
 	def validate(self):
-		os.system("sudo -v")
+		status = os.system("sudo -v")
+		if os.WEXITSTATUS(status) != 0:
+			raise RuntimeError("Sudo password is required to continue!")
 
 	# Sudo timeout reset loop
 	def loop(self):
@@ -319,7 +321,10 @@ def main():
 
 	# Ask for sudo password and start sudo timeout reset loop
 	sudo_loop = SudoLoop()
-	sudo_loop.run()
+	try:
+		sudo_loop.run()
+	except RuntimeError:
+		exit(1)
 
 	# Build FlowEmu
 	try:
