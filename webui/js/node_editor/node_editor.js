@@ -109,6 +109,8 @@ class NodeEditor {
 
 		window.addEventListener("mouseup", function(e) {
 			if(that.dragged_element instanceof Node) {
+				that.dragged_element.element.style.zIndex = 0;
+
 				if(that.node_change_handler !== undefined) {
 					that.node_change_handler(that.dragged_element);
 				}
@@ -1256,6 +1258,7 @@ class NodeLibraryGroup {
 				"x": library_node_position.x - node_editor_position.x - node_editor_pan.x,
 				"y": library_node_position.y - node_editor_position.y - node_editor_pan.y
 			});
+			new_node.element.style.zIndex = 2;
 			node_editor.addNode(new_node);
 
 			if(node_editor.selected_element !== undefined) {
