@@ -606,6 +606,8 @@ class Node {
 
 	unselect() {
 		this.element.classList.remove("selected");
+
+		this.parent.selected_element = undefined;
 	}
 
 	serialize() {
