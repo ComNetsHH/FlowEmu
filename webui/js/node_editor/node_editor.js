@@ -31,7 +31,7 @@ class NodeEditor {
 	selected_element = undefined;
 	dragged_element = undefined;
 
-	pan = {"x": 0, "y": 0};
+	pan = {"x": 300, "y": 0};
 	panning = undefined;
 
 	node_add_handler = undefined;

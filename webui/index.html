@@ -53,15 +53,18 @@
 		</div>
 
 		<div class="content">
-			<div id="node_library"></div>
-			<div id="node_editor">
+			<div class="sidebar sidebar_left">
+				<div id="node_library"></div>
 				<div id="library_hide_button" class="hide_button"><</div>
-				<div id="settings_hide_button" class="hide_button">></div>
 			</div>
-			<div id="node_settings" class="node_settings">
-				<canvas id="queue_chart" width="400" height="250"></canvas>
-				<canvas id="delay_chart" width="400" height="250"></canvas>
-				<canvas id="throughput_chart" width="400" height="250"></canvas>
+			<div id="node_editor"></div>
+			<div class="sidebar sidebar_right">
+				<div id="settings_hide_button" class="hide_button">></div>
+				<div id="node_settings" class="node_settings">
+					<canvas id="queue_chart" width="400" height="250"></canvas>
+					<canvas id="delay_chart" width="400" height="250"></canvas>
+					<canvas id="throughput_chart" width="400" height="250"></canvas>
+				</div>
 			</div>
 		</div>
 

@@ -94,36 +94,44 @@ body > .header .graph_loadsave .button:active {
 }
 
 body > .content {
-	display: flex;
+	position: relative;
 	width: 100%;
 	height: calc(100% - 56px);
 }
 
-body > .content .node_library {
-	flex: 0 0 auto;
+body > .content .sidebar {
+	display: flex;
+	align-items: flex-start;
+
+	position: absolute;
+	top: 0;
+	height: 100%;
+
+	z-index: 1;
+}
+
+body > .content .sidebar_left {
+	left: 0;
+}
+
+body > .content .sidebar_right {
+	right: 0;
 }
 
 body > .content .node_library.hidden {
-	width: 0;
+	display: none;
 }
 
 body > .content .node_editor {
-	flex: 1 1 auto;
-}
-
-body > .content .node_settings {
-	flex: 0 0 auto;
+	height: 100%;
 }
 
 body > .content .node_settings.hidden {
-	width: 0;
+	display: none;
 }
 
 .hide_button {
-	position: absolute;
-	top: 16px;
-	z-index: 1;
-
+	margin-top: 16px;
 	padding: 24px 8px;
 
 	background: rgb(25, 25, 25);
@@ -137,12 +145,4 @@ body > .content .node_settings.hidden {
 
 .hide_button:active {
 	background: rgb(20, 20, 20);
-}
-
-#library_hide_button {
-	left: 0;
-}
-
-#settings_hide_button {
-	right: 0;
 }
