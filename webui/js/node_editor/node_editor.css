@@ -185,9 +185,8 @@
 }
 
 .node .content .statistic .value {
-	flex: 1 1 auto;
 	margin: 0 8px;
-	text-align: right;
+	margin-left: auto;
 }
 
 .node .content .flow {
