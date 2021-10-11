@@ -83,7 +83,7 @@ function publish(topic, payload) {
 
 /* ========== Subscribe ========== */
 function subscribe(topic, callback) {
-	sub = new subscription(topic, callback)
+	sub = new subscription(topic, callback);
 	subscriptions.push(sub);
 
 	if(client.connected) {
