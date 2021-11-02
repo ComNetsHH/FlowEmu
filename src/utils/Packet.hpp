@@ -36,6 +36,13 @@ class Packet {
 
 		const std::chrono::high_resolution_clock::time_point& getCreationTimePoint() const;
 
+		size_t parseEthernetHeader(uint16_t &type_field);
+
+		void updateIPv4HeaderChecksum();
+
+		uint8_t getECN();
+		void setECN(uint8_t ecn);
+
 	private:
 		std::vector<uint8_t> bytes;
 		std::chrono::high_resolution_clock::time_point creation_time_point = std::chrono::high_resolution_clock::now();

@@ -43,3 +43,88 @@ const vector<uint8_t>& Packet::getBytes() const {
 const chrono::high_resolution_clock::time_point& Packet::getCreationTimePoint() const {
 	return creation_time_point;
 }
+
+size_t Packet::parseEthernetHeader(uint16_t &type_field) {
+	size_t type_field_offset = 12;
+	size_t network_layer_offset = 14;
+
+	// Parse type field
+	type_field = (bytes[type_field_offset] << 8) | bytes[type_field_offset+1];
+
+	// Handle 802.1Q header
+	if(type_field == 0x8100) {
+		type_field_offset += 4;
+		network_layer_offset += 4;
+
+		type_field = (bytes[type_field_offset] << 8) | bytes[type_field_offset+1];
+	}
+
+	return network_layer_offset;
+}
+
+void Packet::updateIPv4HeaderChecksum() {
+	uint16_t type_field;
+	size_t network_layer_offset = parseEthernetHeader(type_field);
+
+	// Handle type field
+	if(type_field != 0x0800) {
+		// Not IPv4
+		return;
+	}
+
+	uint32_t checksum = 0;
+
+	// Get IP header length
+	size_t ip_header_length = (bytes[network_layer_offset] & 0x0F) * 4;
+
+	// Sum up header fields
+	for(size_t i = 0; i < ip_header_length; i += 2) {
+		if(i == 10) {
+			continue;
+		}
+
+		checksum += (bytes[network_layer_offset+i] << 8) | bytes[network_layer_offset+i+1];
+	}
+
+	// Add end-around carry
+	while(checksum & 0xFFFF0000) {
+		checksum = (checksum & 0xFFFF) + (checksum >> 16);
+	}
+
+	// Calculate ones' complement
+	checksum = ~checksum;
+
+	// Write checksum to packet
+	bytes[network_layer_offset+10] = (checksum >> 8);
+	bytes[network_layer_offset+11] = checksum;
+}
+
+uint8_t Packet::getECN() {
+	uint16_t type_field;
+	size_t network_layer_offset = parseEthernetHeader(type_field);
+
+	// Handle type field
+	if(type_field == 0x0800) {
+		// IPv4
+		return bytes[network_layer_offset+1] & 0b00000011;
+	} else if(type_field == 0x86DD) {
+		// IPv6
+		return ((bytes[network_layer_offset+1] & 0b00110000) >> 4);
+	}
+
+	return 0;
+}
+
+void Packet::setECN(uint8_t ecn) {
+	uint16_t type_field;
+	size_t network_layer_offset = parseEthernetHeader(type_field);
+
+	// Handle type field
+	if(type_field == 0x0800) {
+		// IPv4
+		bytes[network_layer_offset+1] = (bytes[network_layer_offset+1] & ~0b00000011) | (ecn & 0b00000011);
+	} else if(type_field == 0x86DD) {
+		// IPv6
+		bytes[network_layer_offset+1] = (bytes[network_layer_offset+1] & ~0b00110000) | ((ecn << 4) & 0b00110000);
+	}
+}
