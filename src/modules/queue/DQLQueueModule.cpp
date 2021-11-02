@@ -23,6 +23,8 @@
 // This module is work in progress and will not perform any meaningful actions!
 //
 
+// Inspired by: M. Bachl, J. Fabini and T. Zseby, "LFQ: Online Learning of Per-flow Queuing Policies using Deep Reinforcement Learning," 2020 IEEE 45th Conference on Local Computer Networks (LCN), 2020, pp. 417-420, doi: 10.1109/LCN48667.2020.9314771
+
 #include "DQLQueueModule.hpp"
 
 #include <boost/bind.hpp>
