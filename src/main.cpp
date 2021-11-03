@@ -122,10 +122,16 @@ int main(int argc, const char *argv[]) {
 
 		string module_id = m.str(1);
 		string parameter_id = m.str(2);
-		double value = stod(m.str(3));
+		string value = m.str(3);
 
 		try {
-			module_manager.getModule(module_id)->getParameter(parameter_id).parameter->set(value);
+			const auto parameter = module_manager.getModule(module_id)->getParameter(parameter_id).parameter;
+
+			if(const auto parameter_double = dynamic_cast<ParameterDouble*>(parameter)) {
+				const double value_double = stod(value);
+
+				parameter_double->set(value_double);
+			}
 		} catch(const std::out_of_range &e) {
 			cerr << "Error while setting module parameter from command line: " << e.what() << endl;
 		}

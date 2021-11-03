@@ -28,17 +28,26 @@
 #include <list>
 #include <string>
 
+#include <json/json.h>
+
 class Parameter {
 	public:
-		Parameter(double default_value, double min, double max, double step) : value(default_value), min(min), max(max), step(step) {
+		virtual void callChangeHandlers() = 0;
+
+		virtual Json::Value serialize() = 0;
+};
+
+template<typename T> class ParameterTemplate : public Parameter {
+	public:
+		ParameterTemplate(T default_value) : value(default_value) {
 			
 		}
 
-		void addChangeHandler(std::function<void(double)> handler) {
+		void addChangeHandler(std::function<void(T)> handler) {
 			change_handlers.push_back(handler);
 		}
 
-		void callChangeHandlers() {
+		void callChangeHandlers() override {
 			for(const auto& handler : change_handlers) {
 				try {
 					handler(value);
@@ -47,7 +56,36 @@ class Parameter {
 			}
 		}
 
-		void set(double value) {
+		virtual void set(T value) {
+			this->value.store(value);
+
+			callChangeHandlers();
+		}
+
+		virtual T get() {
+			return value.load();
+		}
+
+		Json::Value serialize() override {
+			Json::Value json_root;
+			json_root["value"] = get();
+
+			return json_root;
+		}
+
+	private:
+		std::atomic<T> value;
+
+		std::list<std::function<void(T)>> change_handlers;
+};
+
+class ParameterDouble : public ParameterTemplate<double> {
+	public:
+		ParameterDouble(double default_value, double min, double max, double step) : ParameterTemplate(default_value), min(min), max(max), step(step) {
+			
+		}
+
+		void set(double value) override {
 			if(value < min) {
 				std::cerr << "Parameter value of " << value << " subceeds minimum of " << min << "! Parameter value will be set to minimum." << std::endl;
 				value = min;
@@ -56,13 +94,7 @@ class Parameter {
 				value = max;
 			}
 
-			this->value.store(value);
-
-			callChangeHandlers();
-		}
-
-		double get() {
-			return value.load();
+			ParameterTemplate::set(value);
 		}
 
 		double getMin() {
@@ -77,14 +109,20 @@ class Parameter {
 			return step;
 		}
 
-	private:
-		std::atomic<double> value;
+		Json::Value serialize() override {
+			Json::Value json_root = ParameterTemplate::serialize();
+			json_root["data_type"] = "double";
+			json_root["min"] = getMin();
+			json_root["max"] = getMax();
+			json_root["step"] = getStep();
 
+			return json_root;
+		}
+
+	private:
 		double min;
 		double max;
 		double step;
-
-		std::list<std::function<void(double)>> change_handlers;
 };
 
 #endif

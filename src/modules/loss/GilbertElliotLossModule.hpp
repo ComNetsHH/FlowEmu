@@ -49,12 +49,12 @@ class GilbertElliotLossModule : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
-		Parameter parameter_p01 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
-		Parameter parameter_p10 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
-		Parameter parameter_e0 = {0, 0, 100, 1};
-		Parameter parameter_e1 = {100, 0, 100, 1};
-		Parameter parameter_seed_transition = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
-		Parameter parameter_seed_loss = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_p01 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
+		ParameterDouble parameter_p10 = {0.001, 0, std::numeric_limits<double>::quiet_NaN(), 0.001};
+		ParameterDouble parameter_e0 = {0, 0, 100, 1};
+		ParameterDouble parameter_e1 = {100, 0, 100, 1};
+		ParameterDouble parameter_seed_transition = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_seed_loss = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 		Statistic statistic_state;
 
 		std::mt19937 generator_transition;

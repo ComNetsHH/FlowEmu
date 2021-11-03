@@ -46,7 +46,7 @@ class BitrateRateModule : public Module {
 		RequestingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
 
-		Parameter parameter_bitrate = {1000000, 0, std::numeric_limits<double>::quiet_NaN(), 1000};
+		ParameterDouble parameter_bitrate = {1000000, 0, std::numeric_limits<double>::quiet_NaN(), 1000};
 
 		boost::asio::high_resolution_timer timer;
 		std::shared_ptr<Packet> current_transmission = nullptr;

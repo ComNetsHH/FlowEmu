@@ -47,8 +47,8 @@ class FixedIntervalRateModule : public Module {
 		RequestingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
-		Parameter parameter_interval = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
-		Parameter parameter_rate = {1000, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_interval = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_rate = {1000, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 
 		boost::asio::high_resolution_timer timer;
 		void process(const boost::system::error_code& error);

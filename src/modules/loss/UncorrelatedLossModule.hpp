@@ -46,8 +46,8 @@ class UncorrelatedLossModule : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port_rl;
 		SendingPort<std::shared_ptr<Packet>> output_port_rl;
 
-		Parameter parameter_loss = {10, 0, 100, 1};
-		Parameter parameter_seed = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_loss = {10, 0, 100, 1};
+		ParameterDouble parameter_seed = {1, 0, std::numeric_limits<double>::quiet_NaN(), 1};
 
 		std::mt19937 generator_loss;
 		std::unique_ptr<std::bernoulli_distribution> distribution;

@@ -142,26 +142,28 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 		const string &parameter_id = entry.second.id;
 		const auto parameter = entry.second.parameter;
 
-		mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter](const string &topic, const string &payload) {
-			double value;
+		if(const auto parameter_double = dynamic_cast<ParameterDouble*>(parameter)) {
+			mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter_double](const string &topic, const string &payload) {
+				double value_double;
 
-			try {
-				value = stod(payload);
-			} catch(const std::exception& e) {
-				value = numeric_limits<double>::quiet_NaN();
-			}
+				try {
+					value_double = stod(payload);
+				} catch(const std::exception& e) {
+					value_double = numeric_limits<double>::quiet_NaN();
+				}
 
-			if(isfinite(value)) {
-				parameter->set(value);
-			} else {
-				parameter->callChangeHandlers();
-			}
-		});
+				if(isfinite(value_double)) {
+					parameter_double->set(value_double);
+				} else {
+					parameter_double->callChangeHandlers();
+				}
+			});
 
-		mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter->get()), true, false);
-		parameter->addChangeHandler([&, id, parameter_id](double value) {
-			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value), true, false);
-		});
+			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter_double->get()), true, false);
+			parameter_double->addChangeHandler([&, id, parameter_id](double value_double) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value_double), true, false);
+			});
+		}
 	}
 
 	for(const auto& entry : module->getStatistics()) {

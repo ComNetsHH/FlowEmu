@@ -124,16 +124,11 @@ class Module {
 			json_content.append(json_flow);
 
 			for(auto const& entry : parameters) {
-				Json::Value json_parameter;
+				Json::Value json_parameter = entry.second.parameter->serialize();
 				json_parameter["type"] = "parameter";
 				json_parameter["id"] = entry.second.id;
 				json_parameter["label"] = entry.second.label;
 				json_parameter["unit"] = entry.second.unit;
-				json_parameter["integer"] = false;
-				json_parameter["value"] = entry.second.parameter->get();
-				json_parameter["min"] = entry.second.parameter->getMin();
-				json_parameter["max"] = entry.second.parameter->getMax();
-				json_parameter["step"] = entry.second.parameter->getStep();
 				json_content.append(json_parameter);
 			}
 
@@ -167,10 +162,15 @@ class Module {
 			if(json_root.isMember("content")) {
 				for(const auto& item : json_root["content"]) {
 					if(item.get("type", "").asString() == "parameter" && item.isMember("value")) {
-						std::string id = item.get("id", "").asString();
-						double value = item.get("value", 0).asDouble();
+						const std::string id = item.get("id", "").asString();
+						const auto parameter = getParameter(id).parameter;
+						const Json::Value value = item.get("value", 0);
+						
+						if(const auto parameter_double = dynamic_cast<ParameterDouble*>(parameter)) {
+							const double value_double = value.asDouble();
 
-						getParameter(id).parameter->set(value);
+							parameter_double->set(value_double);
+						}
 					}
 				}
 			}

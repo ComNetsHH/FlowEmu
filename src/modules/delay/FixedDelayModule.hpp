@@ -47,7 +47,7 @@ class FixedDelayModule : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
 		SendingPort<std::shared_ptr<Packet>> output_port_lr;
 
-		Parameter parameter_delay = {0, 0, std::numeric_limits<double>::quiet_NaN(), 10};
+		ParameterDouble parameter_delay = {0, 0, std::numeric_limits<double>::quiet_NaN(), 10};
 
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		boost::asio::high_resolution_timer timer_lr;

@@ -55,8 +55,8 @@ class DQLQueueModule : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		RespondingPort<std::shared_ptr<Packet>> output_port;
 
-		Parameter parameter_buffer_size = {100, 0, std::numeric_limits<double>::quiet_NaN(), 1};
-		Parameter parameter_epsilon = {0.001, 0, 1, 0.001};
+		ParameterDouble parameter_buffer_size = {100, 0, std::numeric_limits<double>::quiet_NaN(), 1};
+		ParameterDouble parameter_epsilon = {0.001, 0, 1, 0.001};
 
 		Statistic statistic_queue_length;
 
