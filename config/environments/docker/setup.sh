@@ -20,6 +20,7 @@ setup_network() {
 
 	sudo ip link add emulator netns source type veth peer name in netns channel
 	sudo ip netns exec source ethtool -K emulator rx off tx off
+	sudo ip netns exec source sysctl -w net.ipv4.tcp_ecn=1
 	sudo ip netns exec source ip addr add 10.0.1.1/24 dev emulator
 	sudo ip netns exec channel ip link set in up
 	sudo ip netns exec source ip link set lo up
@@ -28,6 +29,7 @@ setup_network() {
 
 	sudo ip link add emulator netns sink type veth peer name out netns channel
 	sudo ip netns exec sink ethtool -K emulator rx off tx off
+	sudo ip netns exec sink sysctl -w net.ipv4.tcp_ecn=1
 	sudo ip netns exec sink ip addr add 10.0.2.1/24 dev emulator
 	sudo ip netns exec channel ip link set out up
 	sudo ip netns exec sink ip link set lo up
