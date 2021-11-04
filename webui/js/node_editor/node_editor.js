@@ -209,10 +209,18 @@ class NodeEditor {
 			switch(item.type) {
 				case "parameter":
 					if(!(item.id in node.parameters)) {
-						var parameter = new NodeContentParameter(item.id, item.label, item.unit, item.integer, item.min, item.max, item.step);
-						node.addContentItem(parameter);
+						var parameter = undefined;
+						switch(item.data_type) {
+							case "double":
+								parameter = new NodeContentParameterDouble(item.id, item.label, item.unit, item.min, item.max, item.step);
+								break;
+						}
 
-						modified = true;
+						if(parameter !== undefined) {
+							node.addContentItem(parameter);
+
+							modified = true;
+						}
 					}
 					break;
 				case "statistic":
@@ -641,8 +649,16 @@ class Node {
 					that.addContentItem(label);
 					break;
 				case "parameter":
-					var parameter = new NodeContentParameter(item.id, item.label, item.unit, item.integer, item.min, item.max, item.step);
-					that.addContentItem(parameter);
+					var parameter = undefined;
+					switch(item.data_type) {
+						case "double":
+							parameter = new NodeContentParameterDouble(item.id, item.label, item.unit, item.min, item.max, item.step);
+							break;
+					}
+
+					if(parameter !== undefined) {
+						that.addContentItem(parameter);
+					}
 					break;
 				case "statistic":
 					var statistic = new NodeContentStatistic(item.id, item.label, item.unit, item.integer);
@@ -712,8 +728,34 @@ class NodeContentParameter extends NodeContentItem {
 	id = undefined;
 	label = undefined;
 	unit = undefined;
-	integer = undefined;
 	value = undefined;
+
+	constructor(id, label, unit) {
+		super();
+		this.element.classList.add("parameter");
+
+		this.id = id;
+		this.label = label;
+		this.unit = unit;
+	}
+
+	setValue(value) {
+		this.value = value;
+	}
+
+	serialize() {
+		var data = {
+			"type": "parameter",
+			"id": this.id,
+			"label": this.label,
+			"unit": this.unit
+		};
+
+		return data;
+	}
+}
+
+class NodeContentParameterDouble extends NodeContentParameter {
 	min = undefined;
 	max = undefined;
 	step = undefined;
@@ -721,14 +763,9 @@ class NodeContentParameter extends NodeContentItem {
 	element_label = undefined;
 	element_input = undefined;
 
-	constructor(id, label, unit, integer, min, max, step) {
-		super();
-		this.element.classList.add("parameter");
+	constructor(id, label, unit, min, max, step) {
+		super(id, label, unit);
 
-		this.id = id;
-		this.label = label;
-		this.unit = unit;
-		this.integer = integer;
 		this.min = min;
 		this.max = max;
 		this.step = step;
@@ -753,16 +790,11 @@ class NodeContentParameter extends NodeContentItem {
 		this.element.appendChild(element_step_down);
 
 		this.element_input = document.createElement("input");
-		this.element_input.classList.add("value_input");
-		this.element_input.type = "text"
+		this.element_input.classList.add("value_input_double");
+		this.element_input.type = "text";
 		this.element_input.value = min != null ? min : 0;
 		this.element_input.addEventListener("input", function(e) {
-			var value;
-			if(that.integer) {
-				value = parseInt(this.value);
-			} else {
-				value = parseFloat(this.value);
-			}
+			var value = parseFloat(this.value);
 
 			if(value !== that.value) {
 				this.classList.add("changed");
@@ -773,11 +805,7 @@ class NodeContentParameter extends NodeContentItem {
 		this.element_input.addEventListener("change", function(e) {
 			this.classList.remove("changed");
 
-			if(that.integer) {
-				this.value = parseInt(this.value);
-			} else {
-				this.value = parseFloat(this.value);
-			}
+			this.value = parseFloat(this.value);
 
 			if(that.min != null && this.value < that.min) {
 				this.value = that.min;
@@ -788,7 +816,7 @@ class NodeContentParameter extends NodeContentItem {
 			that.value = this.value;
 
 			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
-				that.parent.parent.parameter_change_handler(that.parent, that.id, this.value);
+				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
 			}
 		});
 		this.element_input.addEventListener("mousemove", function(e) {
@@ -817,21 +845,16 @@ class NodeContentParameter extends NodeContentItem {
 	setValue(value) {
 		this.element_input.classList.remove("changed");
 
-		this.value = value;
+		super.setValue(value);
 		this.element_input.value = value;
 	}
 
 	serialize() {
-		var data = {
-			"type": "parameter",
-			"id": this.id,
-			"label": this.label,
-			"unit": this.unit,
-			"integer": this.integer,
-			"min": this.min,
-			"max": this.max,
-			"step": this.step
-		};
+		var data = super.serialize();
+		data["data_type"] = "double";
+		data["min"] = this.min,
+		data["max"] = this.max,
+		data["step"] = this.step
 
 		return data;
 	}

@@ -139,7 +139,11 @@
 			node_editor.setParameterAddHandler(function(node, id) {
 				node_parameter_subscriptions[node.id + "." + id] = subscribe("get/module/" + node.id + "/" + id, function(topic, message) {
 					if(node.id in node_editor.nodes && id in node_editor.nodes[node.id].parameters) {
-						node_editor.nodes[node.id].parameters[id].setValue(parseFloat(message));
+						var parameter = node_editor.nodes[node.id].parameters[id];
+						
+						if(parameter instanceof NodeContentParameterDouble) {
+							parameter.setValue(parseFloat(message));
+						}
 					}
 				});
 			});
