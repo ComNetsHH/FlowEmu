@@ -170,6 +170,10 @@ class Module {
 							const double value_double = value.asDouble();
 
 							parameter_double->set(value_double);
+						} else if(const auto parameter_bool = dynamic_cast<ParameterBool*>(parameter)) {
+							const bool value_bool = value.asBool();
+
+							parameter_bool->set(value_bool);
 						}
 					}
 				}

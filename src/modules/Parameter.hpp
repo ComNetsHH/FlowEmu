@@ -125,4 +125,18 @@ class ParameterDouble : public ParameterTemplate<double> {
 		double step;
 };
 
+class ParameterBool : public ParameterTemplate<bool> {
+	public:
+		ParameterBool(bool default_value) : ParameterTemplate(default_value) {
+			
+		}
+
+		Json::Value serialize() override {
+			Json::Value json_root = ParameterTemplate::serialize();
+			json_root["data_type"] = "bool";
+
+			return json_root;
+		}
+};
+
 #endif

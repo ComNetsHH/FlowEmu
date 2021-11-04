@@ -163,6 +163,21 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 			parameter_double->addChangeHandler([&, id, parameter_id](double value_double) {
 				mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value_double), true, false);
 			});
+		} else if(const auto parameter_bool = dynamic_cast<ParameterBool*>(parameter)) {
+			mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter_bool](const string &topic, const string &payload) {
+				try {
+					const bool value_bool = (stoi(payload) != 0);
+
+					parameter_bool->set(value_bool);
+				} catch(const std::exception& e) {
+					parameter_bool->callChangeHandlers();
+				}
+			});
+
+			mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(parameter_bool->get()), true, false);
+			parameter_bool->addChangeHandler([&, id, parameter_id](bool value_bool) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value_bool), true, false);
+			});
 		}
 	}
 

@@ -214,6 +214,9 @@ class NodeEditor {
 							case "double":
 								parameter = new NodeContentParameterDouble(item.id, item.label, item.unit, item.min, item.max, item.step);
 								break;
+							case "bool":
+								parameter = new NodeContentParameterBool(item.id, item.label, item.unit);
+								break;
 						}
 
 						if(parameter !== undefined) {
@@ -654,6 +657,9 @@ class Node {
 						case "double":
 							parameter = new NodeContentParameterDouble(item.id, item.label, item.unit, item.min, item.max, item.step);
 							break;
+						case "bool":
+							parameter = new NodeContentParameterBool(item.id, item.label, item.unit);
+							break;
 					}
 
 					if(parameter !== undefined) {
@@ -855,6 +861,52 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		data["min"] = this.min,
 		data["max"] = this.max,
 		data["step"] = this.step
+
+		return data;
+	}
+}
+
+class NodeContentParameterBool extends NodeContentParameter {
+	element_label = undefined;
+	element_input = undefined;
+
+	constructor(id, label, unit, min, max, step) {
+		super(id, label, unit);
+
+		var that = this;
+
+		this.element_label = document.createElement("a");
+		this.element_label.classList.add("label");
+		this.element_label.textContent = label + ":";
+		this.element.appendChild(this.element_label);
+
+		this.element_input = document.createElement("input");
+		this.element_input.classList.add("value_input_bool");
+		this.element_input.type = "checkbox";
+		this.element_input.checked = false;
+		this.element_input.addEventListener("change", function(e) {
+			that.value = this.checked ? 1 : 0;
+
+			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
+				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
+			}
+		});
+		this.element.appendChild(this.element_input);
+
+		var element_unit = document.createElement("a");
+		element_unit.classList.add("unit");
+		element_unit.textContent = this.unit;
+		this.element.appendChild(element_unit);
+	}
+
+	setValue(value) {
+		super.setValue(value);
+		this.element_input.checked = value;
+	}
+
+	serialize() {
+		var data = super.serialize();
+		data["data_type"] = "bool";
 
 		return data;
 	}

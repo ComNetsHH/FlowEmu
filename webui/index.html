@@ -143,6 +143,8 @@
 						
 						if(parameter instanceof NodeContentParameterDouble) {
 							parameter.setValue(parseFloat(message));
+						} else if(parameter instanceof NodeContentParameterBool) {
+							parameter.setValue(parseInt(message) != 0);
 						}
 					}
 				});

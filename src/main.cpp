@@ -131,6 +131,10 @@ int main(int argc, const char *argv[]) {
 				const double value_double = stod(value);
 
 				parameter_double->set(value_double);
+			} else if(const auto parameter_bool = dynamic_cast<ParameterBool*>(parameter)) {
+				const bool value_bool = (stoi(value) != 0);
+
+				parameter_bool->set(value_bool);
 			}
 		} catch(const std::out_of_range &e) {
 			cerr << "Error while setting module parameter from command line: " << e.what() << endl;
