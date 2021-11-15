@@ -137,6 +137,14 @@
 	align-items: center;
 }
 
+.node .content .parameter .label {
+	margin-right: 8px;
+}
+
+.node .content .parameter .label:empty {
+	display: none;
+}
+
 .node .content .parameter input[type=text] {
 	flex: 1 1 auto;
 	width: 100%;
@@ -162,7 +170,6 @@
 .node .content .parameter input[type=checkbox] {
 	flex: 0 0 auto;
 	margin-left: auto;
-	margin-right: 8px;
 
 	line-height: 28px;
 }
@@ -179,13 +186,19 @@
 }
 
 .node .content .parameter .step:first-of-type {
-	margin-left: 8px;
 	border-radius: 3px 0 0 3px;
 }
 
 .node .content .parameter .step:last-of-type {
-	margin-right: 8px;
 	border-radius: 0 3px 3px 0;
+}
+
+.node .content .parameter .unit {
+	margin-left: 8px;
+}
+
+.node .content .parameter .unit:empty {
+	display: none;
 }
 
 .node .content .statistic {
@@ -194,9 +207,24 @@
 	align-items: center;
 }
 
+.node .content .statistic .label {
+	margin-right: 8px;
+}
+
+.node .content .statistic .label:empty {
+	display: none;
+}
+
 .node .content .statistic .value {
-	margin: 0 8px;
 	margin-left: auto;
+}
+
+.node .content .statistic .unit {
+	margin-left: 8px;
+}
+
+.node .content .statistic .unit:empty {
+	display: none !important;
 }
 
 .node .content .flow {
