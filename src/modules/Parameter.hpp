@@ -26,6 +26,7 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <mutex>
 #include <string>
 
 #include <json/json.h>
@@ -37,8 +38,16 @@ class Parameter {
 		virtual Json::Value serialize() = 0;
 };
 
+template<typename T> class AtomicParameterTemplate;
+
 template<typename T> class ParameterTemplate : public Parameter {
+	friend class AtomicParameterTemplate<T>;
+
 	public:
+		ParameterTemplate() {
+			
+		}
+
 		ParameterTemplate(T default_value) : value(default_value) {
 			
 		}
@@ -50,20 +59,24 @@ template<typename T> class ParameterTemplate : public Parameter {
 		void callChangeHandlers() override {
 			for(const auto& handler : change_handlers) {
 				try {
-					handler(value);
+					handler(get());
 				} catch(const std::bad_function_call &e) {
 				}
 			}
 		}
 
 		virtual void set(T value) {
-			this->value.store(value);
+			std::unique_lock<std::mutex> value_lock(value_mutex);
+			this->value = value;
+			value_lock.unlock();
 
 			callChangeHandlers();
 		}
 
 		virtual T get() {
-			return value.load();
+			std::unique_lock<std::mutex> value_lock(value_mutex);
+
+			return value;
 		}
 
 		Json::Value serialize() override {
@@ -74,14 +87,35 @@ template<typename T> class ParameterTemplate : public Parameter {
 		}
 
 	private:
-		std::atomic<T> value;
+		T value;
+		std::mutex value_mutex;
 
 		std::list<std::function<void(T)>> change_handlers;
 };
 
-class ParameterDouble : public ParameterTemplate<double> {
+template<typename T> class AtomicParameterTemplate : public ParameterTemplate<T> {
 	public:
-		ParameterDouble(double default_value, double min, double max, double step) : ParameterTemplate(default_value), min(min), max(max), step(step) {
+		AtomicParameterTemplate(T default_value) : value(default_value) {
+			
+		}
+
+		virtual void set(T value) {
+			this->value.store(value);
+
+			ParameterTemplate<T>::callChangeHandlers();
+		}
+
+		virtual T get() {
+			return value.load();
+		}
+
+	private:
+		std::atomic<T> value;
+};
+
+class ParameterDouble : public AtomicParameterTemplate<double> {
+	public:
+		ParameterDouble(double default_value, double min, double max, double step) : AtomicParameterTemplate(default_value), min(min), max(max), step(step) {
 			
 		}
 
@@ -94,7 +128,7 @@ class ParameterDouble : public ParameterTemplate<double> {
 				value = max;
 			}
 
-			ParameterTemplate::set(value);
+			AtomicParameterTemplate::set(value);
 		}
 
 		double getMin() {
@@ -110,7 +144,7 @@ class ParameterDouble : public ParameterTemplate<double> {
 		}
 
 		Json::Value serialize() override {
-			Json::Value json_root = ParameterTemplate::serialize();
+			Json::Value json_root = AtomicParameterTemplate::serialize();
 			json_root["data_type"] = "double";
 			json_root["min"] = getMin();
 			json_root["max"] = getMax();
@@ -125,14 +159,14 @@ class ParameterDouble : public ParameterTemplate<double> {
 		double step;
 };
 
-class ParameterBool : public ParameterTemplate<bool> {
+class ParameterBool : public AtomicParameterTemplate<bool> {
 	public:
-		ParameterBool(bool default_value) : ParameterTemplate(default_value) {
+		ParameterBool(bool default_value) : AtomicParameterTemplate(default_value) {
 			
 		}
 
 		Json::Value serialize() override {
-			Json::Value json_root = ParameterTemplate::serialize();
+			Json::Value json_root = AtomicParameterTemplate::serialize();
 			json_root["data_type"] = "bool";
 
 			return json_root;
