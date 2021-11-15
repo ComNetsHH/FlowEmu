@@ -870,7 +870,7 @@ class NodeContentParameterBool extends NodeContentParameter {
 	element_label = undefined;
 	element_input = undefined;
 
-	constructor(id, label, unit, min, max, step) {
+	constructor(id, label, unit) {
 		super(id, label, unit);
 
 		var that = this;
