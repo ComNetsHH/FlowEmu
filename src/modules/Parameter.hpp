@@ -173,4 +173,18 @@ class ParameterBool : public AtomicParameterTemplate<bool> {
 		}
 };
 
+class ParameterString : public ParameterTemplate<std::string> {
+	public:
+		ParameterString(std::string default_value) : ParameterTemplate(default_value) {
+			
+		}
+
+		Json::Value serialize() override {
+			Json::Value json_root = ParameterTemplate::serialize();
+			json_root["data_type"] = "string";
+
+			return json_root;
+		}
+};
+
 #endif

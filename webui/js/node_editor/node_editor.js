@@ -217,6 +217,9 @@ class NodeEditor {
 							case "bool":
 								parameter = new NodeContentParameterBool(item.id, item.label, item.unit);
 								break;
+							case "string":
+								parameter = new NodeContentParameterString(item.id, item.label, item.unit);
+								break;
 						}
 
 						if(parameter !== undefined) {
@@ -660,6 +663,9 @@ class Node {
 						case "bool":
 							parameter = new NodeContentParameterBool(item.id, item.label, item.unit);
 							break;
+						case "string":
+							parameter = new NodeContentParameterString(item.id, item.label, item.unit);
+							break;
 					}
 
 					if(parameter !== undefined) {
@@ -907,6 +913,66 @@ class NodeContentParameterBool extends NodeContentParameter {
 	serialize() {
 		var data = super.serialize();
 		data["data_type"] = "bool";
+
+		return data;
+	}
+}
+
+class NodeContentParameterString extends NodeContentParameter {
+	element_label = undefined;
+	element_input = undefined;
+
+	constructor(id, label, unit) {
+		super(id, label, unit);
+
+		var that = this;
+
+		this.element_label = document.createElement("a");
+		this.element_label.classList.add("label");
+		this.element_label.textContent = label + ":";
+		this.element.appendChild(this.element_label);
+
+		this.element_input = document.createElement("input");
+		this.element_input.classList.add("value_input_string");
+		this.element_input.type = "text";
+		this.element_input.value = "";
+		this.element_input.addEventListener("input", function(e) {
+			if(this.value !== that.value) {
+				this.classList.add("changed");
+			} else {
+				this.classList.remove("changed");
+			}
+		});
+		this.element_input.addEventListener("change", function(e) {
+			this.classList.remove("changed");
+
+			that.value = this.value;
+
+			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
+				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
+			}
+		});
+		this.element_input.addEventListener("mousemove", function(e) {
+			e.stopPropagation();
+		});
+		this.element.appendChild(this.element_input);
+
+		var element_unit = document.createElement("a");
+		element_unit.classList.add("unit");
+		element_unit.textContent = this.unit;
+		this.element.appendChild(element_unit);
+	}
+
+	setValue(value) {
+		this.element_input.classList.remove("changed");
+
+		super.setValue(value);
+		this.element_input.value = value;
+	}
+
+	serialize() {
+		var data = super.serialize();
+		data["data_type"] = "string";
 
 		return data;
 	}

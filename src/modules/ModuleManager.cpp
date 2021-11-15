@@ -178,6 +178,15 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 			parameter_bool->addChangeHandler([&, id, parameter_id](bool value_bool) {
 				mqtt.publish("get/module/" + id + "/" + parameter_id, to_string(value_bool), true, false);
 			});
+		} else if(const auto parameter_string = dynamic_cast<ParameterString*>(parameter)) {
+			mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter_string](const string &topic, const string &payload) {
+				parameter_string->set(payload);
+			});
+
+			mqtt.publish("get/module/" + id + "/" + parameter_id, parameter_string->get(), true, false);
+			parameter_string->addChangeHandler([&, id, parameter_id](string value_string) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id, value_string, true, false);
+			});
 		}
 	}
 

@@ -21,6 +21,7 @@
 
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -389,7 +390,7 @@ def main():
 								if isinstance(value, str):
 									value = eval(value)
 
-								module_parameters += " --" + module + "." + parameter + "=" + str(value)
+								module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
 
 					# Setup processes
 					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)

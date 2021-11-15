@@ -174,6 +174,10 @@ class Module {
 							const bool value_bool = value.asBool();
 
 							parameter_bool->set(value_bool);
+						} else if(const auto parameter_string = dynamic_cast<ParameterString*>(parameter)) {
+							const std::string value_string = value.asString();
+
+							parameter_string->set(value_string);
 						}
 					}
 				}

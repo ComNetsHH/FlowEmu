@@ -114,7 +114,7 @@ int main(int argc, const char *argv[]) {
 	
 	// Get module parameters from command line
 	for(const string& option : po::collect_unrecognized(parsed.options, po::collect_unrecognized_mode::exclude_positional)) {
-		regex r("--([\\w-]+)\\.([\\w-]+)=([\\d+.?\\d*]+)");
+		regex r("--([\\w-]+)\\.([\\w-]+)=(.*)");
 		smatch m;
 		if(!(regex_search(option, m, r) && m.size() == 4)) {
 			continue;
@@ -135,8 +135,10 @@ int main(int argc, const char *argv[]) {
 				const bool value_bool = (stoi(value) != 0);
 
 				parameter_bool->set(value_bool);
+			} else if(const auto parameter_string = dynamic_cast<ParameterString*>(parameter)) {
+				parameter_string->set(value);
 			}
-		} catch(const std::out_of_range &e) {
+		} catch(const std::exception &e) {
 			cerr << "Error while setting module parameter from command line: " << e.what() << endl;
 		}
 	}
