@@ -390,6 +390,10 @@ def main():
 								if isinstance(value, str):
 									value = eval(value)
 
+								# Convert boolean to integer
+								if isinstance(value, bool):
+									value = int(value)
+
 								module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
 
 					# Setup processes
