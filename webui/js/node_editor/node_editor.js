@@ -1031,7 +1031,7 @@ class NodeContentParameterStringSelect extends NodeContentParameter {
 		options.forEach(function(item) {
 			var option = document.createElement("option");
 			option.value = item;
-			option.label = item;
+			option.text = item;
 			that.element_input.appendChild(option);
 		});
 
