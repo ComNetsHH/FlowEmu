@@ -21,6 +21,7 @@
 
 #include "TraceRateModule.hpp"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -28,21 +29,63 @@
 
 using namespace std;
 
-TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, const string &downlink_trace_filename, const string &uplink_trace_filename) : timer_lr(io_service), timer_rl(io_service) {
+TraceRateModule::TraceRateModule(boost::asio::io_service &io_service, const string &traces_path, const string &trace_filename_lr, const string &trace_filename_rl) : timer_lr(io_service), timer_rl(io_service) {
 	setName("Trace Rate");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
 	addPort({"rl_in", "In", PortInfo::Side::right, &input_port_rl});
 	addPort({"rl_out", "Out", PortInfo::Side::left, &output_port_rl});
+	addParameter({"lr_trace_filename", "🠒", "", &parameter_trace_filename_lr});
+	addParameter({"rl_trace_filename", "🠐", "", &parameter_trace_filename_rl});
 
-	try {
-		loadTrace(trace_lr, downlink_trace_filename);
-		loadTrace(trace_rl, uplink_trace_filename);
-	} catch(const runtime_error &e) {
-		cerr << e.what() << endl;
+	parameter_trace_filename_lr.addChangeHandler([&, traces_path](string trace_filename_lr) {
+		unique_lock<mutex> trace_lr_lock(trace_lr_mutex);
+
+		try {
+			loadTrace(trace_lr, traces_path + "/" + trace_filename_lr);
+		} catch(const runtime_error &e) {
+			cerr << e.what() << endl;
+		}
+
+		reset();
+	});
+	parameter_trace_filename_rl.addChangeHandler([&, traces_path](string trace_filename_rl) {
+		unique_lock<mutex> trace_rl_lock(trace_rl_mutex);
+
+		try {
+			loadTrace(trace_rl, traces_path + "/" + trace_filename_rl);
+		} catch(const runtime_error &e) {
+			cerr << e.what() << endl;
+		}
+
+		reset();
+	});
+
+	parameter_trace_filename_lr.set(trace_filename_lr);
+	parameter_trace_filename_rl.set(trace_filename_rl);
+
+	listTraces(traces_path);
+}
+
+void TraceRateModule::listTraces(const string &path) {
+	if(!filesystem::exists(path)) {
+		cerr << "Path " << path << " does not exist!" << endl;
+		return;
 	}
 
-	reset();
+	std::list<std::string> trace_filenames;
+	for(const auto &entry : filesystem::directory_iterator(path)) {
+		if(entry.path().filename().extension() == ".md") {
+			continue;
+		}
+
+		trace_filenames.push_back(entry.path().filename().string());
+	}
+
+	trace_filenames.sort();
+
+	parameter_trace_filename_lr.setOptions(trace_filenames);
+	parameter_trace_filename_rl.setOptions(trace_filenames);
 }
 
 void TraceRateModule::loadTrace(vector<uint32_t> &trace, const string &trace_filename) {
@@ -55,7 +98,13 @@ void TraceRateModule::loadTrace(vector<uint32_t> &trace, const string &trace_fil
 
 	string line;
 	while(getline(trace_file, line)) {
-		trace.push_back(stoul(line));
+		try {
+			trace.push_back(stoul(line));
+		} catch(const invalid_argument &e) {
+			trace.clear();
+			trace_file.close();
+			throw runtime_error("Invalid trace file format!");
+		}
 	}
 
 	trace_file.close();
@@ -91,8 +140,12 @@ void TraceRateModule::processLr(const boost::system::error_code& error) {
 		output_port_lr.send(packet);
 	}
 
+	unique_lock<mutex> trace_lr_lock(trace_lr_mutex);
+
 	if(trace_lr_itr == trace_lr.end()) {
 		if(trace_lr.back() >= trace_rl.back()) {
+			unique_lock<mutex> trace_rl_lock(trace_rl_mutex);
+
 			reset();
 		}
 
@@ -113,8 +166,12 @@ void TraceRateModule::processRl(const boost::system::error_code& error) {
 		output_port_rl.send(packet);
 	}
 
+	unique_lock<mutex> trace_rl_lock(trace_rl_mutex);
+
 	if(trace_rl_itr == trace_rl.end()) {
 		if(trace_rl.back() > trace_lr.back()) {
+			unique_lock<mutex> trace_lr_lock(trace_lr_mutex);
+
 			reset();
 		}
 

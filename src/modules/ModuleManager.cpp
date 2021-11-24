@@ -119,7 +119,7 @@ void ModuleManager::addModule(const string &id, const Json::Value &json_root, bo
 	} else if(type == "fixed_interval_rate") {
 		new_module = make_shared<FixedIntervalRateModule>(io_service, chrono::milliseconds(1));
 	} else if(type == "trace_rate") {
-		new_module = make_shared<TraceRateModule>(io_service, "config/traces/Verizon-LTE-short.down", "config/traces/Verizon-LTE-short.up");
+		new_module = make_shared<TraceRateModule>(io_service, "config/traces", "Verizon-LTE-short.down", "Verizon-LTE-short.up");
 	} else {
 		cerr << "Unknown module type: " << type << endl;
 		return;
