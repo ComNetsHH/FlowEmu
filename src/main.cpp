@@ -137,6 +137,8 @@ int main(int argc, const char *argv[]) {
 				parameter_bool->set(value_bool);
 			} else if(const auto parameter_string = dynamic_cast<ParameterString*>(parameter)) {
 				parameter_string->set(value);
+			} else if(const auto parameter_string_select = dynamic_cast<ParameterStringSelect*>(parameter)) {
+				parameter_string_select->set(value);
 			}
 		} catch(const std::exception &e) {
 			cerr << "Error while setting module parameter from command line: " << e.what() << endl;

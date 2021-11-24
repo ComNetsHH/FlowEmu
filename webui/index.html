@@ -72,6 +72,7 @@
 			var node_editor = new NodeEditor("#node_editor");
 
 			var node_parameter_subscriptions = {};
+			var node_parameter_options_subscriptions = {};
 			var node_statistic_subscriptions = {};
 
 			subscribe("get/module/+", function(topic, message) {
@@ -147,9 +148,18 @@
 							parameter.setValue(parseInt(message) != 0);
 						} else if(parameter instanceof NodeContentParameterString) {
 							parameter.setValue(message);
+						} else if(parameter instanceof NodeContentParameterStringSelect) {
+							parameter.setValue(message);
 						}
 					}
 				});
+
+				var parameter = node_editor.nodes[node.id].parameters[id];
+				if(parameter instanceof NodeContentParameterStringSelect) {
+					node_parameter_options_subscriptions[node.id + "." + id] = subscribe("get/module/" + node.id + "/" + id + "/options", function(topic, message) {
+						parameter.setOptions(message.length > 0 ? JSON.parse(message) : []);
+					});
+				}
 			});
 
 			node_editor.setParameterChangeHandler(function(node, parameter_id, value) {
@@ -158,6 +168,11 @@
 
 			node_editor.setParameterRemoveHandler(function(node, id) {
 				unsubscribeByReference(node_parameter_subscriptions[node.id + "." + id]);
+
+				var parameter = node_editor.nodes[node.id].parameters[id];
+				if(parameter instanceof NodeContentParameterStringSelect) {
+					unsubscribeByReference(node_parameter_options_subscriptions[node.id + "." + id]);
+				}
 			});
 
 			node_editor.setStatisticAddHandler(function(node, id) {

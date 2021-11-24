@@ -187,6 +187,20 @@ void ModuleManager::addModule(const string &id, shared_ptr<Module> module, bool 
 			parameter_string->addChangeHandler([&, id, parameter_id](string value_string) {
 				mqtt.publish("get/module/" + id + "/" + parameter_id, value_string, true, false);
 			});
+		} else if(const auto parameter_string_select = dynamic_cast<ParameterStringSelect*>(parameter)) {
+			mqtt.subscribe("set/module/" + id + "/" + parameter_id, [&, parameter_string_select](const string &topic, const string &payload) {
+				parameter_string_select->set(payload);
+			});
+
+			mqtt.publish("get/module/" + id + "/" + parameter_id, parameter_string_select->get(), true, false);
+			parameter_string_select->addChangeHandler([&, id, parameter_id](string value_string_select) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id, value_string_select, true, false);
+			});
+
+			mqtt.publish("get/module/" + id + "/" + parameter_id + "/options", parameter_string_select->serializeOptions(), true, false);
+			parameter_string_select->addOptionsChangeHandler([&, id, parameter_id](Json::Value options_string_select) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id + "/options", options_string_select, true, false);
+			});
 		}
 	}
 
@@ -242,6 +256,10 @@ void ModuleManager::removeModule(const string &id, bool publish, bool publish_pa
 			mqtt.unsubscribe("set/module/" + id + "/" + parameter_id);
 
 			mqtt.publish("get/module/" + id + "/" + parameter_id, nullptr, true, true);
+
+			if(const auto parameter_string_select = dynamic_cast<ParameterStringSelect*>(entry.second.parameter)) {
+				mqtt.publish("get/module/" + id + "/" + parameter_id + "/options", nullptr, true, true);
+			}
 		};
 
 		for(const auto& entry : modules.at(id)->getStatistics()) {

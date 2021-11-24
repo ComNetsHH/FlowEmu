@@ -187,4 +187,67 @@ class ParameterString : public ParameterTemplate<std::string> {
 		}
 };
 
+class ParameterStringSelect : public ParameterTemplate<std::string> {
+	public:
+		ParameterStringSelect(std::string default_value, std::list<std::string> options) : ParameterTemplate(default_value), options(options) {
+			
+		}
+
+		void setOptions(const std::list<std::string> &options) {
+			std::unique_lock<std::mutex> options_lock(options_mutex);
+
+			this->options = options;
+		}
+
+		void addOption(const std::string &option) {
+			std::unique_lock<std::mutex> options_lock(options_mutex);
+
+			options.push_back(option);
+		}
+
+		void clearOptions() {
+			std::unique_lock<std::mutex> options_lock(options_mutex);
+
+			options.clear();
+		}
+
+		Json::Value serializeOptions() {
+			std::unique_lock<std::mutex> options_lock(options_mutex);
+
+			Json::Value json_root;
+
+			for(const auto& item : options) {
+				json_root.append(item);
+			}
+
+			return json_root;
+		}
+
+		void addOptionsChangeHandler(std::function<void(Json::Value)> handler) {
+			options_change_handlers.push_back(handler);
+		}
+
+		void callOptionsChangeHandlers() {
+			for(const auto& handler : options_change_handlers) {
+				try {
+					handler(serializeOptions());
+				} catch(const std::bad_function_call &e) {
+				}
+			}
+		}
+
+		Json::Value serialize() override {
+			Json::Value json_root = ParameterTemplate::serialize();
+			json_root["data_type"] = "string_select";
+			json_root["options"] = serializeOptions();
+
+			return json_root;
+		}
+	private:
+		std::list<std::string> options;
+		std::mutex options_mutex;
+
+		std::list<std::function<void(Json::Value)>> options_change_handlers;
+};
+
 #endif

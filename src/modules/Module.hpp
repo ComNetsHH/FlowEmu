@@ -178,6 +178,10 @@ class Module {
 							const std::string value_string = value.asString();
 
 							parameter_string->set(value_string);
+						} else if(const auto parameter_string_select = dynamic_cast<ParameterStringSelect*>(parameter)) {
+							const std::string value_string_select = value.asString();
+
+							parameter_string_select->set(value_string_select);
 						}
 					}
 				}
