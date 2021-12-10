@@ -25,10 +25,15 @@ FROM builder AS build
 ADD CMakeLists.txt /flowemu/CMakeLists.txt
 ADD src /flowemu/src
 
+# Setup ccache
+# Source: https://stackoverflow.com/a/56833198
+ENV CCACHE_DIR /ccache
+
 # Build FlowEmu
-RUN mkdir -p /flowemu/BUILD \
+RUN --mount=type=cache,target=/ccache \
+	mkdir -p /flowemu/BUILD \
 	&& cd /flowemu/BUILD \
-	&& cmake .. \
+	&& cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache .. \
 	&& make -j$(nproc)
 
 
