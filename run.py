@@ -391,11 +391,16 @@ def main():
 								module_parameters += " --" + module + "." + parameter + "=" + str(value)
 
 					# Setup processes
+					process_logger = Process("Logger", color=37)
 					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
 					process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
 					process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
 
 					# Start processes
+					process_logger.setVerbose(False)
+					process_logger.setLogfile(results_path + ".log")
+					process_logger.run("mosquitto_sub -h " + get(environment.config, ("mqtt", "host"), "") + " -t '#' -v")
+
 					process_channel.setLogfile(results_path + "_channel.out")
 					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 
@@ -413,6 +418,7 @@ def main():
 					process_source.wait()
 					process_sink.stop()
 					process_channel.stop()
+					process_logger.stop()
 
 		# Catch keyboard interrupts
 		except KeyboardInterrupt:
@@ -420,6 +426,7 @@ def main():
 			process_source.stop()
 			process_sink.stop()
 			process_channel.stop()
+			process_logger.stop()
 
 	# Run FlowEmu in interactive mode
 	if operating_mode == "interactive":
