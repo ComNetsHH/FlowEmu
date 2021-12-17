@@ -187,11 +187,10 @@ class Process:
 					self.logfile.write("[" + timestamp + "] " + line.rstrip().decode("utf-8", errors="replace") + "\n")
 
 				# Write line to command-line
-				if self.verbose:
-					if level == "error":
-						print("\033[1;31m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
-					else:
-						print("\033[1;" + str(int(self.color)) + "m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
+				if level == "error":
+					print("\033[1;31m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
+				elif self.verbose:
+					print("\033[1;" + str(int(self.color)) + "m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
 			else:
 				break
 
