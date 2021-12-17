@@ -68,7 +68,7 @@ Please adapt the commands that are executed on the host system accordingly.
 ## Install prerequisites
 Before we can start, you need to install some packages that are required on the host system:
 ```
-sudo apt-get install python3-toml ethtool
+sudo apt-get install python3-toml ethtool mosquitto-clients
 ```
 
 ### Docker
