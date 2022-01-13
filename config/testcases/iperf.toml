@@ -14,3 +14,7 @@ fifo_queue.buffer_size = 10
 
 [deep-buffer]
 fifo_queue.buffer_size = 100
+
+[scripted]
+source-command = "iperf -c 10.0.2.1 -t 120 -Z cubic"
+control-command = "python -u config/scripts/buffer_size.py"
