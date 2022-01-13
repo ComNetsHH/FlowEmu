@@ -392,6 +392,7 @@ def main():
 
 					# Setup processes
 					process_logger = Process("Logger", color=37)
+					process_control = Process("Control", color=37)
 					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
 					process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
 					process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
@@ -410,12 +411,21 @@ def main():
 
 					time.sleep(1)
 
+					if "control-command" in testcase and testcase["control-command"] != "":
+						process_control.setLogfile(results_path + "_control.out")
+						process_control.run(get(environment.config, ("run_prefix", "control"), "") + " " + testcase["control-command"])
+
 					if "source-command" in testcase and testcase["source-command"] != "":
 						process_source.setLogfile(results_path + "_source.out")
 						process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
 
 					# Wait for source process to finish before stopping all other processes
-					process_source.wait()
+					if "control-command" in testcase and testcase["control-command"] != "":
+						process_control.wait()
+						process_source.stop()
+					else:
+						process_source.wait()
+						process_control.stop()
 					process_sink.stop()
 					process_channel.stop()
 					process_logger.stop()
@@ -423,6 +433,7 @@ def main():
 		# Catch keyboard interrupts
 		except KeyboardInterrupt:
 			# Cleanly terminate all processes
+			process_control.stop()
 			process_source.stop()
 			process_sink.stop()
 			process_channel.stop()
