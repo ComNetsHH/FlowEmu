@@ -68,7 +68,7 @@ Please adapt the commands that are executed on the host system accordingly.
 ## Install prerequisites
 Before we can start, you need to install some packages that are required on the host system:
 ```
-sudo apt-get install python3-toml ethtool mosquitto-clients
+sudo apt-get install pipenv ethtool mosquitto-clients
 ```
 
 ### Docker
@@ -91,6 +91,17 @@ git clone https://github.com/ComNetsHH/FlowEmu.git
 cd FlowEmu
 ```
 
+### Set up Python environment
+FlowEmu comes with a Pipfile for Pipenv. To set up a virtual environment for Python and install all dependencies, run the following command:
+```
+pipenv install
+```
+
+You can then install the FlowEmu Python library using:
+```
+pipenv run pip install -e lib/python
+```
+
 ### Install and start the MQTT broker
 FlowEmu needs an MQTT broker, which also serves the GUI.
 This can be started using Docker Compose and the following commands:
@@ -111,7 +122,7 @@ Alternatively, you can run the broker in the foreground by omitting the `-d` opt
 ### Build and start FlowEmu
 You can now execute the run script:
 ```
-./run.py config/environments/docker
+pipenv run ./run.py config/environments/docker
 ```
 
 The script will build the Docker image, which includes compiling FlowEmu.
