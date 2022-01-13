@@ -97,8 +97,9 @@ FlowEmu comes with a Pipfile for Pipenv. To set up a virtual environment for Pyt
 pipenv install
 ```
 
-You can then install the FlowEmu Python library using:
+You can then upgrade pip and install the FlowEmu Python library using:
 ```
+pipenv run pip install --upgrade pip
 pipenv run pip install -e lib/python
 ```
 
