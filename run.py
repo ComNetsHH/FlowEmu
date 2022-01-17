@@ -188,11 +188,10 @@ class Process:
 					self.logfile.write("[" + timestamp + "] " + line.rstrip().decode("utf-8", errors="replace") + "\n")
 
 				# Write line to command-line
-				if self.verbose:
-					if level == "error":
-						print("\033[1;31m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
-					else:
-						print("\033[1;" + str(int(self.color)) + "m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
+				if level == "error":
+					print("\033[1;31m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
+				elif self.verbose:
+					print("\033[1;" + str(int(self.color)) + "m[" + timestamp + " - " + self.name + "] " + line.rstrip().decode("utf-8", errors="replace") + "\033[0m\r")
 			else:
 				break
 
@@ -397,11 +396,17 @@ def main():
 								module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
 
 					# Setup processes
+					process_logger = Process("Logger", color=37)
+					process_control = Process("Control", color=37)
 					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
 					process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
 					process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
 
 					# Start processes
+					process_logger.setVerbose(False)
+					process_logger.setLogfile(results_path + ".log")
+					process_logger.run("mosquitto_sub -h " + get(environment.config, ("mqtt", "host"), "") + " -t '#' -v")
+
 					process_channel.setLogfile(results_path + "_channel.out")
 					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 
@@ -411,21 +416,33 @@ def main():
 
 					time.sleep(1)
 
+					if "control-command" in testcase and testcase["control-command"] != "":
+						process_control.setLogfile(results_path + "_control.out")
+						process_control.run(get(environment.config, ("run_prefix", "control"), "") + " " + testcase["control-command"])
+
 					if "source-command" in testcase and testcase["source-command"] != "":
 						process_source.setLogfile(results_path + "_source.out")
 						process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
 
 					# Wait for source process to finish before stopping all other processes
-					process_source.wait()
+					if "control-command" in testcase and testcase["control-command"] != "":
+						process_control.wait()
+						process_source.stop()
+					else:
+						process_source.wait()
+						process_control.stop()
 					process_sink.stop()
 					process_channel.stop()
+					process_logger.stop()
 
 		# Catch keyboard interrupts
 		except KeyboardInterrupt:
 			# Cleanly terminate all processes
+			process_control.stop()
 			process_source.stop()
 			process_sink.stop()
 			process_channel.stop()
+			process_logger.stop()
 
 	# Run FlowEmu in interactive mode
 	if operating_mode == "interactive":
