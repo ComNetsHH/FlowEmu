@@ -1,10 +1,9 @@
 <div align="center">
-	<h3>
-		<img src=".readme/flowemu_logo.svg" width="600" alt="FlowEmu">
-	</h3>
-	<h3>
-		Flow-Based Network Emulator
-	</h3>
+	<img src=".readme/flowemu_logo.svg" width="600" alt="FlowEmu">
+	<br />
+	<br />
+	<b>Flow-Based Network Emulator</b>
+	<br />
 	<br />
 	<p>
 		<a href="#about">About</a>
