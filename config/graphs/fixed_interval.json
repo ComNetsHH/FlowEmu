@@ -51,6 +51,7 @@
 				"x": 979,
 				"y": 194
 			},
+			"removable": true,
 			"size": 
 			{
 				"height": 138,
@@ -86,11 +87,11 @@
 					"type": "flow"
 				},
 				{
+					"data_type": "double",
 					"id": "buffer_size",
-					"integer": false,
 					"label": "Buffer",
 					"max": null,
-					"min": 0,
+					"min": 1,
 					"step": 1,
 					"type": "parameter",
 					"unit": "packets",
@@ -108,6 +109,7 @@
 				"x": 336,
 				"y": 194
 			},
+			"removable": true,
 			"size": 
 			{
 				"height": 125,
@@ -153,8 +155,8 @@
 					"type": "flow"
 				},
 				{
+					"data_type": "double",
 					"id": "interval",
-					"integer": false,
 					"label": "Interval",
 					"max": null,
 					"min": 0,
@@ -164,8 +166,8 @@
 					"value": 1
 				},
 				{
+					"data_type": "double",
 					"id": "rate",
-					"integer": false,
 					"label": "Rate",
 					"max": null,
 					"min": 0,
@@ -180,6 +182,7 @@
 				"x": 659,
 				"y": 194
 			},
+			"removable": true,
 			"size": 
 			{
 				"height": 157,
@@ -218,6 +221,7 @@
 				"x": 1319,
 				"y": 562
 			},
+			"removable": false,
 			"size": 
 			{
 				"height": 87,
@@ -256,6 +260,7 @@
 				"x": 22,
 				"y": 562
 			},
+			"removable": false,
 			"size": 
 			{
 				"height": 87,
@@ -308,6 +313,7 @@
 				"x": 979,
 				"y": 357
 			},
+			"removable": true,
 			"size": 
 			{
 				"height": 114,
