@@ -214,7 +214,7 @@ class ParameterStringSelect : public ParameterTemplate<std::string> {
 		Json::Value serializeOptions() {
 			std::unique_lock<std::mutex> options_lock(options_mutex);
 
-			Json::Value json_root;
+			Json::Value json_root = Json::arrayValue;
 
 			for(const auto& item : options) {
 				json_root.append(item);
