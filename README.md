@@ -196,4 +196,4 @@ FlowEmu is licensed under the [GNU General Public License v3.0](COPYING) or late
  * [Daniel Stolpmann](https://github.com/dstolpmann), Hamburg University of Technology, Institute of Communication Networks, Germany - <daniel.stolpmann@tuhh.de>
 
 # Publications
- * [D. Stolpmann and A. Timm-Giel, “FlowEmu: An Open-Source Flow-Based Network Emulator,” in Conference on Networked Systems 2021 (NetSys 2021), Lübeck, Germany, Sep. 2021](https://doi.org/10.14279/tuj.eceasst.80.1141)
+ * [D. Stolpmann and A. Timm-Giel, “FlowEmu: An Open-Source Flow-Based Network Emulator,” Electronic Communications of the EASST, vol. 80: Conference on Networked Systems 2021 (NetSys 2021), Sep. 2021](https://doi.org/10.14279/tuj.eceasst.80.1141)
