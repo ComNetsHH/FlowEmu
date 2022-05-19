@@ -21,13 +21,13 @@ RUN apt-get update \
 #######################################
 FROM builder AS build
 
-# Add FlowEmu source
-ADD CMakeLists.txt /flowemu/CMakeLists.txt
-ADD src /flowemu/src
-
 # Setup ccache
 # Source: https://stackoverflow.com/a/56833198
 ENV CCACHE_DIR /ccache
+
+# Add FlowEmu source
+ADD CMakeLists.txt /flowemu/CMakeLists.txt
+ADD src /flowemu/src
 
 # Build FlowEmu
 RUN --mount=type=cache,target=/ccache \
