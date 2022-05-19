@@ -91,7 +91,8 @@ cd FlowEmu
 ```
 
 ### Set up Python environment
-FlowEmu comes with a Pipfile for Pipenv. To set up a virtual environment for Python and install all dependencies, run the following command:
+FlowEmu comes with a Pipfile for Pipenv.
+To set up a virtual environment for Python and install all dependencies, run the following command:
 ```
 pipenv install
 ```
@@ -126,7 +127,8 @@ pipenv run ./run.py config/environments/docker
 ```
 
 The script will build the Docker image, which includes compiling FlowEmu.
-It then starts three Docker containers: *source, channel and sink*. The emulator is executed in the *channel* container, while the *source* and *sink* containers can be used to start the application under test.
+It then starts three Docker containers: *source, channel and sink*.
+The emulator is executed in the *channel* container, while the *source* and *sink* containers can be used to start the application under test.
 All Docker containers are connected by manually creating bridge interfaces between their network namespaces.
 This is done instead of using native Docker networks, because the Docker networks have shown to not be suitable for using them with the emulator.
 
