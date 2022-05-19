@@ -105,17 +105,15 @@ pipenv run pip install -e lib/python
 
 ### Install and start the MQTT broker
 FlowEmu needs an MQTT broker, which also serves the GUI.
-This can be started using Docker Compose and the following commands:
+This can be started using Docker Compose and the following command:
 ```
-cd server
-docker-compose up -d
-cd ..
+docker-compose -f server/docker-compose.yml up -d
 ```
 
 The Docker Compose file is set up to automatically start the broker on system boot.
-If you want to stop it, run the following command inside the `server` directory:
+If you want to stop it, run the following command in the root directory of the repository:
 ```
-docker-compose down
+docker-compose -f server/docker-compose.yml down
 ```
 
 Alternatively, you can run the broker in the foreground by omitting the `-d` option.
