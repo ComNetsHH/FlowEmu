@@ -45,6 +45,8 @@ class ThroughputMeter : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
 
+		ParameterDouble parameter_interval = {100, 0, std::numeric_limits<double>::quiet_NaN(), 100};
+		ParameterDouble parameter_window_size = {1000, 0, std::numeric_limits<double>::quiet_NaN(), 100};
 		Statistic statistic_bits_per_second;
 		Statistic statistic_bytes_per_second;
 		Statistic statistic_packets_per_second;

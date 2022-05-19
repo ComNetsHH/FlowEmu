@@ -29,6 +29,8 @@ ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io
 	setName("Throughput Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addParameter({"interval", "Interval", "ms", &parameter_interval});
+	addParameter({"window_size", "Window", "ms", &parameter_window_size});
 	addStatistic({"bits_per_second", "Bits", "bit/s", &statistic_bits_per_second});
 	addStatistic({"bytes_per_second", "Bytes", "B/s", &statistic_bytes_per_second});
 	addStatistic({"packets_per_second", "Packets", "packets/s", &statistic_packets_per_second});
@@ -53,7 +55,7 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::seconds(1);
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_window_size.get());
 	while(!bytes.empty()) {
 		const auto& entry = bytes.front();
 		if(entry.first <= chrono_deadline) {
@@ -64,11 +66,13 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
-	statistic_bits_per_second.set(bytes_sum * 8);
-	statistic_bytes_per_second.set(bytes_sum);
-	statistic_packets_per_second.set(bytes.size());
+	double window_factor = 1000.0 / parameter_window_size.get();
+	uint64_t bytes_per_second = bytes_sum * window_factor;
+	statistic_bits_per_second.set(bytes_per_second * 8);
+	statistic_bytes_per_second.set(bytes_per_second);
+	statistic_packets_per_second.set(bytes.size() * window_factor);
 
-	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
+	timer.expires_at(timer.expiry() + chrono::milliseconds((uint64_t) parameter_interval.get()));
 	timer.async_wait(boost::bind(&ThroughputMeter::process, this, boost::asio::placeholders::error));
 }
 

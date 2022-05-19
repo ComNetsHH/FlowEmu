@@ -31,6 +31,8 @@ DelayMeter::DelayMeter(boost::asio::io_service &io_service) : timer(io_service) 
 	setName("Delay Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addParameter({"interval", "Interval", "ms", &parameter_interval});
+	addParameter({"window_size", "Window", "ms", &parameter_window_size});
 	addStatistic({"min", "Min.", "ms", &statistic_min});
 	addStatistic({"max", "Max.", "ms", &statistic_max});
 	addStatistic({"mean", "Mean", "ms", &statistic_mean});
@@ -52,7 +54,7 @@ void DelayMeter::process(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::seconds(1);
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_window_size.get());
 	while(!creation_time_points.empty()) {
 		const auto& entry = creation_time_points.front();
 		if(entry.first <= chrono_deadline) {
@@ -91,7 +93,7 @@ void DelayMeter::process(const boost::system::error_code& error) {
 	statistic_max.set((double) max_delay / 1000000);
 	statistic_mean.set(mean_delay / 1000000);
 
-	timer.expires_at(timer.expiry() + chrono::milliseconds(100));
+	timer.expires_at(timer.expiry() + chrono::milliseconds((uint64_t) parameter_interval.get()));
 	timer.async_wait(boost::bind(&DelayMeter::process, this, boost::asio::placeholders::error));
 }
 
