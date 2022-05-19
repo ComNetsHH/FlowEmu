@@ -837,6 +837,9 @@ class NodeContentParameterDouble extends NodeContentParameter {
 				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
 			}
 		});
+		this.element_input.addEventListener("keydown", function(e) {
+			e.stopPropagation();
+		});
 		this.element_input.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
 		});
@@ -957,6 +960,9 @@ class NodeContentParameterString extends NodeContentParameter {
 			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
 				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
 			}
+		});
+		this.element_input.addEventListener("keydown", function(e) {
+			e.stopPropagation();
 		});
 		this.element_input.addEventListener("mousemove", function(e) {
 			e.stopPropagation();
