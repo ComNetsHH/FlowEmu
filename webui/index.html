@@ -501,10 +501,10 @@
 				}
 			});
 
-			subscribe("get/module/throughput_meter/bytes_per_second", function(topic, message) {
+			subscribe("get/module/throughput_meter/bits_per_second", function(topic, message) {
 				const now = (Date.now() - start_time) / 1000;
 				throughput_chart.data.datasets[0].data = throughput_chart.data.datasets[0].data.filter(item => item.x > now - 35);
-				throughput_chart.data.datasets[0].data.push({x: now, y: parseFloat(message) * 8});
+				throughput_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
 			});
 
 			subscribe("get/module/throughput_meter/packets_per_second", function(topic, message) {

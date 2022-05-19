@@ -29,6 +29,7 @@ ThroughputMeter::ThroughputMeter(boost::asio::io_service &io_service) : timer(io
 	setName("Throughput Meter");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
+	addStatistic({"bits_per_second", "Bits", "bit/s", &statistic_bits_per_second});
 	addStatistic({"bytes_per_second", "Bytes", "B/s", &statistic_bytes_per_second});
 	addStatistic({"packets_per_second", "Packets", "packets/s", &statistic_packets_per_second});
 
@@ -63,6 +64,7 @@ void ThroughputMeter::process(const boost::system::error_code& error) {
 		}
 	}
 
+	statistic_bits_per_second.set(bytes_sum * 8);
 	statistic_bytes_per_second.set(bytes_sum);
 	statistic_packets_per_second.set(bytes.size());
 

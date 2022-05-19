@@ -45,6 +45,7 @@ class ThroughputMeter : public Module {
 		ReceivingPort<std::shared_ptr<Packet>> input_port;
 		SendingPort<std::shared_ptr<Packet>> output_port;
 
+		Statistic statistic_bits_per_second;
 		Statistic statistic_bytes_per_second;
 		Statistic statistic_packets_per_second;
 
