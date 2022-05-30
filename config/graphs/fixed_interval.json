@@ -28,6 +28,28 @@
 					"type": "flow"
 				},
 				{
+					"data_type": "double",
+					"id": "interval",
+					"label": "Interval",
+					"max": null,
+					"min": 0,
+					"step": 100,
+					"type": "parameter",
+					"unit": "ms",
+					"value": 100
+				},
+				{
+					"data_type": "double",
+					"id": "window_size",
+					"label": "Window",
+					"max": null,
+					"min": 0,
+					"step": 100,
+					"type": "parameter",
+					"unit": "ms",
+					"value": 1000
+				},
+				{
 					"id": "max",
 					"label": "Max.",
 					"type": "statistic",
@@ -48,13 +70,13 @@
 			],
 			"position": 
 			{
-				"x": 979,
-				"y": 194
+				"x": 981,
+				"y": 153
 			},
 			"removable": true,
 			"size": 
 			{
-				"height": 138,
+				"height": 210,
 				"width": 250
 			},
 			"title": "Delay Meter",
@@ -106,17 +128,79 @@
 			],
 			"position": 
 			{
-				"x": 336,
-				"y": 194
+				"x": 234,
+				"y": 155
 			},
 			"removable": true,
 			"size": 
 			{
-				"height": 125,
+				"height": 126,
 				"width": 250
 			},
 			"title": "FIFO Queue",
 			"type": "fifo_queue"
+		},
+		"fixed_delay": 
+		{
+			"content": 
+			[
+				{
+					"ports": 
+					{
+						"left": 
+						[
+							{
+								"id": "lr_in",
+								"label": "In",
+								"type": "receiving"
+							},
+							{
+								"id": "rl_out",
+								"label": "Out",
+								"type": "sending"
+							}
+						],
+						"right": 
+						[
+							{
+								"id": "lr_out",
+								"label": "Out",
+								"type": "sending"
+							},
+							{
+								"id": "rl_in",
+								"label": "In",
+								"type": "receiving"
+							}
+						]
+					},
+					"type": "flow"
+				},
+				{
+					"data_type": "double",
+					"id": "delay",
+					"label": "Delay",
+					"max": null,
+					"min": 0,
+					"step": 10,
+					"type": "parameter",
+					"unit": "ms",
+					"value": 0
+				}
+			],
+			"position": 
+			{
+				"x": 608,
+				"y": 418
+			},
+			"removable": true,
+			"size": 
+			{
+				"height": 123,
+				"width": 250
+			},
+			"title": "Fixed Delay",
+			"type": "fixed_delay"
 		},
 		"fixed_interval_rate": 
 		{
@@ -179,13 +263,13 @@
 			],
 			"position": 
 			{
-				"x": 659,
-				"y": 194
+				"x": 531,
+				"y": 155
 			},
 			"removable": true,
 			"size": 
 			{
-				"height": 157,
+				"height": 159,
 				"width": 250
 			},
 			"title": "Fixed Interval Rate",
@@ -296,6 +380,34 @@
 					"type": "flow"
 				},
 				{
+					"data_type": "double",
+					"id": "interval",
+					"label": "Interval",
+					"max": null,
+					"min": 0,
+					"step": 100,
+					"type": "parameter",
+					"unit": "ms",
+					"value": 100
+				},
+				{
+					"data_type": "double",
+					"id": "window_size",
+					"label": "Window",
+					"max": null,
+					"min": 0,
+					"step": 100,
+					"type": "parameter",
+					"unit": "ms",
+					"value": 1000
+				},
+				{
+					"id": "bits_per_second",
+					"label": "Bits",
+					"type": "statistic",
+					"unit": "bit/s"
+				},
+				{
 					"id": "bytes_per_second",
 					"label": "Bytes",
 					"type": "statistic",
@@ -310,13 +422,13 @@
 			],
 			"position": 
 			{
-				"x": 979,
-				"y": 357
+				"x": 981,
+				"y": 377
 			},
 			"removable": true,
 			"size": 
 			{
-				"height": 114,
+				"height": 210,
 				"width": 250
 			},
 			"title": "Throughput Meter",
@@ -364,18 +476,6 @@
 		{
 			"from": 
 			{
-				"node": "socket_source",
-				"port": "in"
-			},
-			"to": 
-			{
-				"node": "socket_sink",
-				"port": "out"
-			}
-		},
-		{
-			"from": 
-			{
 				"node": "fixed_interval_rate",
 				"port": "lr_in"
 			},
@@ -393,8 +493,44 @@
 			},
 			"to": 
 			{
+				"node": "fixed_delay",
+				"port": "lr_in"
+			}
+		},
+		{
+			"from": 
+			{
+				"node": "fixed_delay",
+				"port": "lr_out"
+			},
+			"to": 
+			{
 				"node": "delay_meter",
 				"port": "in"
+			}
+		},
+		{
+			"from": 
+			{
+				"node": "socket_source",
+				"port": "in"
+			},
+			"to": 
+			{
+				"node": "fixed_delay",
+				"port": "rl_out"
+			}
+		},
+		{
+			"from": 
+			{
+				"node": "fixed_delay",
+				"port": "rl_in"
+			},
+			"to": 
+			{
+				"node": "socket_sink",
+				"port": "out"
 			}
 		}
 	]

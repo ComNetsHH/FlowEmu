@@ -8,4 +8,6 @@ graph-file = "fixed_interval"
 source-command = "ping 10.0.2.1 -c 10"
 sink-command = ""
 
-repetitions = 10
+fixed_delay.delay = "[0, 10, 20]"
+
+repetitions = 3
