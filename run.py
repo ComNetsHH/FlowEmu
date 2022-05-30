@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import itertools
 import json
 import os
 import re
@@ -369,71 +370,101 @@ def main():
 				# Write test case to results directory
 				results.writeTestcase(testcase)
 
-				# Repeat test case
-				for repetition in range(0, testcase["repetitions"]):
-					testcase["repetition"] = repetition
-					results_path = results.getResultsDirectoryPath() + "/" + testcase["name"] + "_rep" + str(testcase["repetition"])
-					print("\033[1;33m--> Run test case \'" + testcase["name"] + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
+				# Get module parameters from test case
+				fixed_parameters = []
+				fixed_values = []
+				variable_parameters = []
+				variable_values = []
+				for module in testcase.keys():
+					if(isinstance(testcase[module], dict)):
+						for parameter, value in testcase[module].items():
+							# Evaluate Python expression
+							if isinstance(value, str):
+								value = eval(value)
+
+							# Handle variable parameters
+							if isinstance(value, list) or isinstance(value, range) or isinstance(value, tuple):
+								variable_parameters.append((module, parameter))
+								variable_values.append(value)
+								continue
+
+							# Convert boolean to integer
+							if isinstance(value, bool):
+								value = int(value)
+
+							# Handle fixed parameters
+							fixed_parameters.append((module, parameter))
+							fixed_values.append(value)
+
+				# Run test case for each parameter combination
+				for variable_values in itertools.product(*variable_values):
+					# Get fixed parameters
+					parameters = dict(zip(fixed_parameters, fixed_values))
+
+					# Add variable parameters
+					parameters.update(dict(zip(variable_parameters, variable_values)))
+					variable_parameters_name = "_".join([parameter[1].replace("_", "-") + "=" + str(value) for parameter, value in parameters.items()])
+
+					# Generate test case name
+					testcase_name = testcase["name"]
+					if variable_parameters_name != "":
+						testcase_name += "_" + variable_parameters_name
 
 					# Get graph file from test case
 					graph_file = ""
 					if "graph-file" in testcase:
 						graph_file = " --graph-file=" + testcase["graph-file"]
 
-					# Get module parameters from test case
+					# Generate command-line arguments
 					module_parameters = ""
-					for module in testcase.keys():
-						if(isinstance(testcase[module], dict)):
-							for parameter, value in testcase[module].items():
-								# Evaluate Python expression
-								if isinstance(value, str):
-									value = eval(value)
+					for (module, parameter), value in parameters.items():
+						module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
 
-								# Convert boolean to integer
-								if isinstance(value, bool):
-									value = int(value)
+					# Repeat test case
+					for repetition in range(0, testcase["repetitions"]):
+						testcase["repetition"] = repetition
+						results_path = results.getResultsDirectoryPath() + "/" + testcase_name + "_rep" + str(testcase["repetition"])
+						print("\033[1;33m--> Run test case \'" + testcase_name + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
 
-								module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
+						# Setup processes
+						process_logger = Process("Logger", color=37)
+						process_control = Process("Control", color=37)
+						process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
+						process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
+						process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
 
-					# Setup processes
-					process_logger = Process("Logger", color=37)
-					process_control = Process("Control", color=37)
-					process_source = Process("Source", docker_container=get(environment.config, ("docker_container", "source")), color=34)
-					process_channel = Process("Channel", docker_container=get(environment.config, ("docker_container", "channel")), color=35)
-					process_sink = Process("Sink", docker_container=get(environment.config, ("docker_container", "sink")), color=36)
+						# Start processes
+						process_logger.setVerbose(False)
+						process_logger.setLogfile(results_path + ".log")
+						process_logger.run("mosquitto_sub -h " + get(environment.config, ("mqtt", "host"), "") + " -t '#' -v")
 
-					# Start processes
-					process_logger.setVerbose(False)
-					process_logger.setLogfile(results_path + ".log")
-					process_logger.run("mosquitto_sub -h " + get(environment.config, ("mqtt", "host"), "") + " -t '#' -v")
+						process_channel.setLogfile(results_path + "_channel.out")
+						process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
 
-					process_channel.setLogfile(results_path + "_channel.out")
-					process_channel.run(get(environment.config, ("run_prefix", "channel"), "") + " " + "flowemu --mqtt-host=" + get(environment.config, ("mqtt", "host"), "") + " --interface-source=" + get(environment.config, ("interface", "source"), "") + " --interface-sink=" + get(environment.config, ("interface", "sink"), "") + graph_file + module_parameters)
+						if "sink-command" in testcase and testcase["sink-command"] != "":
+							process_sink.setLogfile(results_path + "_sink.out")
+							process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
 
-					if "sink-command" in testcase and testcase["sink-command"] != "":
-						process_sink.setLogfile(results_path + "_sink.out")
-						process_sink.run(get(environment.config, ("run_prefix", "sink"), "") + " " + testcase["sink-command"])
+						time.sleep(1)
 
-					time.sleep(1)
+						if "control-command" in testcase and testcase["control-command"] != "":
+							process_control.setLogfile(results_path + "_control.out")
+							process_control.run(get(environment.config, ("run_prefix", "control"), "") + " " + testcase["control-command"])
 
-					if "control-command" in testcase and testcase["control-command"] != "":
-						process_control.setLogfile(results_path + "_control.out")
-						process_control.run(get(environment.config, ("run_prefix", "control"), "") + " " + testcase["control-command"])
+						if "source-command" in testcase and testcase["source-command"] != "":
+							process_source.setLogfile(results_path + "_source.out")
+							process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
 
-					if "source-command" in testcase and testcase["source-command"] != "":
-						process_source.setLogfile(results_path + "_source.out")
-						process_source.run(get(environment.config, ("run_prefix", "source"), "") + " " + testcase["source-command"])
-
-					# Wait for source process to finish before stopping all other processes
-					if "control-command" in testcase and testcase["control-command"] != "":
-						process_control.wait()
-						process_source.stop()
-					else:
-						process_source.wait()
-						process_control.stop()
-					process_sink.stop()
-					process_channel.stop()
-					process_logger.stop()
+						# Wait for source process to finish before stopping all other processes
+						if "control-command" in testcase and testcase["control-command"] != "":
+							process_control.wait()
+							process_source.stop()
+						else:
+							process_source.wait()
+							process_control.stop()
+						process_sink.stop()
+						process_channel.stop()
+						process_logger.stop()
 
 		# Catch keyboard interrupts
 		except KeyboardInterrupt:
