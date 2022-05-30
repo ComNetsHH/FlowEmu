@@ -112,6 +112,7 @@ class Config:
 
 			# Add general parameters to test case
 			testcase = deepcopy(testcases_toml["general"])
+			testcase.pop("disabled", None)
 			for key, value in config.items():
 				if key in testcase and isinstance(testcase[key], dict) and isinstance(value, dict):
 					testcase[key].update(value)
@@ -362,8 +363,8 @@ def main():
 		try:
 			# Run test case
 			for testcase in config.testcases:
-				# Skip other test cases if a specific test case is given as command-line argument
-				if len(sys.argv) > 3 and sys.argv[3] != testcase["name"]:
+				# Skip disabled test cases or other test cases if a specific test case is given as command-line argument
+				if ("disabled" in testcase and testcase["disabled"] == True) or (len(sys.argv) > 3 and sys.argv[3] != testcase["name"]):
 					print("\033[1;33m--> Skip test case \'" + testcase["name"] + "\'\033[0m")
 					continue
 
