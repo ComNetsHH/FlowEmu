@@ -371,61 +371,61 @@ def main():
 				# Write test case to results directory
 				results.writeTestcase(testcase)
 
-				# Get module parameters from test case
-				fixed_parameters = []
-				fixed_values = []
-				variable_parameters = []
-				variable_values = []
-				for module in testcase.keys():
-					if(isinstance(testcase[module], dict)):
-						for parameter, value in testcase[module].items():
-							# Evaluate Python expression
-							if isinstance(value, str):
-								value = eval(value)
+				# Repeat test case
+				for repetition in range(0, testcase["repetitions"]):
+					testcase["repetition"] = repetition
 
-							# Handle variable parameters
-							if isinstance(value, list) or isinstance(value, range) or isinstance(value, tuple):
-								variable_parameters.append((module, parameter))
-								variable_values.append(value)
-								continue
+					# Get module parameters from test case
+					fixed_parameters = []
+					fixed_values = []
+					variable_parameters = []
+					variable_values = []
+					for module in testcase.keys():
+						if(isinstance(testcase[module], dict)):
+							for parameter, value in testcase[module].items():
+								# Evaluate Python expression
+								if isinstance(value, str):
+									value = eval(value)
 
-							# Convert boolean to integer
-							if isinstance(value, bool):
-								value = int(value)
+								# Handle variable parameters
+								if isinstance(value, list) or isinstance(value, range) or isinstance(value, tuple):
+									variable_parameters.append((module, parameter))
+									variable_values.append(value)
+									continue
 
-							# Handle fixed parameters
-							fixed_parameters.append((module, parameter))
-							fixed_values.append(value)
+								# Convert boolean to integer
+								if isinstance(value, bool):
+									value = int(value)
 
-				# Run test case for each parameter combination
-				for variable_values in itertools.product(*variable_values):
-					# Get variable parameters
-					parameters = dict(zip(variable_parameters, variable_values))
-					variable_parameters_name = "_".join([parameter[1].replace("_", "-") + "=" + str(value) for parameter, value in parameters.items()])
+								# Handle fixed parameters
+								fixed_parameters.append((module, parameter))
+								fixed_values.append(value)
 
-					# Add fixed parameters
-					parameters.update(dict(zip(fixed_parameters, fixed_values)))
+					# Run test case for each parameter combination
+					for variable_values in itertools.product(*variable_values):
+						# Get variable parameters
+						parameters = dict(zip(variable_parameters, variable_values))
+						variable_parameters_name = "_".join([parameter[1].replace("_", "-") + "=" + str(value) for parameter, value in parameters.items()])
 
-					# Generate test case name
-					testcase_name = testcase["name"]
-					if variable_parameters_name != "":
-						testcase_name += "_" + variable_parameters_name
+						# Add fixed parameters
+						parameters.update(dict(zip(fixed_parameters, fixed_values)))
 
-					# Get graph file from test case
-					graph_file = ""
-					if "graph-file" in testcase:
-						graph_file = " --graph-file=" + testcase["graph-file"]
-
-					# Generate command-line arguments
-					module_parameters = ""
-					for (module, parameter), value in parameters.items():
-						module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
-
-					# Repeat test case
-					for repetition in range(0, testcase["repetitions"]):
-						testcase["repetition"] = repetition
+						# Generate test case name and results path
+						testcase_name = testcase["name"]
+						if variable_parameters_name != "":
+							testcase_name += "_" + variable_parameters_name
 						results_path = results.getResultsDirectoryPath() + "/" + testcase_name + "_rep" + str(testcase["repetition"])
 						print("\033[1;33m--> Run test case \'" + testcase_name + "\' - repetition " + str(testcase["repetition"]) + "\033[0m")
+
+						# Get graph file from test case
+						graph_file = ""
+						if "graph-file" in testcase:
+							graph_file = " --graph-file=" + testcase["graph-file"]
+
+						# Generate command-line arguments
+						module_parameters = ""
+						for (module, parameter), value in parameters.items():
+							module_parameters += " --" + module + "." + parameter + "=" + re.escape(str(value))
 
 						# Setup processes
 						process_logger = Process("Logger", color=37)
