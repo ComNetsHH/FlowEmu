@@ -201,7 +201,14 @@ class Process:
 	def run(self, cmd):
 		if not self.process:
 			self.cmd = cmd
-			print(self.name + " command-line call: " + self.cmd)
+
+			# Get current timestamp
+			timestamp = str(round((time.time() - start_time)*1000, 1))
+
+			# Write command to log file and command-line
+			if self.logfile:
+				self.logfile.write("[" + timestamp + "] " + "Command-line call: " + self.cmd + "\n")
+			print("\033[1;" + str(int(self.color)) + "m[" + timestamp + " - " + self.name + "] " + "Command-line call: " + self.cmd + "\033[0m\r")
 
 			if self.docker_container != None:
 				# Run command in docker container
