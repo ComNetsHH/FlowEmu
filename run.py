@@ -399,12 +399,12 @@ def main():
 
 				# Run test case for each parameter combination
 				for variable_values in itertools.product(*variable_values):
-					# Get fixed parameters
-					parameters = dict(zip(fixed_parameters, fixed_values))
-
-					# Add variable parameters
-					parameters.update(dict(zip(variable_parameters, variable_values)))
+					# Get variable parameters
+					parameters = dict(zip(variable_parameters, variable_values))
 					variable_parameters_name = "_".join([parameter[1].replace("_", "-") + "=" + str(value) for parameter, value in parameters.items()])
+
+					# Add fixed parameters
+					parameters.update(dict(zip(fixed_parameters, fixed_values)))
 
 					# Generate test case name
 					testcase_name = testcase["name"]
