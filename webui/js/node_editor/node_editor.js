@@ -799,7 +799,7 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		element_step_down.classList.add("step");
 		element_step_down.textContent = "<";
 		element_step_down.addEventListener("click", function(e) {
-			that.element_input.value = parseFloat(that.element_input.value) - step;
+			that.element_input.value = formatValue(parseFormatedValue(that.element_input.value) - step);
 			that.element_input.dispatchEvent(new Event("change"));
 		});
 		element_step_down.addEventListener("mousemove", function(e) {
@@ -812,7 +812,7 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		this.element_input.type = "text";
 		this.element_input.value = min != null ? min : 0;
 		this.element_input.addEventListener("input", function(e) {
-			var value = parseFloat(this.value);
+			var value = parseFormatedValue(this.value);
 
 			if(value !== that.value) {
 				this.classList.add("changed");
@@ -823,15 +823,16 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		this.element_input.addEventListener("change", function(e) {
 			this.classList.remove("changed");
 
-			this.value = parseFloat(this.value);
+			var value = parseFormatedValue(this.value);
 
-			if(that.min != null && this.value < that.min) {
-				this.value = that.min;
-			} else if(that.max != null && this.value > that.max) {
-				this.value = that.max;
+			if(that.min != null && value < that.min) {
+				value = that.min;
+			} else if(that.max != null && value > that.max) {
+				value = that.max;
 			}
 
-			that.value = this.value;
+			this.value = formatValue(value);
+			that.value = value;
 
 			if(that.parent !== undefined && that.parent.parent !== undefined && that.parent.parent.parameter_change_handler !== undefined) {
 				that.parent.parent.parameter_change_handler(that.parent, that.id, that.value);
@@ -849,7 +850,7 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		element_step_up.classList.add("step");
 		element_step_up.textContent = ">";
 		element_step_up.addEventListener("click", function(e) {
-			that.element_input.value = parseFloat(that.element_input.value) + step;
+			that.element_input.value = formatValue(parseFormatedValue(that.element_input.value) + step);
 			that.element_input.dispatchEvent(new Event("change"));
 		});
 		element_step_up.addEventListener("mousemove", function(e) {
@@ -867,7 +868,7 @@ class NodeContentParameterDouble extends NodeContentParameter {
 		this.element_input.classList.remove("changed");
 
 		super.setValue(value);
-		this.element_input.value = value;
+		this.element_input.value = formatValue(value);
 	}
 
 	serialize() {
@@ -1086,7 +1087,7 @@ class NodeContentStatistic extends NodeContentItem {
 	}
 
 	setValue(value) {
-		this.element_value.textContent = value;
+		this.element_value.textContent = formatValue(value);
 	}
 
 	serialize() {

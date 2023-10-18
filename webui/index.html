@@ -32,6 +32,7 @@
 		<link rel="stylesheet" href="css/ui.css">
 		<link rel="stylesheet" href="js/node_editor/node_editor.css">
 
+		<script src="js/utils/utils.js"></script>
 		<script src="js/node_editor/node_editor.js"></script>
 		<script src="js/chart/chart.umd.js"></script>
 		<script src="js/mqtt/mqttjs.js"></script>
@@ -372,6 +373,16 @@
 							title: {
 								display: true,
 								text: "Packets"
+							},
+							ticks: {
+								callback: formatValue,
+							}
+						}
+					},
+					plugins: {
+						tooltip: {
+							callbacks: {
+								label: chartTooltip.bind({unit: "packets"})
 							}
 						}
 					}
@@ -425,6 +436,16 @@
 							title: {
 								display: true,
 								text: "ms"
+							},
+							ticks: {
+								callback: formatValue,
+							}
+						}
+					},
+					plugins: {
+						tooltip: {
+							callbacks: {
+								label: chartTooltip.bind({unit: "ms"})
 							}
 						}
 					}
@@ -487,7 +508,10 @@
 								display: true,
 								text: "Bits/s"
 							},
-							position: 'left'
+							position: 'left',
+							ticks: {
+								callback: formatValue,
+							}
 						},
 						y1: {
 							display: true,
@@ -495,7 +519,17 @@
 								display: true,
 								text: "Packets/s"
 							},
-							position: 'right'
+							position: 'right',
+							ticks: {
+								callback: formatValue,
+							}
+						}
+					},
+					plugins: {
+						tooltip: {
+							callbacks: {
+								label: chartTooltip
+							}
 						}
 					}
 				}
