@@ -54,7 +54,7 @@ function topic_matches_sub(sub, topic) {
 }
 
 /* ========== Connect ========== */
-var client = mqtt.connect({port: location.port, keepalive: 30, clean: true, resubscribe: false});
+var client = mqtt.connect("ws://" + location.hostname + ":" + location.port, {keepalive: 30, clean: true, resubscribe: false});
 
 client.on("connect", function() {
 	subscriptions.forEach(function(item) {
