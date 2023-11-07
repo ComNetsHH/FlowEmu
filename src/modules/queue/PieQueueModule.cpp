@@ -29,7 +29,7 @@ using namespace std;
 PieQueueModule::PieQueueModule(boost::asio::io_service &io_service,
                                size_t buffer_size, uint64_t qdelay_ref_input,
                                uint64_t max_burst_input, uint32_t seed)
-    : timer_statistics(io_service), timer_probability_update(io_service) {
+    : timer_probability_update(io_service), timer_statistics(io_service) {
 	setName("PIE Queue");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});

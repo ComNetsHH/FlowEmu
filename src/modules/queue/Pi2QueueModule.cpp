@@ -29,7 +29,7 @@ Pi2QueueModule::Pi2QueueModule(boost::asio::io_service &io_service,
                                size_t buffer_size,
                                uint64_t qdelay_ref_input,
                                uint64_t rtt_max_input, uint32_t seed)
-    : timer_statistics(io_service), timer_probability_update(io_service) {
+    : timer_probability_update(io_service), timer_statistics(io_service) {
 	setName("PI2 Queue");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
