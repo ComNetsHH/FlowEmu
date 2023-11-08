@@ -73,7 +73,7 @@ sudo apt-get install pipenv ethtool mosquitto-clients
 ### Docker
 As the development environment is based on Docker, you also need to install and set up Docker and Docker Compose:
 ```
-sudo apt-get install docker.io docker-compose
+sudo apt-get install docker.io docker-buildx docker-compose
 ```
 
 Add your own user to the *docker* group, so you are able to control the Docker daemon:
