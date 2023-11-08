@@ -351,6 +351,49 @@
 				}
 			});
 
+
+			const chart_start_timestamp = Date.now();
+			const chart_total_time = 30;
+
+			function chartAddDatapoint(dataset, value) {
+				if(isNaN(value)) {
+					dataset.data = [];
+					return;
+				}
+
+				const now = (Date.now() - chart_start_timestamp) / 1000;
+
+				dataset.data.pop();
+				for(let i = 0; i < 2; i++) {
+					dataset.data.push({x: now, y: value});
+				}
+			}
+
+			function chartUpdate(chart) {
+				const x_max = (Date.now() - chart_start_timestamp) / 1000;
+				const x_min = x_max - chart_total_time;
+
+				chart.data.datasets.forEach(function(dataset) {
+					if(dataset.data.length == 0) {
+						return;
+					}
+
+					const first_visible_index = dataset.data.findIndex(item => item.x >= x_min);
+					if(first_visible_index > 0) {
+						dataset.data = dataset.data.slice(first_visible_index - 1);
+					}
+
+					dataset.data[0].x = Math.max(dataset.data[0].x, x_min);
+					dataset.data[dataset.data.length - 1].x = x_max;
+				});
+
+				chart.options.scales.x.min = x_min;
+				chart.options.scales.x.max = x_max;
+
+				chart.update();
+			}
+
+
 			var queue_ctx = document.getElementById('queue_chart').getContext('2d');
 			var queue_chart = new Chart(queue_ctx, {
 				type: 'scatter',
@@ -358,6 +401,7 @@
 					datasets: [{
 						label: 'Queue Length',
 						data: [],
+						stepped: true,
 						borderColor: 'orange',
 						showLine: true,
 					}]
@@ -389,18 +433,12 @@
 				}
 			});
 
-			const start_time = Date.now();
 			subscribe("get/module/fifo_queue/queue_length", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				queue_chart.data.datasets[0].data = queue_chart.data.datasets[0].data.filter(item => item.x > now - 35);
-				queue_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(queue_chart.data.datasets[0], parseFloat(message));
 			});
 
 			setInterval(function() {
-				const now = (Date.now() - start_time) / 1000;
-				queue_chart.options.scales.x.max = now;
-				queue_chart.options.scales.x.min = now - 30;
-				queue_chart.update();
+				chartUpdate(queue_chart);
 			}, 100);
 
 
@@ -411,16 +449,19 @@
 					datasets: [{
 						label: 'Mean Delay',
 						data: [],
+						stepped: true,
 						borderColor: 'orange',
 						showLine: true,
 					},{
 						label: 'Min. Delay',
 						data: [],
+						stepped: true,
 						borderColor: 'rebeccapurple',
 						showLine: true,
 					},{
 						label: 'Max. Delay',
 						data: [],
+						stepped: true,
 						borderColor: 'rebeccapurple',
 						showLine: true,
 					}]
@@ -453,28 +494,19 @@
 			});
 
 			subscribe("get/module/delay_meter/mean", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				delay_chart.data.datasets[0].data = delay_chart.data.datasets[0].data.filter(item => item.x > now - 35);
-				delay_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(delay_chart.data.datasets[0], parseFloat(message));
 			});
 
 			subscribe("get/module/delay_meter/min", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				delay_chart.data.datasets[1].data = delay_chart.data.datasets[1].data.filter(item => item.x > now - 35);
-				delay_chart.data.datasets[1].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(delay_chart.data.datasets[1], parseFloat(message));
 			});
 
 			subscribe("get/module/delay_meter/max", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				delay_chart.data.datasets[2].data = delay_chart.data.datasets[2].data.filter(item => item.x > now - 35);
-				delay_chart.data.datasets[2].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(delay_chart.data.datasets[2], parseFloat(message));
 			});
 
 			setInterval(function() {
-				const now = (Date.now() - start_time) / 1000;
-				delay_chart.options.scales.x.max = now;
-				delay_chart.options.scales.x.min = now - 30;
-				delay_chart.update();
+				chartUpdate(delay_chart);
 			}, 100);
 
 
@@ -486,12 +518,14 @@
 						label: 'Bits/s',
 						yAxisID: 'y',
 						data: [],
+						stepped: true,
 						borderColor: 'orange',
 						showLine: true
 					}, {
 						label: 'Packets/s',
 						yAxisID: 'y1',
 						data: [],
+						stepped: true,
 						borderColor: 'rebeccapurple',
 						showLine: true
 					}]
@@ -536,22 +570,15 @@
 			});
 
 			subscribe("get/module/throughput_meter/bits_per_second", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				throughput_chart.data.datasets[0].data = throughput_chart.data.datasets[0].data.filter(item => item.x > now - 35);
-				throughput_chart.data.datasets[0].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(throughput_chart.data.datasets[0], parseFloat(message));
 			});
 
 			subscribe("get/module/throughput_meter/packets_per_second", function(topic, message) {
-				const now = (Date.now() - start_time) / 1000;
-				throughput_chart.data.datasets[1].data = throughput_chart.data.datasets[1].data.filter(item => item.x > now - 35);
-				throughput_chart.data.datasets[1].data.push({x: now, y: parseFloat(message)});
+				chartAddDatapoint(throughput_chart.data.datasets[1], parseFloat(message));
 			});
 
 			setInterval(function() {
-				const now = (Date.now() - start_time) / 1000;
-				throughput_chart.options.scales.x.max = now;
-				throughput_chart.options.scales.x.min = now - 30;
-				throughput_chart.update();
+				chartUpdate(throughput_chart);
 			}, 100);
 
 			var node_settings = document.getElementById("node_settings");
