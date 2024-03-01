@@ -34,7 +34,7 @@
 
 class FixedDelayModule : public Module {
 	public:
-		FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay);
+		FixedDelayModule(boost::asio::io_service &io_service, double delay);
 		~FixedDelayModule();
 
 		const char* getType() const {
@@ -44,11 +44,10 @@ class FixedDelayModule : public Module {
 		void handleDelayChange();
 
 	private:
+		ParameterDouble parameter_delay = {0.0, 0.0, std::numeric_limits<double>::quiet_NaN(), 10.0};
+
 		ReceivingPort<std::shared_ptr<Packet>> input_port_lr;
 		SendingPort<std::shared_ptr<Packet>> output_port_lr;
-
-		ParameterDouble parameter_delay = {0, 0, std::numeric_limits<double>::quiet_NaN(), 10};
-
 		void receiveFromLeftModule(std::shared_ptr<Packet> packet);
 		boost::asio::high_resolution_timer timer_lr;
 		std::queue<std::pair<std::chrono::high_resolution_clock::time_point, std::shared_ptr<Packet>>> packet_queue_lr;

@@ -25,7 +25,7 @@
 
 using namespace std;
 
-FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, uint64_t delay) : timer_lr(io_service), timer_rl(io_service) {
+FixedDelayModule::FixedDelayModule(boost::asio::io_service &io_service, double delay) : timer_lr(io_service), timer_rl(io_service) {
 	setName("Fixed Delay");
 	addPort({"lr_in", "In", PortInfo::Side::left, &input_port_lr});
 	addPort({"lr_out", "Out", PortInfo::Side::right, &output_port_lr});
@@ -47,7 +47,7 @@ void FixedDelayModule::handleDelayChange() {
 }
 
 void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
-	if(parameter_delay.get() == 0) {
+	if(parameter_delay.get() == 0.0) {
 		output_port_lr.send(packet);
 		return;
 	}
@@ -63,7 +63,7 @@ void FixedDelayModule::receiveFromLeftModule(shared_ptr<Packet> packet) {
 
 void FixedDelayModule::setQueueTimeoutLr() {
 	timer_lr.cancel();
-	timer_lr.expires_at(packet_queue_lr.front().first + chrono::milliseconds((uint64_t) parameter_delay.get()));
+	timer_lr.expires_at(packet_queue_lr.front().first + chrono::nanoseconds((uint64_t) (parameter_delay.get() * 1000000.0)));
 	timer_lr.async_wait(boost::bind(&FixedDelayModule::processQueueLr, this, boost::asio::placeholders::error));
 }
 
@@ -72,7 +72,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_delay.get());
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::nanoseconds((uint64_t) (parameter_delay.get() * 1000000.0));
 
 	while(!packet_queue_lr.empty()) {
 		if(packet_queue_lr.front().first <= chrono_deadline) {
@@ -86,7 +86,7 @@ void FixedDelayModule::processQueueLr(const boost::system::error_code& error) {
 }
 
 void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
-	if(parameter_delay.get() == 0) {
+	if(parameter_delay.get() == 0.0) {
 		output_port_rl.send(packet);
 		return;
 	}
@@ -102,7 +102,7 @@ void FixedDelayModule::receiveFromRightModule(shared_ptr<Packet> packet) {
 
 void FixedDelayModule::setQueueTimeoutRl() {
 	timer_rl.cancel();
-	timer_rl.expires_at(packet_queue_rl.front().first + chrono::milliseconds((uint64_t) parameter_delay.get()));
+	timer_rl.expires_at(packet_queue_rl.front().first + chrono::nanoseconds((uint64_t) (parameter_delay.get() * 1000000.0)));
 	timer_rl.async_wait(boost::bind(&FixedDelayModule::processQueueRl, this, boost::asio::placeholders::error));
 }
 
@@ -111,7 +111,7 @@ void FixedDelayModule::processQueueRl(const boost::system::error_code& error) {
 		return;
 	}
 
-	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::milliseconds((uint64_t) parameter_delay.get());
+	chrono::high_resolution_clock::time_point chrono_deadline = chrono::high_resolution_clock::now() - chrono::nanoseconds((uint64_t) (parameter_delay.get() * 1000000.0));
 
 	while(!packet_queue_rl.empty()) {
 		if(packet_queue_rl.front().first <= chrono_deadline) {

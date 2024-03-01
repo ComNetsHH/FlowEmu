@@ -97,7 +97,7 @@ void ModuleManager::addModule(const string &id, const Json::Value &json_root, bo
 
 	shared_ptr<Module> new_module;
 	if(type == "fixed_delay") {
-		new_module = make_shared<FixedDelayModule>(io_service, 50);
+		new_module = make_shared<FixedDelayModule>(io_service, 50.0);
 	} else if(type == "gilbert_elliot_loss") {
 		new_module = make_shared<GilbertElliotLossModule>(io_service, 0.001, 0.001, 0, 100);
 	} else if(type == "uncorrelated_loss") {
