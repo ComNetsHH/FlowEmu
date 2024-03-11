@@ -268,6 +268,17 @@
 			fixed_delay.addContentItem(flow);
 			delay_group.addNode(fixed_delay);
 
+			var trace_delay = new Node("trace_delay");
+			trace_delay.setType("trace_delay");
+			trace_delay.setTitle("Trace Delay");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "receiving", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "receiving", "In"));
+			trace_delay.addContentItem(flow);
+			delay_group.addNode(trace_delay);
+
 			node_library.addGroup(delay_group);
 
 

@@ -13,6 +13,7 @@ set(flowemu_SRCS
 	main.cpp
 	modules/ModuleManager.cpp
 	modules/delay/FixedDelayModule.cpp
+	modules/delay/TraceDelayModule.cpp
 	modules/loss/GilbertElliotLossModule.cpp
 	modules/loss/TraceLossModule.cpp
 	modules/loss/UncorrelatedLossModule.cpp
