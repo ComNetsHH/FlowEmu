@@ -31,6 +31,7 @@
 
 #include "delay/FixedDelayModule.hpp"
 #include "loss/GilbertElliotLossModule.hpp"
+#include "loss/TraceLossModule.hpp"
 #include "loss/UncorrelatedLossModule.hpp"
 #include "meter/DelayMeter.hpp"
 #include "meter/ThroughputMeter.hpp"
@@ -100,6 +101,8 @@ void ModuleManager::addModule(const string &id, const Json::Value &json_root, bo
 		new_module = make_shared<FixedDelayModule>(io_service, 50.0);
 	} else if(type == "gilbert_elliot_loss") {
 		new_module = make_shared<GilbertElliotLossModule>(io_service, 0.001, 0.001, 0, 100);
+	} else if(type == "trace_loss") {
+		new_module = make_shared<TraceLossModule>(io_service, "config/traces/loss", "example", "example");
 	} else if(type == "uncorrelated_loss") {
 		new_module = make_shared<UncorrelatedLossModule>(10);
 	} else if(type == "delay_meter") {
@@ -119,7 +122,7 @@ void ModuleManager::addModule(const string &id, const Json::Value &json_root, bo
 	} else if(type == "fixed_interval_rate") {
 		new_module = make_shared<FixedIntervalRateModule>(io_service, chrono::milliseconds(1));
 	} else if(type == "trace_rate") {
-		new_module = make_shared<TraceRateModule>(io_service, "config/traces", "Verizon-LTE-short.down", "Verizon-LTE-short.up");
+		new_module = make_shared<TraceRateModule>(io_service, "config/traces/rate", "Verizon-LTE-short.down", "Verizon-LTE-short.up");
 	} else {
 		cerr << "Unknown module type: " << type << endl;
 		return;

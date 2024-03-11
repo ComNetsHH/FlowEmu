@@ -230,6 +230,17 @@
 			uncorrelated_loss.addContentItem(flow);
 			loss_group.addNode(uncorrelated_loss);
 
+			var trace_loss = new Node("trace_loss");
+			trace_loss.setType("trace_loss");
+			trace_loss.setTitle("Trace Loss");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("lr_in", "receiving", "In"));
+			flow.addPort("left", new Port("rl_out", "sending", "Out"));
+			flow.addPort("right", new Port("lr_out", "sending", "Out"));
+			flow.addPort("right", new Port("rl_in", "receiving", "In"));
+			trace_loss.addContentItem(flow);
+			loss_group.addNode(trace_loss);
+
 			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
 			gilbert_elliot_loss.setType("gilbert_elliot_loss");
 			gilbert_elliot_loss.setTitle("Gilbert-Elliot Loss");
