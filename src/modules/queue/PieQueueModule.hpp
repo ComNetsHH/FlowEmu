@@ -46,6 +46,7 @@ class PieQueueModule : public Module {
 public:
 	PieQueueModule(boost::asio::io_service &io_service, size_t buffer_size,
 	               uint64_t qdelay_ref_input, uint64_t max_burst_input, uint32_t seed = 1);
+	PieQueueModule(boost::asio::io_service &io_service) : PieQueueModule(io_service, 100, 15, 150) {};
 
 	const char *getType() const { return "pie_queue"; }
 

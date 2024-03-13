@@ -34,6 +34,7 @@
 class TraceLossModule : public Module {
 	public:
 		TraceLossModule(boost::asio::io_service &io_service, const std::string &traces_path, const std::string &trace_filename_lr, const std::string &trace_filename_rl);
+		TraceLossModule(boost::asio::io_service &io_service) : TraceLossModule(io_service, "config/traces/loss", "example", "example") {};
 
 		const char* getType() const {
 			return "trace_loss";

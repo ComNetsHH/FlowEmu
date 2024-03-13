@@ -36,6 +36,7 @@
 class BitrateRateModule : public Module {
 	public:
 		BitrateRateModule(boost::asio::io_service &io_service, uint64_t bitrate);
+		BitrateRateModule(boost::asio::io_service &io_service) : BitrateRateModule(io_service, 1000000) {};
 		~BitrateRateModule();
 
 		const char* getType() const {

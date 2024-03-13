@@ -35,6 +35,7 @@
 class GilbertElliotLossModule : public Module {
 	public:
 		GilbertElliotLossModule(boost::asio::io_service &io_service, double p01, double p10, double e0 = 0, double e1 = 100, uint32_t seed_transition = 1, uint32_t seed_loss = 1);
+		GilbertElliotLossModule(boost::asio::io_service &io_service) : GilbertElliotLossModule(io_service, 0.001, 0.001, 0, 100) {};
 		~GilbertElliotLossModule();
 
 		const char* getType() const {

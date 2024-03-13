@@ -50,6 +50,7 @@ class Pi2QueueModule : public Module {
 public:
 	Pi2QueueModule(boost::asio::io_service &io_service, size_t buffer_size,
 	               uint64_t qdelay_ref_input, uint64_t rtt_max_input, uint32_t seed = 1);
+	Pi2QueueModule(boost::asio::io_service &io_service) : Pi2QueueModule(io_service, 100, 15, 100) {};
 
 	const char *getType() const { return "pi2_queue"; }
 

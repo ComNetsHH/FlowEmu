@@ -217,187 +217,29 @@
 			var node_library = new NodeLibrary("#node_library");
 			node_library.connectNodeEditor(node_editor);
 
-			var loss_group = new NodeLibraryGroup("Loss");
+			subscribe("get/module_library", function(topic, message) {
+				node_library.clear();
 
-			var uncorrelated_loss = new Node("uncorrelated_loss");
-			uncorrelated_loss.setType("uncorrelated_loss");
-			uncorrelated_loss.setTitle("Uncorrelated Loss");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "receiving", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "receiving", "In"));
-			uncorrelated_loss.addContentItem(flow);
-			loss_group.addNode(uncorrelated_loss);
+				const module_library_data = (message.length > 0 ? JSON.parse(message) : null);
+				if(!module_library_data) {
+					return;
+				}
 
-			var trace_loss = new Node("trace_loss");
-			trace_loss.setType("trace_loss");
-			trace_loss.setTitle("Trace Loss");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "receiving", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "receiving", "In"));
-			trace_loss.addContentItem(flow);
-			loss_group.addNode(trace_loss);
+				for(const group_label in module_library_data) {
+					const group_data = module_library_data[group_label];
 
-			var gilbert_elliot_loss = new Node("gilbert_elliot_loss");
-			gilbert_elliot_loss.setType("gilbert_elliot_loss");
-			gilbert_elliot_loss.setTitle("Gilbert-Elliot Loss");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "receiving", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "receiving", "In"));
-			gilbert_elliot_loss.addContentItem(flow);
-			loss_group.addNode(gilbert_elliot_loss);
+					const group = new NodeLibraryGroup(group_label);
 
-			node_library.addGroup(loss_group);
+					group_data.forEach(function(node_data) {
+						const node = new Node(node_data["type"]);
+						node.deserialize(node_data);
 
+						group.addNode(node);
+					});
 
-			var delay_group = new NodeLibraryGroup("Delay");
-
-			var fixed_delay = new Node("fixed_delay");
-			fixed_delay.setType("fixed_delay");
-			fixed_delay.setTitle("Fixed Delay");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "receiving", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "receiving", "In"));
-			fixed_delay.addContentItem(flow);
-			delay_group.addNode(fixed_delay);
-
-			var trace_delay = new Node("trace_delay");
-			trace_delay.setType("trace_delay");
-			trace_delay.setTitle("Trace Delay");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "receiving", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "receiving", "In"));
-			trace_delay.addContentItem(flow);
-			delay_group.addNode(trace_delay);
-
-			node_library.addGroup(delay_group);
-
-
-			var queue_group = new NodeLibraryGroup("Queue");
-
-			/* var dql_queue = new Node("dql_queue");
-			dql_queue.setType("dql_queue");
-			dql_queue.setTitle("DQL Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			dql_queue.addContentItem(flow);
-			queue_group.addNode(dql_queue); */
-
-			var fifo_queue = new Node("fifo_queue");
-			fifo_queue.setType("fifo_queue");
-			fifo_queue.setTitle("FIFO Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			fifo_queue.addContentItem(flow);
-			queue_group.addNode(fifo_queue);
-
-			var codel_queue = new Node("codel_queue");
-			codel_queue.setType("codel_queue");
-			codel_queue.setTitle("CoDel Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			codel_queue.addContentItem(flow)
-			queue_group.addNode(codel_queue);
-
-			var pie_queue = new Node("pie_queue");
-			pie_queue.setType("pie_queue");
-			pie_queue.setTitle("PIE Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			pie_queue.addContentItem(flow)
-			queue_group.addNode(pie_queue);
-
-			var pi2_queue = new Node("pi2_queue");
-			pi2_queue.setType("pi2_queue");
-			pi2_queue.setTitle("PI2 Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			pi2_queue.addContentItem(flow)
-			queue_group.addNode(pi2_queue);
-
-			var red_queue = new Node("red_queue");
-			red_queue.setType("red_queue");
-			red_queue.setTitle("RED Queue");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "responding", "Out"));
-			red_queue.addContentItem(flow)
-			queue_group.addNode(red_queue);
-
-			node_library.addGroup(queue_group);
-
-
-			var rate_group = new NodeLibraryGroup("Rate");
-
-			var bitrate_rate = new Node("bitrate_rate");
-			bitrate_rate.setType("bitrate_rate");
-			bitrate_rate.setTitle("Bitrate Rate");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "requesting", "In"));
-			flow.addPort("right", new Port("out", "sending", "Out"));
-			bitrate_rate.addContentItem(flow);
-			rate_group.addNode(bitrate_rate);
-
-			var fixed_interval_rate = new Node("fixed_interval_rate");
-			fixed_interval_rate.setType("fixed_interval_rate");
-			fixed_interval_rate.setTitle("Fixed Interval Rate");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "requesting", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "requesting", "In"));
-			fixed_interval_rate.addContentItem(flow);
-			rate_group.addNode(fixed_interval_rate);
-
-			var trace_rate = new Node("trace_rate");
-			trace_rate.setType("trace_rate");
-			trace_rate.setTitle("Trace Rate");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("lr_in", "requesting", "In"));
-			flow.addPort("left", new Port("rl_out", "sending", "Out"));
-			flow.addPort("right", new Port("lr_out", "sending", "Out"));
-			flow.addPort("right", new Port("rl_in", "requesting", "In"));
-			trace_rate.addContentItem(flow);
-			rate_group.addNode(trace_rate);
-
-			node_library.addGroup(rate_group);
-
-
-			var meter_group = new NodeLibraryGroup("Meter");
-
-			var delay_meter = new Node("delay_meter");
-			delay_meter.setType("delay_meter");
-			delay_meter.setTitle("Delay Meter");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "sending", "Out"));
-			delay_meter.addContentItem(flow);
-			meter_group.addNode(delay_meter);
-
-			var throughput_meter = new Node("throughput_meter");
-			throughput_meter.setType("throughput_meter");
-			throughput_meter.setTitle("Throughput Meter");
-			var flow = new NodeContentFlow();
-			flow.addPort("left", new Port("in", "receiving", "In"));
-			flow.addPort("right", new Port("out", "sending", "Out"));
-			throughput_meter.addContentItem(flow);
-			meter_group.addNode(throughput_meter);
-
-			node_library.addGroup(meter_group);
+					node_library.addGroup(group);
+				}
+			});
 
 			document.getElementById("library_hide_button").addEventListener("click", function(e) {
 				if(node_library.element.classList.contains("hidden")) {

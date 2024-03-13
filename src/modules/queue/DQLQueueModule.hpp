@@ -45,6 +45,7 @@
 class DQLQueueModule : public Module {
 	public:
 		DQLQueueModule(boost::asio::io_service &io_service, size_t buffer_size, double epsilon);
+		DQLQueueModule(boost::asio::io_service &io_service) : DQLQueueModule(io_service, 100, 0.001) {};
 		~DQLQueueModule();
 
 		const char* getType() const {

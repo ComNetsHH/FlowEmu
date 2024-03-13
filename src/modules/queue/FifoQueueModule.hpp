@@ -34,6 +34,7 @@
 class FifoQueueModule : public Module {
 	public:
 		FifoQueueModule(boost::asio::io_service &io_service, size_t buffer_size);
+		FifoQueueModule(boost::asio::io_service &io_service) : FifoQueueModule(io_service, 100) {};
 
 		const char* getType() const {
 			return "fifo_queue";

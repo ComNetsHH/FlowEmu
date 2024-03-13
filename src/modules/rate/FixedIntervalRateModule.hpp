@@ -35,6 +35,7 @@
 class FixedIntervalRateModule : public Module {
 	public:
 		FixedIntervalRateModule(boost::asio::io_service &io_service, std::chrono::high_resolution_clock::duration interval);
+		FixedIntervalRateModule(boost::asio::io_service &io_service) : FixedIntervalRateModule(io_service, std::chrono::milliseconds(1)) {};
 		~FixedIntervalRateModule();
 
 		const char* getType() const {

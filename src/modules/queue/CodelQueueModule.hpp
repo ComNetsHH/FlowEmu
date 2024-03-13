@@ -52,6 +52,7 @@ class CodelQueueModule : public Module {
 public:
 	CodelQueueModule(boost::asio::io_service &io_service, size_t buffer_size,
 	                 size_t target_queue_time);
+	CodelQueueModule(boost::asio::io_service &io_service) : CodelQueueModule(io_service, 100, 5) {};
 
 	const char *getType() const { return "codel_queue"; }
 

@@ -24,12 +24,15 @@
 
 #include <memory>
 
+#include <boost/asio.hpp>
+
 #include "../Module.hpp"
 #include "../../utils/Packet.hpp"
 
 class NullModule : public Module {
 	public:
 		NullModule();
+		NullModule(boost::asio::io_service &io_service) : NullModule() {};
 
 	const char* getType() const {
 		return "null";

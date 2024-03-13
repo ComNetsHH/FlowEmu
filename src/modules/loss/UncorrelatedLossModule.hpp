@@ -35,6 +35,7 @@
 class UncorrelatedLossModule : public Module {
 	public:
 		UncorrelatedLossModule(double loss, uint32_t seed = 1);
+		UncorrelatedLossModule(boost::asio::io_service &io_service) : UncorrelatedLossModule(10) {};
 
 		const char* getType() const {
 			return "uncorrelated_loss";

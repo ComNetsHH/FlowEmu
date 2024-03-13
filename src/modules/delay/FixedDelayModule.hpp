@@ -35,6 +35,7 @@
 class FixedDelayModule : public Module {
 	public:
 		FixedDelayModule(boost::asio::io_service &io_service, double delay);
+		FixedDelayModule(boost::asio::io_service &io_service) : FixedDelayModule(io_service, 50.0) {};
 		~FixedDelayModule();
 
 		const char* getType() const {

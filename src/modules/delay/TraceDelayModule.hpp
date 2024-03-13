@@ -38,6 +38,7 @@
 class TraceDelayModule : public Module {
 	public:
 		TraceDelayModule(boost::asio::io_service &io_service, const std::string &traces_path, const std::string &trace_filename_lr, const std::string &trace_filename_rl);
+		TraceDelayModule(boost::asio::io_service &io_service) : TraceDelayModule(io_service, "config/traces/delay", "example", "example") {};
 		~TraceDelayModule();
 
 		const char* getType() const {

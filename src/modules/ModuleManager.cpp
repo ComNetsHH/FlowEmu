@@ -51,7 +51,31 @@
 
 using namespace std;
 
+map<string, ModuleManager::ModuleInfo> ModuleManager::module_library = {
+	{"uncorrelated_loss", {"Loss", new ModuleFactory<UncorrelatedLossModule>}},
+	{"gilbert_elliot_loss", {"Loss", new ModuleFactory<GilbertElliotLossModule>}},
+	{"trace_loss", {"Loss", new ModuleFactory<TraceLossModule>}},
+	{"fixed_delay", {"Delay", new ModuleFactory<FixedDelayModule>}},
+	{"trace_delay", {"Delay", new ModuleFactory<TraceDelayModule>}},
+	{"fifo_queue", {"Queue", new ModuleFactory<FifoQueueModule>}},
+	{"red_queue", {"Queue", new ModuleFactory<RedQueueModule>}},
+	{"codel_queue", {"Queue", new ModuleFactory<CodelQueueModule>}},
+	{"pie_queue", {"Queue", new ModuleFactory<PieQueueModule>}},
+	{"pi2_queue", {"Queue", new ModuleFactory<Pi2QueueModule>}},
+	#ifdef MACHINE_LEARNING
+	{"dql_queue", {"Queue", new ModuleFactory<DQLQueueModule>}},
+	#endif
+	{"bitrate_rate", {"Rate", new ModuleFactory<BitrateRateModule>}},
+	{"fixed_interval_rate", {"Rate", new ModuleFactory<FixedIntervalRateModule>}},
+	{"trace_rate", {"Rate", new ModuleFactory<TraceRateModule>}},
+	{"delay_meter", {"Meter", new ModuleFactory<DelayMeter>}},
+	{"throughput_meter", {"Meter", new ModuleFactory<ThroughputMeter>}},
+	{"null", {"", new ModuleFactory<NullModule>}}
+};
+
 ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : io_service(io_service), mqtt(mqtt) {
+	mqtt.publish("get/module_library", getModuleLibrary(), true, true);
+
 	mqtt.subscribeJson("set/module/+", [&](const string &topic, const Json::Value &json_root) {
 		regex r("set\\/module\\/(\\w+)");
 		smatch m;
@@ -98,47 +122,36 @@ ModuleManager::ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt) : 
 	mqtt.publish("get/paths", Json::arrayValue, true, true);
 }
 
+Json::Value ModuleManager::getModuleLibrary() {
+	cout << "Check available modules!" << endl;
+
+	Json::Value json_module_library;
+	for(const auto& entry : module_library) {
+		string group = entry.second.group_label;
+		if(group.empty()) {
+			continue;
+		}
+
+		shared_ptr<Module> module_temp = entry.second.factory->create(io_service);
+
+		if(!json_module_library.isMember(group)) {
+			json_module_library[group] = Json::arrayValue;
+		}
+
+		Json::Value json_module = module_temp->serialize();
+		json_module_library[group].append(json_module);
+	}
+
+	return json_module_library;
+}
+
 void ModuleManager::addModule(const string &id, const Json::Value &json_root, bool publish) {
 	string type = json_root.get("type", "").asString();
 
 	shared_ptr<Module> new_module;
-	if(type == "fixed_delay") {
-		new_module = make_shared<FixedDelayModule>(io_service, 50.0);
-	} else if(type == "trace_delay") {
-		new_module = make_shared<TraceDelayModule>(io_service, "config/traces/delay", "example", "example");
-	} else if(type == "gilbert_elliot_loss") {
-		new_module = make_shared<GilbertElliotLossModule>(io_service, 0.001, 0.001, 0, 100);
-	} else if(type == "trace_loss") {
-		new_module = make_shared<TraceLossModule>(io_service, "config/traces/loss", "example", "example");
-	} else if(type == "uncorrelated_loss") {
-		new_module = make_shared<UncorrelatedLossModule>(10);
-	} else if(type == "delay_meter") {
-		new_module = make_shared<DelayMeter>(io_service);
-	} else if(type == "throughput_meter") {
-		new_module = make_shared<ThroughputMeter>(io_service);
-	} else if(type == "null") {
-		new_module = make_shared<NullModule>();
-	#ifdef MACHINE_LEARNING
-	} else if(type == "dql_queue") {
-		new_module = make_shared<DQLQueueModule>(io_service, 100, 0.001);
-	#endif
-	} else if(type == "codel_queue") {
-		new_module = make_shared<CodelQueueModule>(io_service, 100, 5);
-	} else if(type == "fifo_queue") {
-		new_module = make_shared<FifoQueueModule>(io_service, 100);
-	} else if(type == "pie_queue") {
-		new_module = make_shared<PieQueueModule>(io_service, 100, 15, 150);
-	} else if(type == "pi2_queue") {
-		new_module = make_shared<Pi2QueueModule>(io_service, 100, 15, 100);
-	} else if(type == "red_queue") {
-		new_module = make_shared<RedQueueModule>(io_service, 100, 0.002, 15, 45, 0.1, 1.0);
-	} else if(type == "bitrate_rate") {
-		new_module = make_shared<BitrateRateModule>(io_service, 1000000);
-	} else if(type == "fixed_interval_rate") {
-		new_module = make_shared<FixedIntervalRateModule>(io_service, chrono::milliseconds(1));
-	} else if(type == "trace_rate") {
-		new_module = make_shared<TraceRateModule>(io_service, "config/traces/rate", "Verizon-LTE-short.down", "Verizon-LTE-short.up");
-	} else {
+	try {
+		new_module = module_library.at(type).factory->create(io_service);
+	} catch(const out_of_range &e) {
 		cerr << "Unknown module type: " << type << endl;
 		return;
 	}

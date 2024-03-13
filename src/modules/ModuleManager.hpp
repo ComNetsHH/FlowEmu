@@ -38,6 +38,8 @@ class ModuleManager {
 		ModuleManager(boost::asio::io_service &io_service, Mqtt &mqtt);
 		~ModuleManager();
 
+		Json::Value getModuleLibrary();
+
 		void addModule(const std::string &id, const Json::Value &json_root, bool publish = true);
 		void addModule(const std::string &id, std::shared_ptr<Module> module, bool publish = true);
 		void updateModule(const std::string &id, const Json::Value &json_root, bool publish = true);
@@ -62,6 +64,25 @@ class ModuleManager {
 		void clear();
 
 	private:
+		class ModuleFactoryBase {
+			public:
+				virtual std::shared_ptr<Module> create(boost::asio::io_service &io_service) = 0;
+		};
+
+		template<typename T> class ModuleFactory : public ModuleFactoryBase {
+			public:
+				virtual std::shared_ptr<Module> create(boost::asio::io_service &io_service) {
+					return std::make_shared<T>(io_service);
+				}
+		};
+
+		struct ModuleInfo {
+			std::string group_label;
+			ModuleFactoryBase* factory;
+		};
+
+		static std::map<std::string, ModuleInfo> module_library;
+
 		boost::asio::io_service &io_service;
 		Mqtt &mqtt;
 

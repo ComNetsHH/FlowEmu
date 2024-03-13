@@ -36,6 +36,7 @@
 class TraceRateModule : public Module {
 	public:
 		TraceRateModule(boost::asio::io_service &io_service, const std::string &traces_path, const std::string &trace_filename_lr, const std::string &trace_filename_rl);
+		TraceRateModule(boost::asio::io_service &io_service) : TraceRateModule(io_service, "config/traces/rate", "Verizon-LTE-short.down", "Verizon-LTE-short.up") {};
 		~TraceRateModule();
 
 		const char* getType() const {

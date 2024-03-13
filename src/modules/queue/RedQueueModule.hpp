@@ -43,6 +43,7 @@ public:
 	               double queue_weight, uint32_t min_threshold_input,
 	               uint32_t max_threshold_input, double max_p,
 	               double transmission_time, uint32_t seed = 1);
+	RedQueueModule(boost::asio::io_service &io_service) : RedQueueModule(io_service, 100, 0.002, 15, 45, 0.1, 1.0) {};
 
 	const char *getType() const { return "red_queue"; }
 

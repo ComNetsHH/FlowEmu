@@ -1413,6 +1413,15 @@ class NodeLibrary {
 
 		this.element.appendChild(group.element);
 	}
+
+	clear() {
+		this.groups.forEach(function(group) {
+			group.clear();
+			group.element.remove();
+		});
+
+		this.groups = [];
+	}
 }
 
 class NodeLibraryGroup {
@@ -1489,5 +1498,13 @@ class NodeLibraryGroup {
 
 			e.stopPropagation();
 		});
+	}
+
+	clear() {
+		for(const node_id in this.nodes) {
+			this.nodes[node_id].element.remove();
+		}
+
+		this.nodes = {};
 	}
 }
