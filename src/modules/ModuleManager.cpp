@@ -37,7 +37,11 @@
 #include "meter/DelayMeter.hpp"
 #include "meter/ThroughputMeter.hpp"
 #include "null/NullModule.hpp"
+#include "queue/CodelQueueModule.hpp"
 #include "queue/FifoQueueModule.hpp"
+#include "queue/PieQueueModule.hpp"
+#include "queue/Pi2QueueModule.hpp"
+#include "queue/RedQueueModule.hpp"
 #ifdef MACHINE_LEARNING
 #include "queue/DQLQueueModule.hpp"
 #endif
@@ -118,8 +122,16 @@ void ModuleManager::addModule(const string &id, const Json::Value &json_root, bo
 	} else if(type == "dql_queue") {
 		new_module = make_shared<DQLQueueModule>(io_service, 100, 0.001);
 	#endif
+	} else if(type == "codel_queue") {
+		new_module = make_shared<CodelQueueModule>(io_service, 100, 5);
 	} else if(type == "fifo_queue") {
 		new_module = make_shared<FifoQueueModule>(io_service, 100);
+	} else if(type == "pie_queue") {
+		new_module = make_shared<PieQueueModule>(io_service, 100, 15, 150);
+	} else if(type == "pi2_queue") {
+		new_module = make_shared<Pi2QueueModule>(io_service, 100, 15, 100);
+	} else if(type == "red_queue") {
+		new_module = make_shared<RedQueueModule>(io_service, 100, 0.002, 15, 45, 0.1, 1.0);
 	} else if(type == "bitrate_rate") {
 		new_module = make_shared<BitrateRateModule>(io_service, 1000000);
 	} else if(type == "fixed_interval_rate") {

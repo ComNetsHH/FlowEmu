@@ -51,8 +51,12 @@ Via these interfaces, the user can change the structure and parameters of the mo
  * Delay:
     * Fixed delay
     * Trace (compatible with [Link'Em](https://github.com/sys-uos/linkem))
- * Queues:
+ * Queues and Active Queue Management (AQM) algorithms:
     * FIFO
+    * RED
+    * CoDel
+    * PIE
+    * PI2
  * Rate limiters / departure processes:
     * Bitrate
     * Fixed interval

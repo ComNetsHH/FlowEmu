@@ -20,7 +20,11 @@ set(flowemu_SRCS
 	modules/meter/DelayMeter.cpp
 	modules/meter/ThroughputMeter.cpp
 	modules/null/NullModule.cpp
+	modules/queue/CodelQueueModule.cpp
 	modules/queue/FifoQueueModule.cpp
+	modules/queue/PieQueueModule.cpp
+	modules/queue/Pi2QueueModule.cpp
+	modules/queue/RedQueueModule.cpp
 	modules/rate/BitrateRateModule.cpp
 	modules/rate/FixedIntervalRateModule.cpp
 	modules/rate/TraceRateModule.cpp

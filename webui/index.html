@@ -302,6 +302,42 @@
 			fifo_queue.addContentItem(flow);
 			queue_group.addNode(fifo_queue);
 
+			var codel_queue = new Node("codel_queue");
+			codel_queue.setType("codel_queue");
+			codel_queue.setTitle("CoDel Queue");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "responding", "Out"));
+			codel_queue.addContentItem(flow)
+			queue_group.addNode(codel_queue);
+
+			var pie_queue = new Node("pie_queue");
+			pie_queue.setType("pie_queue");
+			pie_queue.setTitle("PIE Queue");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "responding", "Out"));
+			pie_queue.addContentItem(flow)
+			queue_group.addNode(pie_queue);
+
+			var pi2_queue = new Node("pi2_queue");
+			pi2_queue.setType("pi2_queue");
+			pi2_queue.setTitle("PI2 Queue");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "responding", "Out"));
+			pi2_queue.addContentItem(flow)
+			queue_group.addNode(pi2_queue);
+
+			var red_queue = new Node("red_queue");
+			red_queue.setType("red_queue");
+			red_queue.setTitle("RED Queue");
+			var flow = new NodeContentFlow();
+			flow.addPort("left", new Port("in", "receiving", "In"));
+			flow.addPort("right", new Port("out", "responding", "Out"));
+			red_queue.addContentItem(flow)
+			queue_group.addNode(red_queue);
+
 			node_library.addGroup(queue_group);
 
 
