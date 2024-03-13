@@ -47,8 +47,10 @@ Via these interfaces, the user can change the structure and parameters of the mo
  * Loss:
     * Uncorrelated loss
     * Continuous-time Gilbert-Elliot model
+    * Trace (compatible with [Link'Em](https://github.com/sys-uos/linkem))
  * Delay:
     * Fixed delay
+    * Trace (compatible with [Link'Em](https://github.com/sys-uos/linkem))
  * Queues:
     * FIFO
  * Rate limiters / departure processes:
