@@ -12,6 +12,8 @@ matplotlib = "*"
 [dev-packages]
 build = "*"
 mypy = "*"
+types-toml = "*"
+matplotlib-stubs = "*"
 
 [requires]
 python_version = "3.8"
