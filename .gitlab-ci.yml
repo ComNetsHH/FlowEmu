@@ -1,16 +1,32 @@
-image: ${CI_REGISTRY_IMAGE}/builder
-
 stages:
+  - check
   - build
 
-before_script:
-## Setup ccache (Based on: https://gould.cx/ted/blog/2017/06/10/ccache-for-Gitlab-CI/)
-  - mkdir -p ccache
-  - export CCACHE_BASEDIR=${PWD}
-  - export CCACHE_DIR=${PWD}/ccache
+check:mypy:
+  stage: check
+  image: python:3.8
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    PIPENV_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pipenv"
+  before_script:
+    - pip install pipenv
+    - pipenv sync --dev
+  script:
+    - pipenv run mypy --exclude "ml_python/.*" .
+  cache:
+    key: python
+    paths:
+      - .cache/pip
+      - .cache/pipenv
 
 build:amd64:
   stage: build
+  image: ${CI_REGISTRY_IMAGE}/builder
+  before_script:
+    ## Setup ccache (Based on: https://gould.cx/ted/blog/2017/06/10/ccache-for-Gitlab-CI/)
+    - mkdir -p ccache
+    - export CCACHE_BASEDIR=${PWD}
+    - export CCACHE_DIR=${PWD}/ccache
   script:
     - mkdir -p BUILD
     - cd BUILD
@@ -19,7 +35,7 @@ build:amd64:
   cache:
     key: amd64
     paths:
-      - ccache/
+      - ccache
   artifacts:
     paths:
       - BUILD/bin
