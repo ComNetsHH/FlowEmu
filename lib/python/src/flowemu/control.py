@@ -19,12 +19,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import paho.mqtt.client as mqtt
+from dataclasses import dataclass
+
+from paho.mqtt.client import Client, ConnectFlags, MQTTMessage
+from paho.mqtt.enums import CallbackAPIVersion
+
+from typing import Any, Callable, List, Optional
+from paho.mqtt.properties import Properties
+from paho.mqtt.reasoncodes import ReasonCode
+
+
+@dataclass
+class Subscription:
+	topic: str
+	callback: Callable[[str], None]
 
 class Control(object):
-	def __init__(self, host="localhost", port=1883):
-		self.mqttc = mqtt.Client()
-		self.subscriptions = []
+	def __init__(self, host: str = "localhost", port: int = 1883) -> None:
+		self.mqttc = Client(callback_api_version=CallbackAPIVersion.VERSION2)
+		self.subscriptions: List[Subscription] = []
 
 		self.mqttc.on_connect = self._onConnect
 		self.mqttc.on_message = self._onMessage
@@ -33,23 +46,23 @@ class Control(object):
 
 		self.mqttc.loop_start()
 
-	def _onConnect(self, client, userdata, flags, rc):
+	def _onConnect(self, client: Client, userdata: Any, connect_flags: ConnectFlags, reason_code: ReasonCode, properties: Optional[Properties]) -> None:
 		print("Successfully connected to FlowEmu MQTT broker!")
 
-	def _onMessage(self, client, userdata, msg):
+	def _onMessage(self, client: Client, userdata: Any, msg: MQTTMessage) -> None:
 		for subscription in self.subscriptions:
-			if subscription["topic"] == msg.topic:
-				subscription["callback"](msg.payload.decode("utf-8"))
+			if subscription.topic == msg.topic:
+				subscription.callback(msg.payload.decode("utf-8"))
 
-	def setModuleParameter(self, module, parameter, value):
+	def setModuleParameter(self, module: str, parameter: str, value: str) -> None:
 		self.mqttc.publish(f"set/module/{module}/{parameter}", value)
 	
-	def onModuleStatistic(self, module, statistic):
-		def onModuleStatistic(function):
+	def onModuleStatistic(self, module: str, statistic: str) -> Callable[[Callable[[str], None]], None]:
+		def onModuleStatistic(function: Callable[[str], None]) -> None:
 			topic = f"get/module/{module}/{statistic}"
-			self.subscriptions.append({"topic": topic, "callback": function})
+			self.subscriptions.append(Subscription(topic, function))
 			self.mqttc.subscribe(topic)
 		return onModuleStatistic
 
-	def close(self):
+	def close(self) -> None:
 		self.mqttc.loop_stop()
