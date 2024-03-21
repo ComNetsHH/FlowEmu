@@ -24,16 +24,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import flowemu.control as flowemu
 
+from typing import List
+
+
 flowemuctl = flowemu.Control()
 
 # Create data arrays
-buffer_size_x = []
-buffer_size_y = []
-queue_length_x = []
-queue_length_y = []
+buffer_size_x: List[float] = []
+buffer_size_y: List[float] = []
+queue_length_x: List[float] = []
+queue_length_y: List[float] = []
 
 # Warm up
-flowemuctl.setModuleParameter("fifo_queue", "buffer_size", 0)
+flowemuctl.setModuleParameter("fifo_queue", "buffer_size", str(0))
 sleep(1)
 
 # Get start timestamp
@@ -41,7 +44,7 @@ timestamp_start = perf_counter()
 
 # Register statistic handlers
 @flowemuctl.onModuleStatistic("fifo_queue", "queue_length")
-def onFifoQueueQueueLength(value):
+def onFifoQueueQueueLength(value: str) -> None:
 	timestamp = perf_counter() - timestamp_start
 	value_int = round(float(value))
 	print(f"[{timestamp}] Queue length: {value_int} packets")
@@ -49,7 +52,7 @@ def onFifoQueueQueueLength(value):
 	queue_length_y.append(value_int)
 
 @flowemuctl.onModuleStatistic("fifo_queue", "buffer_size")
-def onFifoQueueBufferSize(value):
+def onFifoQueueBufferSize(value: str) -> None:
 	timestamp = perf_counter() - timestamp_start
 	value_int = round(float(value))
 	print(f"[{timestamp}] FIFO queue buffer size: {value_int} packets")
@@ -64,7 +67,7 @@ for i in np.linspace(0, 100, 11):
 
 	# Set FIFO queue buffer size
 	print(f"[{perf_counter() - timestamp_start}] Set FIFO queue buffer size to {round(i)} packets!")
-	flowemuctl.setModuleParameter(module, parameter, round(i))
+	flowemuctl.setModuleParameter(module, parameter, str(round(i)))
 
 	# Increase timestamp
 	timestamp += 10
@@ -96,4 +99,4 @@ plt.legend()
 
 # Show plot
 plt.tight_layout()
-plt.show()
+plt.show() # type: ignore

@@ -36,7 +36,7 @@ for i in np.linspace(0, 100, 11):
 
 	# Set FIFO queue buffer size
 	print(f"[{perf_counter() - timestamp_start}] Set FIFO queue buffer size to {round(i)} packets!")
-	flowemuctl.setModuleParameter(module, parameter, round(i))
+	flowemuctl.setModuleParameter(module, parameter, str(round(i)))
 
 	# Increase timestamp
 	timestamp += 10

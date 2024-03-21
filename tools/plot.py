@@ -23,12 +23,15 @@ import sys
 import re
 import matplotlib.pyplot as plt
 
+from typing import List
+
+
 # Get path to log file
 log_path = sys.argv[1]
 
 # Create data arrays
-x = []
-y = []
+x: List[float] = []
+y: List[float] = []
 
 # Read data from log file
 with open(log_path, mode="r") as log_file:
@@ -54,4 +57,4 @@ plt.ylabel("Queue Length [packets]")
 
 # Show plot
 plt.tight_layout()
-plt.show()
+plt.show() # type: ignore
