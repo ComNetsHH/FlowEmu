@@ -35,7 +35,7 @@ using namespace std;
 CodelQueueModule::CodelQueueModule(boost::asio::io_service &io_service,
                                    size_t buffer_size, size_t target_queue_time)
     : timer_statistics(io_service) {
-	setName("CoDelQueue");
+	setName("CoDel Queue");
 	addPort({"in", "In", PortInfo::Side::left, &input_port});
 	addPort({"out", "Out", PortInfo::Side::right, &output_port});
 	addParameter({"ecn_mode", "ECN Mode", "", &parameter_ecn_mode});
